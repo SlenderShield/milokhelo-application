@@ -83,9 +83,7 @@ export default function EditProfileScreen() {
       await updateUser.mutateAsync(userData);
       
       // Refresh user data in auth context
-      if (refreshUser) {
-        await refreshUser();
-      }
+      refetch();
 
       Alert.alert('Success', 'Profile updated successfully!', [
         {

@@ -11,7 +11,8 @@ import {
   Platform,
 } from 'react-native';
 import { useState } from 'react';
-import { useChangePassword, useAuth } from '@/src/api/hooks';
+import { useChangePassword } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 
 export default function AccountScreen() {
   const { user } = useAuth();
@@ -59,6 +60,7 @@ export default function AccountScreen() {
       await changePassword.mutateAsync({
         currentPassword,
         newPassword,
+        confirmPassword,
       });
 
       Alert.alert('Success', 'Password changed successfully!');

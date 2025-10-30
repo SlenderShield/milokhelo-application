@@ -41,39 +41,56 @@ export default function TournamentDetailScreen() {
 
   // Check if user is a participant
   const isParticipant = tournament?.participants?.some(
-    (participant) => participant.id === user?.id
-  );
+    (participant) => typeof participant === 'string' ? participant === user?.id : participant === user?.id
+  ) || tournament?.teams?.includes(user?.id || '');
 
   // Check if user is the organizer
-  const isOrganizer = tournament && user && tournament.organizerId === user.id;
+  const isOrganizer = tournament && user && (tournament.organizerId === user.id || tournament.organizer === user.id);
 
   const handleJoinTournament = async () => {
     if (!id) return;
 
+    // TODO: Add team selection UI - tournaments require a teamId
+    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    return;
+
+    /* Commented out until team selection UI is added
     try {
-      await joinTournament.mutateAsync({ id });
+      await joinTournament.mutateAsync({ id, data: { teamId: 'SELECTED_TEAM_ID' } });
       Alert.alert('Success', 'You have joined the tournament!');
       refetch();
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to join tournament');
     }
+    */
   };
 
   const handleRegister = async () => {
     if (!id) return;
 
+    // TODO: Add team selection UI - tournaments require a teamId
+    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    return;
+
+    /* Commented out until team selection UI is added
     try {
-      await registerForTournament.mutateAsync({ tournamentId: id });
+      await registerForTournament.mutateAsync({ id, data: { teamId: 'SELECTED_TEAM_ID' } });
       Alert.alert('Success', 'Registration submitted!');
       refetch();
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to register');
     }
+    */
   };
 
   const handleLeaveTournament = async () => {
     if (!id) return;
 
+    // TODO: Update when leaveTournament API is clarified (may need teamId)
+    Alert.alert('Info', 'Leave tournament feature will be available soon.');
+    return;
+
+    /* Commented out until API is clarified
     Alert.alert(
       'Leave Tournament',
       'Are you sure you want to leave this tournament?',
@@ -94,6 +111,7 @@ export default function TournamentDetailScreen() {
         },
       ]
     );
+    */
   };
 
   // Status badge color
@@ -139,7 +157,7 @@ export default function TournamentDetailScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Tournament Header */}
       <View style={styles.header}>
-        <Text style={styles.tournamentName}>{tournament.name}</Text>
+        <Text style={styles.tournamentName}>{tournament.title || tournament.name}</Text>
         <Text style={styles.tournamentSport}>{tournament.sport}</Text>
         <View
           style={[

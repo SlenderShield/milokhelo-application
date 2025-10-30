@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { useGetTeamById, useUpdateTeam, useAuth } from '@/src/api/hooks';
+import { useGetTeamById, useUpdateTeam } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 import { Avatar } from '@/src/components/Avatar';
 import { ImagePickerComponent } from '@/src/components/ImagePicker';
 
