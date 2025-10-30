@@ -279,9 +279,9 @@ export default function NotificationsScreen() {
           >
             Notifications
           </Text>
-          {unreadCount && unreadCount.unreadCount > 0 && (
+          {unreadCount && unreadCount.count > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{unreadCount.unreadCount}</Text>
+              <Text style={styles.badgeText}>{unreadCount.count}</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -313,7 +313,7 @@ export default function NotificationsScreen() {
         notifications &&
         notifications.length > 0 &&
         unreadCount &&
-        unreadCount.unreadCount > 0 && (
+        unreadCount.count > 0 && (
           <View style={styles.headerActions}>
             <TouchableOpacity
               style={styles.markAllButton}
@@ -341,8 +341,8 @@ export default function NotificationsScreen() {
         </View>
       ) : (
         <FlatList
-          data={currentData}
-          keyExtractor={(item) => item.id}
+          data={currentData as any[]}
+          keyExtractor={(item: any) => item.id}
           renderItem={
             activeTab === 'notifications'
               ? renderNotification

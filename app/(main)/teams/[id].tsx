@@ -24,8 +24,11 @@ export default function TeamDetailScreen() {
   const leaveTeam = useLeaveTeam();
 
   // Check if user is a member
-  const isMember = team?.members?.some((member) => member.id === user?.id);
-  const isCaptain = team?.captain?.id === user?.id;
+  const isMember = team?.members?.some((member) => 
+    typeof member === 'string' ? member === user?.id : member.userId === user?.id
+  );
+  const isCaptain = (typeof team?.captain === 'string' ? team?.captain === user?.id : false) || 
+                    team?.captainId === user?.id;
 
   const handleJoinTeam = async () => {
     if (!id) return;

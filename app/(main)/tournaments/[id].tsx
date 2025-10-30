@@ -240,10 +240,10 @@ export default function TournamentDetailScreen() {
           ) : bracket && bracket.rounds && bracket.rounds.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={true}>
               <View style={styles.bracketContainer}>
-                {bracket.rounds.map((round, roundIndex) => (
+                {bracket.rounds.map((round: any, roundIndex: number) => (
                   <View key={roundIndex} style={styles.roundColumn}>
                     <Text style={styles.roundTitle}>{round.name || `Round ${roundIndex + 1}`}</Text>
-                    {round.matches?.map((match, matchIndex) => {
+                    {round.matches?.map((match: any, matchIndex: number) => {
                       // Handle both team1/team2 (backend) and teamA/teamB (legacy)
                       const team1 = match.team1 || match.teamA || null;
                       const team2 = match.team2 || match.teamB || null;
@@ -303,16 +303,18 @@ export default function TournamentDetailScreen() {
           Participants ({tournament.participants?.length || 0})
         </Text>
         {tournament.participants && tournament.participants.length > 0 ? (
-          tournament.participants.map((participant, index) => (
-            <View key={participant.id || index} style={styles.participantCard}>
-              <View style={styles.participantAvatar}>
-                <Text style={styles.participantAvatarText}>
-                  {participant.name?.substring(0, 1).toUpperCase() || 'P'}
-                </Text>
+          tournament.participants.map((participant, index) => {
+            // Participants are team/user IDs (strings)
+            const participantId = typeof participant === 'string' ? participant : participant;
+            return (
+              <View key={participantId || index} style={styles.participantCard}>
+                <View style={styles.participantAvatar}>
+                  <Text style={styles.participantAvatarText}>P</Text>
+                </View>
+                <Text style={styles.participantName}>Participant {index + 1}</Text>
               </View>
-              <Text style={styles.participantName}>{participant.name}</Text>
-            </View>
-          ))
+            );
+          })
         ) : (
           <Text style={styles.emptyText}>No participants yet</Text>
         )}
