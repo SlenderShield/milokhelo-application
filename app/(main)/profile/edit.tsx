@@ -13,14 +13,14 @@ import {
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useAuth } from '@/src/context/AuthContext';
-import { useUpdateUser } from '@/src/api/hooks';
+import { useUpdateMyProfile } from '@/src/api/hooks';
 import { Avatar } from '@/src/components/Avatar';
 import { ImagePickerComponent } from '@/src/components/ImagePicker';
 
 export default function EditProfileScreen() {
   const router = useRouter();
-  const { user, refreshUser } = useAuth();
-  const updateUser = useUpdateUser();
+  const { user, refetch } = useAuth();
+  const updateUser = useUpdateMyProfile();
 
   const [name, setName] = useState(user?.name || '');
   const [bio, setBio] = useState(user?.bio || '');

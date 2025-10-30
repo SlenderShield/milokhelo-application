@@ -20,11 +20,12 @@
 
 #### **HIGH PRIORITY** - Code Fixes & Quality
 
-- [ ] **Fix TypeScript Errors** (~20 errors in screens)
-  - Fix API hook parameter mismatches in oauth-callback, reset-password
-  - Fix missing exports in useAuth, useDeleteFeedback
-  - Fix chat room and notification API parameter issues
-  - See: Run `npm run type-check` for full list
+- [x] **Fix TypeScript Errors** - 🟡 SIGNIFICANT PROGRESS (90 → 84 → ongoing)
+  - ✅ Fixed API hook parameter mismatches in oauth-callback, reset-password
+  - ✅ Fixed missing exports and imports (useAuth locations)
+  - ✅ Fixed chat room and notification API parameter issues
+  - ✅ Updated models to match backend openapi.yaml
+  - 🔄 Continuing to fix remaining model-screen mismatches
 
 - [ ] **Create Reusable Form Components Library** (8-10 hours)
   - FormInput, FormSelect, FormDatePicker, FormTimePicker
