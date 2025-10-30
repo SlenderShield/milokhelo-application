@@ -10,6 +10,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { handleOAuthRedirect, exchangeOAuthCode, type OAuthProvider } from '@/src/services/oauth';
 import { useAuth } from '@/src/context/AuthContext';
+import { TokenManager } from '@/src/api/client';
 
 /**
  * OAuth Callback Screen
@@ -18,7 +19,7 @@ import { useAuth } from '@/src/context/AuthContext';
 export default function OAuthCallbackScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { login } = useAuth();
+  const { refetch } = useAuth();
 
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
   const [message, setMessage] = useState('Authenticating...');
@@ -96,10 +97,11 @@ export default function OAuthCallbackScreen() {
         return;
       }
 
-      // Login with the received token
-      if (login) {
-        await login(result.token);
-      }
+      // Store the JWT token received from backend
+      await TokenManager.setToken(result.token);
+      
+      // Refetch user data to update auth state
+      refetch();
 
       setStatus('success');
       setMessage('Successfully signed in!');

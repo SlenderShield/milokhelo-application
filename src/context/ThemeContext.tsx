@@ -7,7 +7,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Theme, ThemeMode, lightTheme, darkTheme } from './theme';
+import { Theme, ThemeMode, lightTheme, darkTheme } from '../theme/theme';
 
 const THEME_STORAGE_KEY = '@milokhelo_theme_mode';
 

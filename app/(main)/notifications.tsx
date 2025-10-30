@@ -90,8 +90,8 @@ export default function NotificationsScreen() {
   ) => {
     try {
       await respondToInvitation.mutateAsync({
-        invitationId,
-        accept,
+        id: invitationId,
+        data: { response: accept ? 'accept' : 'decline' },
       });
       refetchInvitations();
       Alert.alert(

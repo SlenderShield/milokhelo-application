@@ -99,7 +99,7 @@ export default function ChatMessagesScreen() {
       try {
         await editMessage.mutateAsync({
           messageId: editingMessage.id,
-          content,
+          data: { content },
         });
         setMessageText('');
         setEditingMessage(null);
@@ -118,7 +118,7 @@ export default function ChatMessagesScreen() {
         // Fallback to HTTP API if WebSocket not connected
         await sendMessage.mutateAsync({
           roomId,
-          content,
+          data: { content },
         });
         refetch();
       }
@@ -149,7 +149,7 @@ export default function ChatMessagesScreen() {
         style: 'destructive',
         onPress: async () => {
           try {
-            await deleteMessage.mutateAsync(messageId);
+            await deleteMessage.mutateAsync({ messageId, roomId });
             refetch();
           } catch (err: any) {
             Alert.alert('Error', err.message || 'Failed to delete message');

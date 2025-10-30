@@ -84,7 +84,10 @@ export default function ResetPasswordScreen() {
     try {
       await resetPassword.mutateAsync({
         token,
-        data: { newPassword: password },
+        data: { 
+          password,
+          confirmPassword: confirmPassword,
+        },
       });
 
       Alert.alert(
