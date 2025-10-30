@@ -720,7 +720,7 @@ All API hooks are complete. The primary remaining work is screen development and
 
 **Remaining Tasks:**
 
-- [ ] Add dark mode toggle to settings screen
+- [x] Add dark mode toggle to settings screen ✅ **COMPLETE**
 - [ ] Update remaining screens to use theme values
 - [ ] Test theme switching across entire app
 
@@ -761,7 +761,7 @@ All API hooks are complete. The primary remaining work is screen development and
 
 **Remaining Tasks:**
 
-- [ ] Add offline indicator in UI (network status banner)
+- [x] Add offline indicator in UI (network status banner) ✅ **COMPLETE**
 - [ ] Test offline scenarios thoroughly
 - [ ] Test sync after reconnection
 
