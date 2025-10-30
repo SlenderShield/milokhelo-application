@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/src/context/AuthContext';
 import { QUERY_CONFIG } from '@/src/config/apiConfig';
+import { OfflineIndicator } from '@/src/components/OfflineIndicator';
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -50,6 +51,7 @@ export default function RootLayout() {
             }} 
           />
         </Stack>
+        <OfflineIndicator />
       </AuthProvider>
     </QueryClientProvider>
   );

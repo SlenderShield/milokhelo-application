@@ -32,10 +32,10 @@
   - LocationPicker, SportSelector components
   - Integrate with validation library (React Hook Form)
 
-- [ ] **Add Dark Mode Toggle to Settings** (1 hour)
+- [x] **Add Dark Mode Toggle to Settings** ✅ COMPLETED
   - Theme system exists but needs UI toggle in settings screen
 
-- [ ] **Add Offline Indicator UI** (1 hour)
+- [x] **Add Offline Indicator UI** ✅ COMPLETED
   - Network status banner for offline mode
 
 - [ ] **Write Unit Tests** (15-20 hours)
