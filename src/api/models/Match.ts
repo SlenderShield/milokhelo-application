@@ -28,7 +28,7 @@ export const MatchSchema = z.object({
   minParticipants: z.number().optional(),
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced', 'professional']).optional(),
   status: z.enum(['scheduled', 'live', 'finished', 'cancelled']).default('scheduled'),
-  scores: z.record(z.any()).optional(),
+  scores: z.record(z.string(), z.any()).optional(),
   performanceMetrics: z.array(z.object({
     userId: z.string(),
     goals: z.number().optional(),
@@ -85,7 +85,7 @@ export type MatchUpdate = z.infer<typeof MatchUpdateSchema>;
 
 // Match Result Schema
 export const MatchResultSchema = z.object({
-  scores: z.record(z.any()),
+  scores: z.record(z.string(), z.any()),
   performanceMetrics: z.array(z.object({
     userId: z.string(),
     goals: z.number().optional(),

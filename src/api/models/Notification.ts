@@ -17,7 +17,7 @@ export const NotificationSchema = z.object({
   ]),
   title: z.string(),
   message: z.string(),
-  data: z.record(z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
   isRead: z.boolean().default(false),
   actionUrl: z.string().optional(),

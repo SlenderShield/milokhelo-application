@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 
 const envSchema = z.object({
   API_BASE_URL: z.string().url(),
-  API_TIMEOUT: z.string().transform(Number).default('10000'),
+  API_TIMEOUT: z.string().transform(Number).pipe(z.number()).default(10000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 

@@ -34,7 +34,7 @@ export const VenueSchema = z.object({
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
@@ -68,7 +68,7 @@ export const VenueCreateSchema = z.object({
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
@@ -97,7 +97,7 @@ export const VenueUpdateSchema = z.object({
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
