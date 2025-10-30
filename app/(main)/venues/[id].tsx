@@ -35,7 +35,7 @@ export default function VenueDetailScreen() {
     data: availability,
     isLoading: availabilityLoading,
     refetch: refetchAvailability,
-  } = useGetVenueAvailability(id, { date: selectedDate });
+  } = useGetVenueAvailability(id, selectedDate);
 
   // Book slot mutation
   const bookSlot = useBookVenueSlot();
@@ -52,8 +52,12 @@ export default function VenueDetailScreen() {
             try {
               await bookSlot.mutateAsync({
                 venueId: id,
-                slotId,
-                date: selectedDate,
+                data: {
+                  date: selectedDate,
+                  startTime,
+                  endTime,
+                  sport: 'Football', // TODO: Add sport selection
+                },
               });
               Alert.alert('Success', 'Slot booked successfully!');
               refetchAvailability();
@@ -131,28 +135,21 @@ export default function VenueDetailScreen() {
             <Text style={styles.statLabel}>Rating</Text>
           </View>
         )}
-        {venue.pricePerHour && (
+        {venue.priceRange && (
           <View style={styles.statItem}>
             <Text style={styles.statIcon}>💰</Text>
-            <Text style={styles.statValue}>${venue.pricePerHour}</Text>
-            <Text style={styles.statLabel}>Per Hour</Text>
-          </View>
-        )}
-        {venue.capacity && (
-          <View style={styles.statItem}>
-            <Text style={styles.statIcon}>👥</Text>
-            <Text style={styles.statValue}>{venue.capacity}</Text>
-            <Text style={styles.statLabel}>Capacity</Text>
+            <Text style={styles.statValue}>${venue.priceRange.min}-${venue.priceRange.max}</Text>
+            <Text style={styles.statLabel}>Price Range</Text>
           </View>
         )}
       </View>
 
       {/* Sports Available */}
-      {venue.sports && venue.sports.length > 0 && (
+      {venue.sportsSupported && venue.sportsSupported.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sports Available</Text>
           <View style={styles.sportsContainer}>
-            {venue.sports.map((sport, index) => (
+            {venue.sportsSupported.map((sport: string, index: number) => (
               <View key={index} style={styles.sportChip}>
                 <Text style={styles.sportChipText}>{sport}</Text>
               </View>
@@ -277,19 +274,19 @@ export default function VenueDetailScreen() {
       )} */}
 
       {/* Contact Info */}
-      {(venue.phone || venue.email) && (
+      {(venue.contact?.phone || venue.contactInfo?.phone || venue.contact?.email || venue.contactInfo?.email) && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contact</Text>
-          {venue.phone && (
+          {(venue.contact?.phone || venue.contactInfo?.phone) && (
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>📞</Text>
-              <Text style={styles.contactText}>{venue.phone}</Text>
+              <Text style={styles.contactText}>{venue.contact?.phone || venue.contactInfo?.phone}</Text>
             </View>
           )}
-          {venue.email && (
+          {(venue.contact?.email || venue.contactInfo?.email) && (
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>✉️</Text>
-              <Text style={styles.contactText}>{venue.email}</Text>
+              <Text style={styles.contactText}>{venue.contact?.email || venue.contactInfo?.email}</Text>
             </View>
           )}
         </View>

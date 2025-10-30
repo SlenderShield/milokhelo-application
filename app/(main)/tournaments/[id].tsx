@@ -25,14 +25,12 @@ export default function TournamentDetailScreen() {
   // Fetch tournament details
   const { data: tournament, isLoading, error, refetch } = useGetTournamentById(id);
 
-  // Fetch bracket data if tournament is knockout type
+  // Fetch bracket data (only show if tournament is knockout type)
   const {
     data: bracket,
     isLoading: bracketLoading,
     error: bracketError,
-  } = useGetTournamentBracket(id, {
-    enabled: tournament?.type === 'knockout',
-  });
+  } = useGetTournamentBracket(id);
 
   // Mutations
   const joinTournament = useJoinTournament();
@@ -117,12 +115,14 @@ export default function TournamentDetailScreen() {
   // Status badge color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'upcoming':
+      case 'registration':
         return '#2196F3';
       case 'ongoing':
         return '#4CAF50';
       case 'completed':
         return '#9E9E9E';
+      case 'cancelled':
+        return '#F44336';
       default:
         return '#666';
     }
@@ -243,27 +243,48 @@ export default function TournamentDetailScreen() {
                 {bracket.rounds.map((round, roundIndex) => (
                   <View key={roundIndex} style={styles.roundColumn}>
                     <Text style={styles.roundTitle}>{round.name || `Round ${roundIndex + 1}`}</Text>
-                    {round.matches?.map((match, matchIndex) => (
-                      <View key={matchIndex} style={styles.matchCard}>
-                        <View style={styles.matchTeam}>
-                          <Text style={styles.matchTeamName}>
-                            {match.team1?.name || 'TBD'}
-                          </Text>
-                          {match.score1 !== undefined && (
-                            <Text style={styles.matchScore}>{match.score1}</Text>
-                          )}
+                    {round.matches?.map((match, matchIndex) => {
+                      // Handle both team1/team2 (backend) and teamA/teamB (legacy)
+                      const team1 = match.team1 || match.teamA || null;
+                      const team2 = match.team2 || match.teamB || null;
+                      
+                      // Handle score formats
+                      let score1, score2;
+                      if (match.score1 !== undefined && match.score2 !== undefined) {
+                        score1 = match.score1;
+                        score2 = match.score2;
+                      } else if (match.score && typeof match.score === 'object') {
+                        if ('team1' in match.score && 'team2' in match.score) {
+                          score1 = match.score.team1;
+                          score2 = match.score.team2;
+                        } else if ('teamA' in match.score && 'teamB' in match.score) {
+                          score1 = match.score.teamA;
+                          score2 = match.score.teamB;
+                        }
+                      }
+                      
+                      return (
+                        <View key={matchIndex} style={styles.matchCard}>
+                          <View style={styles.matchTeam}>
+                            <Text style={styles.matchTeamName}>
+                              {typeof team1 === 'string' ? 'Team 1' : team1 || 'TBD'}
+                            </Text>
+                            {score1 !== undefined && (
+                              <Text style={styles.matchScore}>{score1}</Text>
+                            )}
+                          </View>
+                          <View style={styles.matchDivider} />
+                          <View style={styles.matchTeam}>
+                            <Text style={styles.matchTeamName}>
+                              {typeof team2 === 'string' ? 'Team 2' : team2 || 'TBD'}
+                            </Text>
+                            {score2 !== undefined && (
+                              <Text style={styles.matchScore}>{score2}</Text>
+                            )}
+                          </View>
                         </View>
-                        <View style={styles.matchDivider} />
-                        <View style={styles.matchTeam}>
-                          <Text style={styles.matchTeamName}>
-                            {match.team2?.name || 'TBD'}
-                          </Text>
-                          {match.score2 !== undefined && (
-                            <Text style={styles.matchScore}>{match.score2}</Text>
-                          )}
-                        </View>
-                      </View>
-                    ))}
+                      );
+                    })}
                   </View>
                 ))}
               </View>
@@ -307,7 +328,7 @@ export default function TournamentDetailScreen() {
             <Text style={styles.editButtonText}>✏️ Edit Tournament</Text>
           </TouchableOpacity>
         )}
-        {tournament.status === 'upcoming' && (
+        {tournament.status === 'registration' && (
           <>
             {isParticipant ? (
               <TouchableOpacity
