@@ -30,7 +30,7 @@ interface VenueMapProps {
  * Map component to display venues with markers
  * Shows user location and allows venue selection
  */
-export function VenueMap({
+export default function VenueMap({
   venues,
   userLocation,
   selectedVenueId,

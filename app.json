@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MiloKhelo",
-    "slug": "milokhelo-app",
+    "slug": "app-milokhelo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,17 +11,23 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.milokhelo.app",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification",
+          "remote-notification"
+        ],
         "NSLocationWhenInUseUsageDescription": "MiloKhelo needs your location to show nearby venues and help you find sports facilities.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "MiloKhelo needs your location to show nearby venues and send you location-based match notifications.",
         "NSCameraUsageDescription": "MiloKhelo needs access to your camera to take photos for your profile and team logos.",
         "NSPhotoLibraryUsageDescription": "MiloKhelo needs access to your photo library to select photos for your profile and team logos.",
-        "NSPhotoLibraryAddUsageDescription": "MiloKhelo needs permission to save photos to your library."
+        "NSPhotoLibraryAddUsageDescription": "MiloKhelo needs permission to save photos to your library.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -55,11 +61,18 @@
         {
           "icon": "./assets/notification-icon.png",
           "color": "#6200ee",
-          "sounds": ["./assets/notification-sound.wav"],
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ],
           "defaultChannel": {
             "name": "Default",
             "importance": "max",
-            "vibrationPattern": [0, 250, 250, 250],
+            "vibrationPattern": [
+              0,
+              250,
+              250,
+              250
+            ],
             "lightColor": "#6200ee"
           }
         }
@@ -67,8 +80,10 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "your-project-id-here"
-      }
-    }
+        "projectId": "0ba80ba2-1819-4842-ad4b-c73c7f391c88"
+      },
+      "router": {}
+    },
+    "owner": "milo-khelo"
   }
 }

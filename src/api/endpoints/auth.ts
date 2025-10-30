@@ -1,4 +1,4 @@
-import { apiClient } from '../client';
+import { apiClient, TokenManager } from '../client';
 import {
   RegisterUser,
   RegisterUserSchema,
@@ -42,11 +42,15 @@ export const login = (data: LoginUser) =>
     .then((res) => UserProfileSchema.parse(res.data));
 
 // Get Current User
-export const getCurrentUser = () =>
+export const getCurrentUser = async () => {
+  const token = await TokenManager.getToken();
+  if (!token) {
+    return null;
+  }
   apiClient
     .get<UserProfile>('/auth/me')
     .then((res) => UserProfileSchema.parse(res.data));
-
+};
 // Validate/Refresh Session
 export const validateSession = () =>
   apiClient

@@ -8,8 +8,13 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import { VenueMap } from '@/src/components/VenueMap';
-import { useLocation, formatDistance, calculateDistance, sortByDistance } from '@/src/hooks/useLocation';
+import VenueMap from '@/src/components/VenueMap';
+import {
+  useLocation,
+  formatDistance,
+  calculateDistance,
+  sortByDistance,
+} from '@/src/hooks/useLocation';
 import { useGetVenues } from '@/src/api/hooks/useVenues';
 import type { Venue, GeoLocation } from '@/src/api/models/Venue';
 import { useRouter } from 'expo-router';
@@ -29,7 +34,12 @@ export default function VenuesMapScreen() {
   const [radiusFilter, setRadiusFilter] = useState<number>(50); // km
 
   // Get user location
-  const { location: userLocation, loading: locationLoading, error: locationError, refreshLocation } = useLocation();
+  const {
+    location: userLocation,
+    loading: locationLoading,
+    error: locationError,
+    refreshLocation,
+  } = useLocation();
 
   // Get all venues
   const { data: venuesData, isLoading: venuesLoading, refetch } = useGetVenues();
@@ -37,7 +47,7 @@ export default function VenuesMapScreen() {
   // Transform venues data for map (convert GeoLocation to LocationCoords)
   const venues = useMemo(() => {
     if (!venuesData) return [];
-    
+
     return venuesData.map((venue: Venue) => ({
       ...venue,
       // Keep original location for API compatibility, add coords for convenience
@@ -48,7 +58,7 @@ export default function VenuesMapScreen() {
   // Sort venues by distance if user location is available
   const sortedVenues = useMemo(() => {
     if (!userLocation) return venues;
-    
+
     return [...venues]
       .filter(v => v.coords !== null)
       .map(venue => ({
@@ -77,13 +87,9 @@ export default function VenuesMapScreen() {
         <Text style={styles.listItemTitle}>{item.name}</Text>
         <Text style={styles.listItemAddress}>{item.address}</Text>
         <View style={styles.listItemMeta}>
-          <Text style={styles.listItemSports}>
-            {item.sportsSupported.join(' • ')}
-          </Text>
+          <Text style={styles.listItemSports}>{item.sportsSupported.join(' • ')}</Text>
           {typeof item.distance === 'number' && (
-            <Text style={styles.listItemDistance}>
-              📍 {formatDistance(item.distance)}
-            </Text>
+            <Text style={styles.listItemDistance}>📍 {formatDistance(item.distance)}</Text>
           )}
         </View>
       </View>
@@ -110,7 +116,9 @@ export default function VenuesMapScreen() {
             style={[styles.viewToggle, viewMode === 'map' && styles.viewToggleActive]}
             onPress={() => setViewMode('map')}
           >
-            <Text style={[styles.viewToggleText, viewMode === 'map' && styles.viewToggleTextActive]}>
+            <Text
+              style={[styles.viewToggleText, viewMode === 'map' && styles.viewToggleTextActive]}
+            >
               Map
             </Text>
           </TouchableOpacity>
@@ -118,7 +126,9 @@ export default function VenuesMapScreen() {
             style={[styles.viewToggle, viewMode === 'list' && styles.viewToggleActive]}
             onPress={() => setViewMode('list')}
           >
-            <Text style={[styles.viewToggleText, viewMode === 'list' && styles.viewToggleTextActive]}>
+            <Text
+              style={[styles.viewToggleText, viewMode === 'list' && styles.viewToggleTextActive]}
+            >
               List
             </Text>
           </TouchableOpacity>
@@ -148,10 +158,7 @@ export default function VenuesMapScreen() {
           {[5, 10, 25, 50].map(radius => (
             <TouchableOpacity
               key={radius}
-              style={[
-                styles.filterChip,
-                radiusFilter === radius && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, radiusFilter === radius && styles.filterChipActive]}
               onPress={() => setRadiusFilter(radius)}
             >
               <Text
@@ -173,7 +180,7 @@ export default function VenuesMapScreen() {
           venues={venues}
           userLocation={userLocation}
           selectedVenueId={selectedVenueId || undefined}
-          onVenueSelect={(venue) => setSelectedVenueId(venue.id)}
+          onVenueSelect={venue => setSelectedVenueId(venue.id)}
           showUserLocation={true}
           height={600}
         />
@@ -181,7 +188,7 @@ export default function VenuesMapScreen() {
         <FlatList
           data={sortedVenues}
           renderItem={renderVenueListItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           refreshControl={
             <RefreshControl
@@ -193,18 +200,11 @@ export default function VenuesMapScreen() {
           ListEmptyComponent={
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>
-                {userLocation
-                  ? `No venues found within ${radiusFilter}km`
-                  : 'No venues available'}
+                {userLocation ? `No venues found within ${radiusFilter}km` : 'No venues available'}
               </Text>
               {!userLocation && (
-                <TouchableOpacity
-                  style={styles.emptyStateButton}
-                  onPress={refreshLocation}
-                >
-                  <Text style={styles.emptyStateButtonText}>
-                    Enable Location
-                  </Text>
+                <TouchableOpacity style={styles.emptyStateButton} onPress={refreshLocation}>
+                  <Text style={styles.emptyStateButtonText}>Enable Location</Text>
                 </TouchableOpacity>
               )}
             </View>
