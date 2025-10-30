@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from '@/src/context/ThemeContext';
 
 const SETTINGS_SECTIONS = [
   {
@@ -19,6 +20,7 @@ const SETTINGS_SECTIONS = [
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { isDarkMode, toggleTheme, themeMode, setThemeMode } = useTheme();
 
   const handlePress = (itemId: string) => {
     router.push(`/settings/${itemId}` as any);
@@ -26,6 +28,28 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Appearance Section with Dark Mode Toggle */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Appearance</Text>
+        <View style={styles.item}>
+          <View style={styles.itemLeft}>
+            <Text style={styles.itemIcon}>🌓</Text>
+            <View>
+              <Text style={styles.itemLabel}>Dark Mode</Text>
+              <Text style={styles.itemSubtext}>
+                {themeMode === 'system' ? 'System default' : themeMode === 'dark' ? 'On' : 'Off'}
+              </Text>
+            </View>
+          </View>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleTheme}
+            trackColor={{ false: '#ccc', true: '#6200ee' }}
+            thumbColor={isDarkMode ? '#fff' : '#f4f3f4'}
+          />
+        </View>
+      </View>
+
       {SETTINGS_SECTIONS.map((section) => (
         <View key={section.title} style={styles.section}>
           <Text style={styles.sectionTitle}>{section.title}</Text>
@@ -93,6 +117,11 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontSize: 16,
     color: '#333',
+  },
+  itemSubtext: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 2,
   },
   arrow: {
     fontSize: 24,

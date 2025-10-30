@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { useGetAdminReports, useAuth } from '@/src/api/hooks';
+import { useGetAdminReports } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 
 export default function AdminDashboardScreen() {
   const router = useRouter();
@@ -67,7 +68,10 @@ export default function AdminDashboardScreen() {
     );
   }
 
-  const stats = reports?.stats || {};
+  // Handle reports data - it may be an array or object with stats
+  const stats = Array.isArray(reports) 
+    ? { totalUsers: 0, totalMatches: 0, totalTournaments: 0, totalVenues: 0 }
+    : (reports as any)?.stats || {};
 
   return (
     <ScrollView

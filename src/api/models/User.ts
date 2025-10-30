@@ -7,6 +7,7 @@ export const UserProfileSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   avatar: z.string().url().optional(),
+  phone: z.string().optional(), // Changed from phoneNumber to match backend
   bio: z.string().max(500).optional(),
   location: z.object({
     city: z.string().optional(),
@@ -17,15 +18,21 @@ export const UserProfileSchema = z.object({
     }).optional(),
   }).optional(),
   sportsPreferences: z.array(z.string()).optional(),
-  skillLevels: z.record(z.string()).optional(),
+  skillLevels: z.record(z.string(), z.string()).optional(),
   dateOfBirth: z.string().optional(),
-  phoneNumber: z.string().optional(),
   role: z.enum(['guest', 'user', 'venue_owner', 'moderator', 'admin', 'superadmin']).default('user'),
   isEmailVerified: z.boolean().default(false),
+  verified: z.boolean().optional(), // Backend also has 'verified' field
   isActive: z.boolean().default(true),
+  privacy: z.object({
+    showPhone: z.boolean().optional(),
+    showStats: z.boolean().optional(),
+    showLocation: z.boolean().optional(),
+  }).optional(),
   friends: z.array(z.string()).optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  lastLogin: z.string().optional(),
 });
 
 export type UserProfile = z.infer<typeof UserProfileSchema>;
@@ -46,6 +53,7 @@ export const UserUpdateSchema = z.object({
   name: z.string().optional(),
   bio: z.string().max(500).optional(),
   avatar: z.string().url().optional(),
+  phone: z.string().optional(), // Changed from phoneNumber to match backend
   location: z.object({
     city: z.string().optional(),
     country: z.string().optional(),
@@ -55,9 +63,13 @@ export const UserUpdateSchema = z.object({
     }).optional(),
   }).optional(),
   sportsPreferences: z.array(z.string()).optional(),
-  skillLevels: z.record(z.string()).optional(),
+  skillLevels: z.record(z.string(), z.string()).optional(),
   dateOfBirth: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  privacy: z.object({
+    showPhone: z.boolean().optional(),
+    showStats: z.boolean().optional(),
+    showLocation: z.boolean().optional(),
+  }).optional(),
 });
 
 export type UserUpdate = z.infer<typeof UserUpdateSchema>;
@@ -94,7 +106,7 @@ export const AchievementSchema = z.object({
   description: z.string(),
   icon: z.string().optional(),
   category: z.enum(['milestone', 'skill', 'social', 'special']),
-  criteria: z.record(z.any()),
+  criteria: z.record(z.string(), z.any()),
   rarity: z.enum(['common', 'rare', 'epic', 'legendary']),
   points: z.number(),
   unlockedAt: z.string().optional(),

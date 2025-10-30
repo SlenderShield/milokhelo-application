@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { useGetFeedbackList, useDeleteFeedback, useAuth } from '@/src/api/hooks';
+import { useGetFeedbackList } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 
 export default function FeedbackManagementScreen() {
   const router = useRouter();
@@ -18,7 +19,6 @@ export default function FeedbackManagementScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const { data: feedbackList, isLoading, error, refetch } = useGetFeedbackList();
-  const deleteFeedback = useDeleteFeedback();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -29,28 +29,8 @@ export default function FeedbackManagementScreen() {
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
 
-  const handleDelete = (feedbackId: number) => {
-    Alert.alert(
-      'Delete Feedback',
-      'Are you sure you want to delete this feedback?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteFeedback.mutateAsync({ id: feedbackId });
-              Alert.alert('Success', 'Feedback deleted successfully');
-              refetch();
-            } catch (err: any) {
-              Alert.alert('Error', err.message || 'Failed to delete feedback');
-            }
-          },
-        },
-      ]
-    );
-  };
+  // TODO: Add delete functionality when useDeleteFeedback hook is implemented
+  // const handleDelete = (feedbackId: number) => { ... };
 
   if (!isAdmin) {
     return (
@@ -156,17 +136,13 @@ export default function FeedbackManagementScreen() {
             <Text style={styles.userName}>{item.user?.name || 'Anonymous'}</Text>
           </View>
 
-          <TouchableOpacity
+          {/* TODO: Add delete button when useDeleteFeedback hook is implemented */}
+          {/* <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleDelete(item.id)}
-            disabled={deleteFeedback.isPending}
           >
-            {deleteFeedback.isPending ? (
-              <ActivityIndicator size="small" color="#F44336" />
-            ) : (
-              <Text style={styles.deleteButtonText}>🗑️ Delete</Text>
-            )}
-          </TouchableOpacity>
+            <Text style={styles.deleteButtonText}>🗑️ Delete</Text>
+          </TouchableOpacity> */}
         </View>
       </View>
     );

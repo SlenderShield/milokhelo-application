@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { useGetVenueById, useUpdateVenue, useAuth } from '@/src/api/hooks';
+import { useGetVenueById, useUpdateVenue } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 
 const SPORTS = [
   'Football',
@@ -42,8 +43,8 @@ export default function EditVenueScreen() {
   const { user } = useAuth();
 
   // Fetch venue data
-  const { data: venue, isLoading: venueLoading } = useGetVenueById(parseInt(id));
-  const updateVenue = useUpdateVenue(parseInt(id));
+  const { data: venue, isLoading: venueLoading } = useGetVenueById(id);
+  const updateVenue = useUpdateVenue();
 
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
@@ -68,12 +69,12 @@ export default function EditVenueScreen() {
       setName(venue.name || '');
       setAddress(venue.address || '');
       setDescription(venue.description || '');
-      setSelectedSports(venue.sports || []);
+      setSelectedSports(venue.sportsSupported || []);
       setSelectedAmenities(venue.amenities || []);
-      setPricePerHour(venue.pricePerHour?.toString() || '');
-      setCapacity(venue.capacity?.toString() || '');
-      setPhone(venue.contactPhone || '');
-      setEmail(venue.contactEmail || '');
+      setPricePerHour(venue.priceRange?.min?.toString() || '');
+      setCapacity(''); // capacity not in model
+      setPhone(venue.contact?.phone || venue.contactInfo?.phone || '');
+      setEmail(venue.contact?.email || venue.contactInfo?.email || '');
     }
   }, [venue]);
 

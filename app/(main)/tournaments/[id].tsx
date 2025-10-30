@@ -25,14 +25,12 @@ export default function TournamentDetailScreen() {
   // Fetch tournament details
   const { data: tournament, isLoading, error, refetch } = useGetTournamentById(id);
 
-  // Fetch bracket data if tournament is knockout type
+  // Fetch bracket data (only show if tournament is knockout type)
   const {
     data: bracket,
     isLoading: bracketLoading,
     error: bracketError,
-  } = useGetTournamentBracket(id, {
-    enabled: tournament?.type === 'knockout',
-  });
+  } = useGetTournamentBracket(id);
 
   // Mutations
   const joinTournament = useJoinTournament();
@@ -41,39 +39,56 @@ export default function TournamentDetailScreen() {
 
   // Check if user is a participant
   const isParticipant = tournament?.participants?.some(
-    (participant) => participant.id === user?.id
-  );
+    (participant) => typeof participant === 'string' ? participant === user?.id : participant === user?.id
+  ) || tournament?.teams?.includes(user?.id || '');
 
   // Check if user is the organizer
-  const isOrganizer = tournament && user && tournament.organizerId === user.id;
+  const isOrganizer = tournament && user && (tournament.organizerId === user.id || tournament.organizer === user.id);
 
   const handleJoinTournament = async () => {
     if (!id) return;
 
+    // TODO: Add team selection UI - tournaments require a teamId
+    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    return;
+
+    /* Commented out until team selection UI is added
     try {
-      await joinTournament.mutateAsync({ id });
+      await joinTournament.mutateAsync({ id, data: { teamId: 'SELECTED_TEAM_ID' } });
       Alert.alert('Success', 'You have joined the tournament!');
       refetch();
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to join tournament');
     }
+    */
   };
 
   const handleRegister = async () => {
     if (!id) return;
 
+    // TODO: Add team selection UI - tournaments require a teamId
+    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    return;
+
+    /* Commented out until team selection UI is added
     try {
-      await registerForTournament.mutateAsync({ tournamentId: id });
+      await registerForTournament.mutateAsync({ id, data: { teamId: 'SELECTED_TEAM_ID' } });
       Alert.alert('Success', 'Registration submitted!');
       refetch();
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to register');
     }
+    */
   };
 
   const handleLeaveTournament = async () => {
     if (!id) return;
 
+    // TODO: Update when leaveTournament API is clarified (may need teamId)
+    Alert.alert('Info', 'Leave tournament feature will be available soon.');
+    return;
+
+    /* Commented out until API is clarified
     Alert.alert(
       'Leave Tournament',
       'Are you sure you want to leave this tournament?',
@@ -94,17 +109,20 @@ export default function TournamentDetailScreen() {
         },
       ]
     );
+    */
   };
 
   // Status badge color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'upcoming':
+      case 'registration':
         return '#2196F3';
       case 'ongoing':
         return '#4CAF50';
       case 'completed':
         return '#9E9E9E';
+      case 'cancelled':
+        return '#F44336';
       default:
         return '#666';
     }
@@ -139,7 +157,7 @@ export default function TournamentDetailScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Tournament Header */}
       <View style={styles.header}>
-        <Text style={styles.tournamentName}>{tournament.name}</Text>
+        <Text style={styles.tournamentName}>{tournament.title || tournament.name}</Text>
         <Text style={styles.tournamentSport}>{tournament.sport}</Text>
         <View
           style={[
@@ -222,30 +240,51 @@ export default function TournamentDetailScreen() {
           ) : bracket && bracket.rounds && bracket.rounds.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={true}>
               <View style={styles.bracketContainer}>
-                {bracket.rounds.map((round, roundIndex) => (
+                {bracket.rounds.map((round: any, roundIndex: number) => (
                   <View key={roundIndex} style={styles.roundColumn}>
                     <Text style={styles.roundTitle}>{round.name || `Round ${roundIndex + 1}`}</Text>
-                    {round.matches?.map((match, matchIndex) => (
-                      <View key={matchIndex} style={styles.matchCard}>
-                        <View style={styles.matchTeam}>
-                          <Text style={styles.matchTeamName}>
-                            {match.team1?.name || 'TBD'}
-                          </Text>
-                          {match.score1 !== undefined && (
-                            <Text style={styles.matchScore}>{match.score1}</Text>
-                          )}
+                    {round.matches?.map((match: any, matchIndex: number) => {
+                      // Handle both team1/team2 (backend) and teamA/teamB (legacy)
+                      const team1 = match.team1 || match.teamA || null;
+                      const team2 = match.team2 || match.teamB || null;
+                      
+                      // Handle score formats
+                      let score1, score2;
+                      if (match.score1 !== undefined && match.score2 !== undefined) {
+                        score1 = match.score1;
+                        score2 = match.score2;
+                      } else if (match.score && typeof match.score === 'object') {
+                        if ('team1' in match.score && 'team2' in match.score) {
+                          score1 = match.score.team1;
+                          score2 = match.score.team2;
+                        } else if ('teamA' in match.score && 'teamB' in match.score) {
+                          score1 = match.score.teamA;
+                          score2 = match.score.teamB;
+                        }
+                      }
+                      
+                      return (
+                        <View key={matchIndex} style={styles.matchCard}>
+                          <View style={styles.matchTeam}>
+                            <Text style={styles.matchTeamName}>
+                              {typeof team1 === 'string' ? 'Team 1' : team1 || 'TBD'}
+                            </Text>
+                            {score1 !== undefined && (
+                              <Text style={styles.matchScore}>{score1}</Text>
+                            )}
+                          </View>
+                          <View style={styles.matchDivider} />
+                          <View style={styles.matchTeam}>
+                            <Text style={styles.matchTeamName}>
+                              {typeof team2 === 'string' ? 'Team 2' : team2 || 'TBD'}
+                            </Text>
+                            {score2 !== undefined && (
+                              <Text style={styles.matchScore}>{score2}</Text>
+                            )}
+                          </View>
                         </View>
-                        <View style={styles.matchDivider} />
-                        <View style={styles.matchTeam}>
-                          <Text style={styles.matchTeamName}>
-                            {match.team2?.name || 'TBD'}
-                          </Text>
-                          {match.score2 !== undefined && (
-                            <Text style={styles.matchScore}>{match.score2}</Text>
-                          )}
-                        </View>
-                      </View>
-                    ))}
+                      );
+                    })}
                   </View>
                 ))}
               </View>
@@ -264,16 +303,18 @@ export default function TournamentDetailScreen() {
           Participants ({tournament.participants?.length || 0})
         </Text>
         {tournament.participants && tournament.participants.length > 0 ? (
-          tournament.participants.map((participant, index) => (
-            <View key={participant.id || index} style={styles.participantCard}>
-              <View style={styles.participantAvatar}>
-                <Text style={styles.participantAvatarText}>
-                  {participant.name?.substring(0, 1).toUpperCase() || 'P'}
-                </Text>
+          tournament.participants.map((participant, index) => {
+            // Participants are team/user IDs (strings)
+            const participantId = typeof participant === 'string' ? participant : participant;
+            return (
+              <View key={participantId || index} style={styles.participantCard}>
+                <View style={styles.participantAvatar}>
+                  <Text style={styles.participantAvatarText}>P</Text>
+                </View>
+                <Text style={styles.participantName}>Participant {index + 1}</Text>
               </View>
-              <Text style={styles.participantName}>{participant.name}</Text>
-            </View>
-          ))
+            );
+          })
         ) : (
           <Text style={styles.emptyText}>No participants yet</Text>
         )}
@@ -289,7 +330,7 @@ export default function TournamentDetailScreen() {
             <Text style={styles.editButtonText}>✏️ Edit Tournament</Text>
           </TouchableOpacity>
         )}
-        {tournament.status === 'upcoming' && (
+        {tournament.status === 'registration' && (
           <>
             {isParticipant ? (
               <TouchableOpacity

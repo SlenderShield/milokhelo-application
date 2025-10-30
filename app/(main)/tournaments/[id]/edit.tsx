@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { useGetTournamentById, useUpdateTournament, useAuth } from '@/src/api/hooks';
+import { useGetTournamentById, useUpdateTournament } from '@/src/api/hooks';
+import { useAuth } from '@/src/context/AuthContext';
 
 const SPORTS = [
   'Football',
@@ -36,11 +37,11 @@ export default function EditTournamentScreen() {
   const { user } = useAuth();
 
   // Fetch tournament data
-  const { data: tournament, isLoading: tournamentLoading } = useGetTournamentById(parseInt(id));
-  const updateTournament = useUpdateTournament(parseInt(id));
+  const { data: tournament, isLoading: tournamentLoading } = useGetTournamentById(id);
+  const updateTournament = useUpdateTournament();
 
   const [name, setName] = useState('');
-  const [type, setType] = useState<'knockout' | 'league'>('knockout');
+  const [type, setType] = useState<'knockout' | 'league' | 'mixed'>('knockout');
   const [sport, setSport] = useState('');
   const [description, setDescription] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('');
@@ -59,11 +60,11 @@ export default function EditTournamentScreen() {
   // Pre-populate form when tournament data loads
   useEffect(() => {
     if (tournament) {
-      setName(tournament.name || '');
+      setName(tournament.title || tournament.name || '');
       setType(tournament.type || 'knockout');
       setSport(tournament.sport || '');
       setDescription(tournament.description || '');
-      setMaxParticipants(tournament.maxParticipants?.toString() || '');
+      setMaxParticipants(tournament.maxParticipants?.toString() || tournament.maxTeams?.toString() || '');
       
       // Format dates if they exist
       if (tournament.startDate) {
@@ -75,7 +76,8 @@ export default function EditTournamentScreen() {
         setEndDate(end.toISOString().split('T')[0]);
       }
       
-      setLocation(tournament.location || '');
+      // Tournament model doesn't have location field
+      setLocation('');
     }
   }, [tournament]);
 

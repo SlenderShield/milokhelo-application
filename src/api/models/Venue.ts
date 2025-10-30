@@ -28,18 +28,25 @@ export const VenueSchema = z.object({
   }).optional(),
   rating: z.number().min(0).max(5).optional(),
   totalReviews: z.number().optional(),
-  owner: z.string(),
-  contactInfo: z.object({
+  distance: z.number().optional(), // Distance in kilometers for nearby searches
+  owner: z.string().optional(), // Kept for backwards compatibility
+  ownerId: z.string().optional(), // Backend uses ownerId
+  contact: z.object({ // Backend uses 'contact' not 'contactInfo'
+    phone: z.string().optional(),
+    email: z.string().email().optional(),
+  }).optional(),
+  contactInfo: z.object({ // Keep for backwards compatibility
     phone: z.string().optional(),
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
-  status: z.enum(['active', 'inactive', 'pending']).default('pending'),
+  status: z.enum(['active', 'inactive', 'pending', 'banned']).default('pending'),
   isAvailable: z.boolean().default(true),
+  verified: z.boolean().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -68,7 +75,7 @@ export const VenueCreateSchema = z.object({
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
@@ -97,7 +104,7 @@ export const VenueUpdateSchema = z.object({
     email: z.string().email().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  operatingHours: z.record(z.object({
+  operatingHours: z.record(z.string(), z.object({
     open: z.string(),
     close: z.string(),
   })).optional(),
@@ -123,13 +130,16 @@ export type SlotAvailability = z.infer<typeof SlotAvailabilitySchema>;
 // Booking Schema
 export const BookingSchema = z.object({
   id: z.string(),
-  venue: z.string(),
-  user: z.string(),
+  venue: z.string().optional(), // Kept for backwards compatibility
+  venueId: z.string().optional(), // Backend uses venueId
+  user: z.string().optional(), // Kept for backwards compatibility
+  userId: z.string().optional(), // Backend uses userId
   date: z.string(),
   startTime: z.string(),
   endTime: z.string(),
   sport: z.string(),
-  status: z.enum(['pending', 'approved', 'rejected', 'cancelled']).default('pending'),
+  teamSize: z.number().optional(), // Backend includes teamSize
+  status: z.enum(['pending', 'approved', 'rejected', 'cancelled', 'confirmed']).default('pending'),
   totalPrice: z.number(),
   notes: z.string().optional(),
   rejectionReason: z.string().optional(),

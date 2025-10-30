@@ -24,8 +24,11 @@ export default function TeamDetailScreen() {
   const leaveTeam = useLeaveTeam();
 
   // Check if user is a member
-  const isMember = team?.members?.some((member) => member.id === user?.id);
-  const isCaptain = team?.captain?.id === user?.id;
+  const isMember = team?.members?.some((member) => 
+    typeof member === 'string' ? member === user?.id : member.userId === user?.id
+  );
+  const isCaptain = (typeof team?.captain === 'string' ? team?.captain === user?.id : false) || 
+                    team?.captainId === user?.id;
 
   const handleJoinTeam = async () => {
     if (!id) return;
@@ -106,19 +109,19 @@ export default function TeamDetailScreen() {
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{team.wins || 0}</Text>
+          <Text style={styles.statValue}>{team.stats?.wins || 0}</Text>
           <Text style={styles.statLabel}>Wins</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{team.losses || 0}</Text>
+          <Text style={styles.statValue}>{team.stats?.losses || 0}</Text>
           <Text style={styles.statLabel}>Losses</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
           <Text style={styles.statValue}>
-            {team.wins && team.losses
-              ? ((team.wins / (team.wins + team.losses)) * 100).toFixed(0)
+            {team.stats?.wins && team.stats?.losses
+              ? ((team.stats.wins / (team.stats.wins + team.stats.losses)) * 100).toFixed(0)
               : 0}
             %
           </Text>
@@ -126,11 +129,11 @@ export default function TeamDetailScreen() {
         </View>
       </View>
 
-      {/* Team Bio */}
-      {team.bio && (
+      {/* Team Description */}
+      {team.description && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.bioText}>{team.bio}</Text>
+          <Text style={styles.bioText}>{team.description}</Text>
         </View>
       )}
 
@@ -139,12 +142,10 @@ export default function TeamDetailScreen() {
         <Text style={styles.sectionTitle}>Captain</Text>
         <View style={styles.memberCard}>
           <View style={styles.memberAvatar}>
-            <Text style={styles.memberAvatarText}>
-              {team.captain?.name?.substring(0, 1).toUpperCase() || 'C'}
-            </Text>
+            <Text style={styles.memberAvatarText}>C</Text>
           </View>
           <Text style={styles.memberName}>
-            {team.captain?.name || 'Unknown'}
+            {typeof team.captain === 'string' ? 'Captain' : team.captain}
           </Text>
         </View>
       </View>
@@ -155,16 +156,22 @@ export default function TeamDetailScreen() {
           Members ({team.members?.length || 0})
         </Text>
         {team.members && team.members.length > 0 ? (
-          team.members.map((member) => (
-            <View key={member.id} style={styles.memberCard}>
-              <View style={styles.memberAvatar}>
-                <Text style={styles.memberAvatarText}>
-                  {member.name?.substring(0, 1).toUpperCase() || 'M'}
+          team.members.map((member, index) => {
+            // Handle both string IDs and member objects
+            const memberId = typeof member === 'string' ? member : member.userId;
+            const memberRole = typeof member === 'string' ? 'member' : member.role;
+            
+            return (
+              <View key={memberId || index} style={styles.memberCard}>
+                <View style={styles.memberAvatar}>
+                  <Text style={styles.memberAvatarText}>M</Text>
+                </View>
+                <Text style={styles.memberName}>
+                  {typeof member === 'string' ? 'Member' : `Member (${memberRole})`}
                 </Text>
               </View>
-              <Text style={styles.memberName}>{member.name}</Text>
-            </View>
-          ))
+            );
+          })
         ) : (
           <Text style={styles.emptyText}>No members yet</Text>
         )}

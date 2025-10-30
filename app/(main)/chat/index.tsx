@@ -32,14 +32,18 @@ export default function ChatRoomsScreen() {
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Create',
-          onPress: async (roomName) => {
+          onPress: async (roomName: string | undefined) => {
             if (!roomName || !roomName.trim()) {
               Alert.alert('Error', 'Room name is required');
               return;
             }
 
             try {
-              const room = await createRoom.mutateAsync({ name: roomName.trim() });
+              // TODO: Add participant selection UI, for now create with empty participants array
+              const room = await createRoom.mutateAsync({ 
+                name: roomName.trim(),
+                participants: [], // Should select participants in a proper UI
+              });
               refetch();
               router.push(`/chat/${room.id}`);
             } catch (err: any) {
@@ -132,16 +136,16 @@ export default function ChatRoomsScreen() {
           >
             <View style={styles.roomAvatar}>
               <Text style={styles.roomAvatarText}>
-                {item.name.substring(0, 2).toUpperCase()}
+                {(item.name || 'CR').substring(0, 2).toUpperCase()}
               </Text>
             </View>
 
             <View style={styles.roomInfo}>
               <View style={styles.roomHeader}>
-                <Text style={styles.roomName}>{item.name}</Text>
-                {item.lastMessage?.createdAt && (
+                <Text style={styles.roomName}>{item.name || 'Chat Room'}</Text>
+                {item.lastMessage?.timestamp && (
                   <Text style={styles.roomTime}>
-                    {formatTime(item.lastMessage.createdAt)}
+                    {formatTime(item.lastMessage.timestamp)}
                   </Text>
                 )}
               </View>
@@ -149,18 +153,9 @@ export default function ChatRoomsScreen() {
               {item.lastMessage ? (
                 <View style={styles.lastMessageContainer}>
                   <Text style={styles.lastMessage} numberOfLines={1}>
-                    {item.lastMessage.senderName
-                      ? `${item.lastMessage.senderName}: `
-                      : ''}
                     {item.lastMessage.content}
                   </Text>
-                  {item.unreadCount && item.unreadCount > 0 && (
-                    <View style={styles.unreadBadge}>
-                      <Text style={styles.unreadBadgeText}>
-                        {item.unreadCount}
-                      </Text>
-                    </View>
-                  )}
+                  {/* TODO: Add unreadCount to ChatRoom model on backend */}
                 </View>
               ) : (
                 <Text style={styles.noMessages}>No messages yet</Text>
