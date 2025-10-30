@@ -1,0 +1,4508 @@
+openapi: 3.1.0
+info:
+  title: Milokhelo API
+  version: "v1"
+  description: >
+    # Milokhelo REST API v1
+
+    A comprehensive sports platform API built with Node.js, Express, MongoDB, and Redis.
+
+    ## Features
+
+    - **14 Complete Modules**: Auth, Users, Teams, Matches, Tournaments, Chat, Venues, Maps, Calendar, Notifications, Invitations, Feedback, Admin
+    - **OAuth Authentication**: Google & Facebook OAuth 2.0 with Passport.js + Email/Password authentication
+    - **Authorization (RBAC)**: Role-Based Access Control with 6-level hierarchy and granular permissions
+    - **Google Calendar Integration**: Full OAuth2 integration with bidirectional sync and event import
+    - **Push Notifications**: FCM (Firebase) for Android/Web and APNS for iOS with multi-device support
+    - **Input Validation**: Comprehensive request validation with express-validator (17+ schemas, 5 modules)
+    - **Real-time Features**: WebSocket support with Socket.IO for chat and live updates
+    - **Event-Driven Architecture**: Modules communicate via EventBus (in-memory or Redis)
+    - **Automatic Stats Updates**: Match results automatically update player statistics via events
+    - **Achievement System**: 31 predefined achievements with automatic evaluation
+    - **Geo-spatial Search**: Find nearby venues and matches with MongoDB 2dsphere indexes
+    - **Tournament Brackets**: Automatic generation for knockout and league tournaments
+    - **Atomic Bookings**: Transaction-based venue booking with conflict prevention
+    - **Session Management**: HTTP-only cookies with Redis store for security
+
+    ## Architecture
+
+    This API follows Clean Architecture principles with:
+    - **Modular Monolith** architecture for maintainability and future microservices migration
+    - **Dependency Injection** for loose coupling
+    - **Domain-Driven Design** with bounded contexts per module
+    - **Event-driven communication** between modules
+    - **SOLID principles** throughout the codebase
+
+    ## Authentication
+
+    The API supports multiple authentication methods:
+    - **OAuth 2.0**: Google and Facebook via Passport.js strategies
+    - **Email/Password**: Traditional authentication with bcrypt hashing
+    - **Session Cookies**: HTTP-only cookies with Redis session store
+
+    All protected endpoints require authentication via session cookie.
+
+    ## Authorization (RBAC)
+
+    The API implements Role-Based Access Control (RBAC) with a hierarchical role system:
+
+    ### Role Hierarchy (Higher level = More permissions)
+
+    - **guest** (level 0) - Unauthenticated users
+    - **user** (level 1) - Registered users (default)
+    - **venue_owner** (level 2) - Venue owners and managers
+    - **moderator** (level 3) - Content moderators
+    - **admin** (level 4) - System administrators
+    - **superadmin** (level 5) - Super administrators
+
+    ### Permission System
+
+    Permissions follow the pattern `resource:action:scope`:
+    - **resource**: user, venue, booking, match, tournament, admin
+    - **action**: create, read, update, delete, approve, reject
+    - **scope**: own (user's resources), any (all resources)
+
+    ### Common Permissions
+
+    - `user:read` - View user profiles
+    - `venue:create` - Create new venues (venue_owner+)
+    - `booking:approve` - Approve bookings (venue_owner+)
+    - `admin:access` - Access admin panel (admin+)
+    - `match:update:any` - Update any match (moderator+)
+
+    ### Usage in API
+
+    Most endpoints require authentication. Some require specific roles or permissions:
+    - Admin endpoints require `admin` or `superadmin` role
+    - Venue management requires `venue_owner` role or higher
+    - Moderators can manage content across the platform
+    - Users can only modify their own resources unless they have elevated permissions
+
+    ## Input Validation
+
+    All API endpoints implement comprehensive input validation using express-validator:
+
+    ### Validation Coverage
+
+    - **Authentication**: Email format, password strength (8+ chars, uppercase, lowercase, number)
+    - **Users**: Username format (3-30 chars, alphanumeric), profile fields (bio 500 chars max)
+    - **Matches**: Date validation (no past dates), sport types (enum), skill levels, geo-coordinates
+    - **Calendar**: ISO 8601 dates, time range validation (end > start), event types
+    - **Notifications**: Push token length (10-500 chars), platform types (ios/android/web), priority levels
+
+    ### Validation Features
+
+    - **Type Checking**: Email, URL, MongoDB ObjectId, ISO 8601 dates, integers, floats, booleans
+    - **Length Validation**: Min/max character limits for strings, arrays
+    - **Enum Validation**: Whitelist allowed values for sport types, status, roles
+    - **Custom Validators**: Business logic validation (dates not in past, end time after start time)
+    - **Sanitization**: Trim whitespace, normalize emails, escape HTML, type coercion
+    - **Cross-Field**: Validate fields relative to other fields in request
+
+    ### Error Response Format
+
+    When validation fails, the API returns `400 Bad Request` with detailed field-level errors:
+
+    ```json
+    {
+      "status": "error",
+      "message": "Validation failed",
+      "errors": [
+        {
+          "field": "email",
+          "message": "Must be a valid email address",
+          "value": "invalid-email"
+        },
+        {
+          "field": "password",
+          "message": "Password must be at least 8 characters long",
+          "value": "123"
+        }
+      ]
+    }
+    ```
+
+    ### Common Validation Rules
+
+    - **MongoDB IDs**: Must be valid 24-character hex strings
+    - **Emails**: Valid format, automatically normalized
+    - **Dates**: ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ)
+    - **Pagination**: limit (1-100), skip (0+)
+    - **Coordinates**: latitude (-90 to 90), longitude (-180 to 180)
+servers:
+  - url: https://api.milokhelo.com/api/v1
+    description: Production server
+  - url: http://localhost:4000/api/v1
+    description: Local development server
+  - url: http://localhost:4000
+    description: Local server root (for health checks and docs)
+
+tags:
+  - name: Auth
+    description: Authentication & session management (OAuth 2.0 with Google & Facebook)
+  - name: Users
+    description: User profiles, stats, achievements
+  - name: Teams
+    description: Team lifecycle management
+  - name: Matches
+    description: Match lifecycle and participant management
+  - name: Tournaments
+    description: Tournament lifecycle, brackets, registration
+  - name: Chat
+    description: Chat rooms and messages (WebSocket + REST)
+  - name: Venues
+    description: Venue discovery and booking (user)
+  - name: Venue Management
+    description: Venue owner/manager endpoints (CRUD, slots, bookings)
+  - name: Maps
+    description: Mobile-submitted map locations & map-based venue pins
+  - name: Calendar
+    description: Backend calendar events, device sync, and Google Calendar OAuth2 integration
+  - name: Notifications
+    description: Notification listing, device tokens, read tracking
+  - name: Invitations
+    description: Match/tournament invitations
+  - name: Feedback
+    description: User feedback & reports
+  - name: Admin
+    description: Admin-only endpoints (reports, moderation)
+
+paths:
+  ################################################################
+  # AUTH / IAM (OAuth 2.0 with Google & Facebook + Email/Password) #
+  ################################################################
+  /auth/providers:
+    get:
+      tags: [Auth]
+      summary: List supported OAuth providers
+      description: Returns available OAuth providers (Google, Facebook) with their authorization URLs
+      responses:
+        "200":
+          description: Providers metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OAuthProvider"
+              example:
+                - name: google
+                  displayName: Google
+                  authorizationUrl: /api/v1/auth/oauth/google
+                - name: facebook
+                  displayName: Facebook
+                  authorizationUrl: /api/v1/auth/oauth/facebook
+
+  /auth/oauth/google:
+    get:
+      tags: [Auth]
+      summary: Initiate Google OAuth flow
+      description: >
+        Redirects user to Google OAuth consent screen. After user grants permission,
+        Google redirects back to the callback URL with authorization code.
+      responses:
+        "302":
+          description: Redirect to Google OAuth consent screen
+
+  /auth/oauth/facebook:
+    get:
+      tags: [Auth]
+      summary: Initiate Facebook OAuth flow
+      description: >
+        Redirects user to Facebook OAuth consent screen. After user grants permission,
+        Facebook redirects back to the callback URL with authorization code.
+      responses:
+        "302":
+          description: Redirect to Facebook OAuth consent screen
+
+  /auth/oauth/callback/google:
+    get:
+      tags: [Auth]
+      summary: Google OAuth callback
+      description: >
+        Google redirects here with authorization code. Backend exchanges code for tokens,
+        creates/updates user account, and establishes session with HTTP-only cookie.
+        Finally redirects to frontend with user data.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+          description: Authorization code from Google
+        - name: state
+          in: query
+          required: false
+          schema: { type: string }
+          description: CSRF protection state parameter
+      responses:
+        "302":
+          description: Redirect to frontend with Set-Cookie header for session
+
+  /auth/oauth/callback/facebook:
+    get:
+      tags: [Auth]
+      summary: Facebook OAuth callback
+      description: >
+        Facebook redirects here with authorization code. Backend exchanges code for tokens,
+        creates/updates user account, and establishes session with HTTP-only cookie.
+        Finally redirects to frontend with user data.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+          description: Authorization code from Facebook
+        - name: state
+          in: query
+          required: false
+          schema: { type: string }
+          description: CSRF protection state parameter
+      responses:
+        "302":
+          description: Redirect to frontend with Set-Cookie header for session
+
+  /auth/session:
+    get:
+      tags: [Auth]
+      summary: Validate/refresh session
+      description: Get current user profile from active session
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Session valid — user profile returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Session invalid/expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: false }
+                  message: { type: string, example: "No active session" }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Log out user and clear session cookie
+      description: Destroys user session and clears session cookie
+      security:
+        - cookieAuth: []
+      responses:
+        "204":
+          description: Logged out successfully
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register using email/password
+      description: >
+        Create new account with email and password. OAuth authentication is preferred,
+        but email/password registration is also supported.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUser"
+      responses:
+        "201":
+          description: User created and session established
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid input or user already exists
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login using email/password
+      description: Authenticate with email and password, establishes session with HTTP-only cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUser"
+      responses:
+        "200":
+          description: Session cookie set and profile returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/UserProfile"
+                  accessToken:
+                    type: string
+                    description: JWT access token (7-day expiration)
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refreshToken:
+                    type: string
+                    description: Refresh token (30-day expiration)
+                    example: "a1b2c3d4e5f6..."
+        "401":
+          description: Invalid credentials
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current authenticated user
+      description: Returns the currently authenticated user's profile (requires JWT token)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Not authenticated or invalid token
+
+  /auth/verify-email/{token}:
+    post:
+      tags: [Auth]
+      summary: Verify email address
+      description: Verify user's email address using token sent via email
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Email verification token from email
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid or expired token
+
+  /auth/resend-verification:
+    post:
+      tags: [Auth]
+      summary: Resend verification email
+      description: Request a new verification email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Verification email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: User not found or email already verified
+
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request password reset
+      description: Send password reset link to user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: If email exists, reset link sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /auth/validate-reset-token/{token}:
+    get:
+      tags: [Auth]
+      summary: Validate password reset token
+      description: Check if reset token is valid and not expired
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Token validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  email:
+                    type: string
+                    format: email
+                  message:
+                    type: string
+
+  /auth/reset-password/{token}:
+    post:
+      tags: [Auth]
+      summary: Reset password
+      description: Reset password using token from email
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password, confirmPassword]
+              properties:
+                password:
+                  type: string
+                  minLength: 8
+                  description: New password (min 8 chars, uppercase, lowercase, number)
+                confirmPassword:
+                  type: string
+                  description: Must match password
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid token or passwords don't match
+
+  /auth/refresh-token:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      description: Use refresh token to obtain a new access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+                  description: Refresh token from login/register
+      responses:
+        "200":
+          description: New access token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: New JWT access token
+                  user:
+                    $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid or expired refresh token
+        "401":
+          description: User not found or account deactivated
+
+  /auth/change-password:
+    put:
+      tags: [Auth]
+      summary: Change password
+      description: Change password for authenticated user
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword, confirmPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+                confirmPassword:
+                  type: string
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          description: Current password incorrect or validation failed
+        "401":
+          description: Not authenticated
+
+  /auth/deactivate:
+    delete:
+      tags: [Auth]
+      summary: Deactivate account
+      description: Soft-delete user account (can be restored by admin)
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Account deactivated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "401":
+          description: Not authenticated
+
+  ################################################################
+  # USERS                                                         #
+  ################################################################
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get authenticated user profile
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    put:
+      tags: [Users]
+      summary: Update authenticated user profile
+      description: >
+        Update the current user's profile information. This endpoint allows full profile
+        updates including personal information, preferences, and privacy settings.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+            example:
+              name: "John Doe"
+              bio: "Sports enthusiast and weekend warrior"
+              phone: "+254712345678"
+              sportsPreferences: ["football", "basketball"]
+              location:
+                city: "Nairobi"
+              privacy:
+                showPhone: false
+                showStats: true
+                showLocation: true
+      responses:
+        "200":
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: Invalid input data
+        "401":
+          description: Not authenticated
+    patch:
+      tags: [Users]
+      summary: Partially update user profile (legacy)
+      description: Legacy endpoint for partial profile updates. Use PUT /users/me instead.
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Not authenticated
+
+  /users/search:
+    get:
+      tags: [Users]
+      summary: Search users
+      description: >
+        Search for users by username, name, or email. Supports filtering by sport
+        preferences and pagination.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Search query (username, name, or email)
+        - name: query
+          in: query
+          schema: { type: string }
+          description: Alternative search query parameter
+        - name: sport
+          in: query
+          schema: { type: string }
+          description: Filter by sport preference
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of results to return
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of results to skip (for pagination)
+      responses:
+        "200":
+          description: Array of matching users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
+              example:
+                - id: "user123"
+                  username: "johndoe"
+                  name: "John Doe"
+                  avatar: "https://example.com/avatar.jpg"
+                  bio: "Football enthusiast"
+                  sportsPreferences: ["football", "basketball"]
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Search/list users (legacy)
+      description: Legacy endpoint. Use GET /users/search instead for better clarity.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Search (username, name, email)
+        - name: sport
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Array of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
+    post:
+      tags: [Users]
+      summary: Create or update a user profile (self or admin)
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: Profile created/updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/stats:
+    get:
+      tags: [Users]
+      summary: Get user statistics by sport
+      description: >
+        Returns comprehensive user statistics grouped by sport. Stats are automatically
+        updated when matches finish via event-driven system. Includes performance metrics,
+        ratings, streaks, and rankings.
+
+        **Automatic Update System:**
+        - Stats updated automatically when `POST /matches/{id}/finish` is called
+        - Event-driven architecture with `match.finished` event
+        - Supports both simple scores and detailed performance metrics
+        - ELO ratings calculated: ±32 for competitive, ±16 for friendly matches
+        - Winning/losing streaks tracked automatically
+        - Per-sport stat tracking with multi-sport support
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: User ID
+      responses:
+        "200":
+          description: Array of user stats by sport
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserStat"
+              example:
+                - userId: "user123"
+                  sport: "football"
+                  matchesPlayed: 25
+                  wins: 15
+                  losses: 8
+                  draws: 2
+                  goalsScored: 42
+                  assists: 18
+                  fouls: 12
+                  elo: 1250
+                  streak: 3
+                  rating: 4.5
+                  level: 5
+                  updatedAt: "2025-10-29T10:30:00Z"
+                - userId: "user123"
+                  sport: "basketball"
+                  matchesPlayed: 15
+                  wins: 10
+                  losses: 5
+                  draws: 0
+                  goalsScored: 180
+                  assists: 45
+                  fouls: 8
+                  elo: 1180
+                  streak: -1
+                  rating: 4.2
+                  level: 4
+                  updatedAt: "2025-10-28T15:45:00Z"
+        "404":
+          description: User not found
+
+  /users/me/achievements:
+    get:
+      tags: [Users]
+      summary: Get current user's achievements
+      description: >
+        Returns all achievements earned by the authenticated user. Achievements are
+        automatically awarded when users meet specific criteria based on their stats
+        (wins, streaks, ELO ratings, etc.). Supports multiple categories and rarity levels.
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Array of user's earned achievements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Achievement"
+              example:
+                - id: "ach_001"
+                  name: "First Victory"
+                  description: "Win your first match in any sport"
+                  category: "milestone"
+                  sport: "all"
+                  rarity: "common"
+                  points: 10
+                  badgeUrl: "https://example.com/badges/first-victory.png"
+                  createdAt: "2025-10-29T10:00:00Z"
+                - id: "ach_015"
+                  name: "On Fire"
+                  description: "Win 3 matches in a row"
+                  category: "skill"
+                  sport: "all"
+                  rarity: "common"
+                  points: 30
+                  badgeUrl: "https://example.com/badges/on-fire.png"
+                  createdAt: "2025-10-29T10:00:00Z"
+        "401":
+          description: Not authenticated
+
+  /users/{id}/achievements:
+    get:
+      tags: [Users]
+      summary: Get achievements for any user
+      description: >
+        Returns all achievements earned by the specified user. Public endpoint to view
+        other users' achievements.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: User ID
+      responses:
+        "200":
+          description: Array of user's earned achievements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Achievement"
+        "404":
+          description: User not found
+
+  /users/{id}/friends:
+    get:
+      tags: [Users]
+      summary: Get user's friends list
+      description: >
+        Returns the list of friends for a specific user. Friends list includes
+        populated user data with username, name, email, avatar, bio, sports preferences,
+        and location information.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: User ID (MongoDB ObjectId)
+      responses:
+        "200":
+          description: Array of friends with populated user data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
+              example:
+                - id: "friend123"
+                  username: "janedoe"
+                  name: "Jane Doe"
+                  email: "jane@example.com"
+                  avatar: "https://example.com/avatar.jpg"
+                  bio: "Basketball player"
+                  sportsPreferences: ["basketball", "volleyball"]
+                  location:
+                    city: "Nairobi"
+                - id: "friend456"
+                  username: "bobsmith"
+                  name: "Bob Smith"
+                  email: "bob@example.com"
+                  avatar: "https://example.com/avatar2.jpg"
+                  bio: "Football enthusiast"
+                  sportsPreferences: ["football"]
+                  location:
+                    city: "Mombasa"
+        "404":
+          description: User not found
+
+  /users/{friendId}/friend:
+    post:
+      tags: [Users]
+      summary: Add a user as friend
+      description: >
+        Add another user as a friend. This creates a bidirectional friendship where
+        both users are added to each other's friends list automatically. The endpoint
+        validates that the friend exists, prevents self-friending, and checks for
+        duplicate friendships. Publishes a `user.friend_added` event for potential
+        integrations like notifications or activity feeds.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema: { type: string }
+          description: ID of the user to add as friend (MongoDB ObjectId)
+      responses:
+        "200":
+          description: Friend added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Friend added successfully"
+                  friendId:
+                    type: string
+                    description: ID of the added friend
+              example:
+                message: "Friend added successfully"
+                friendId: "507f1f77bcf86cd799439011"
+        "400":
+          description: Bad request - cannot add self, already friends, or invalid ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+              examples:
+                selfFriend:
+                  value:
+                    message: "Cannot add yourself as a friend"
+                alreadyFriends:
+                  value:
+                    message: "Already friends with this user"
+        "401":
+          description: Not authenticated
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found"
+    delete:
+      tags: [Users]
+      summary: Remove a friend
+      description: >
+        Remove a user from your friends list. This removes the friendship bidirectionally,
+        meaning both users are removed from each other's friends list. Publishes a
+        `user.friend_removed` event for potential integrations.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema: { type: string }
+          description: ID of the friend to remove (MongoDB ObjectId)
+      responses:
+        "200":
+          description: Friend removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Friend removed successfully"
+                  friendId:
+                    type: string
+                    description: ID of the removed friend
+              example:
+                message: "Friend removed successfully"
+                friendId: "507f1f77bcf86cd799439011"
+        "400":
+          description: Invalid friend ID
+        "401":
+          description: Not authenticated
+
+  ################################################################
+  # TEAMS                                                         #
+  ################################################################
+  /teams:
+    post:
+      tags: [Teams]
+      summary: Create a team
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamCreate"
+      responses:
+        "201":
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+    get:
+      tags: [Teams]
+      summary: List teams (filterable)
+      parameters:
+        - name: sport
+          in: query
+          schema: { type: string }
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Array of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+
+  /teams/{id}:
+    get:
+      tags: [Teams]
+      summary: Get team details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Team object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    $ref: "#/components/schemas/Team"
+        "404":
+          description: Team not found
+    put:
+      tags: [Teams]
+      summary: Update team
+      description: >
+        Update team details. Only the team captain or admin can update.
+        Supports updating name, description, captain transfer, join code, privacy settings, and avatar.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamUpdate"
+      responses:
+        "200":
+          description: Team updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    $ref: "#/components/schemas/Team"
+        "400":
+          description: Validation error or invalid captain
+        "403":
+          description: Not authorized (captain or admin only)
+        "404":
+          description: Team not found
+    delete:
+      tags: [Teams]
+      summary: Delete a team
+      description: Delete a team. Only the team captain or admin can delete the team.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Team deleted successfully
+        "403":
+          description: Not authorized (captain or admin only)
+        "404":
+          description: Team not found
+
+  /teams/{id}/join:
+    post:
+      tags: [Teams]
+      summary: Join a team
+      description: >
+        Request to join a team. If the team is private and requires a join code, 
+        it must be provided. Users cannot join if they are already members.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                joinCode:
+                  type: string
+                  description: Required for private teams with join code
+                  example: "TEAM2024"
+      responses:
+        "200":
+          description: Successfully joined team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Successfully joined team" }
+        "400":
+          description: Already a member or validation error
+        "403":
+          description: Invalid or missing join code for private team
+        "404":
+          description: Team not found
+
+  /teams/{id}/leave:
+    post:
+      tags: [Teams]
+      summary: Leave a team
+      description: >
+        Leave a team. Captain cannot leave the team - they must transfer 
+        captaincy first or delete the team.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Successfully left team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Successfully left team" }
+        "400":
+          description: Not a member or captain trying to leave
+        "404":
+          description: Team not found
+
+  ################################################################
+  # MATCHES                                                       #
+  ################################################################
+  /matches:
+    post:
+      tags: [Matches]
+      summary: Create a match
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchCreate"
+      responses:
+        "201":
+          description: Created match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+    get:
+      tags: [Matches]
+      summary: List matches (filterable)
+      parameters:
+        - name: sport
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: startAt
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Matches array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+
+  /matches/{id}:
+    get:
+      tags: [Matches]
+      summary: Get match details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+    patch:
+      tags: [Matches]
+      summary: Update match
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchUpdate"
+      responses:
+        "200":
+          description: Updated match
+    delete:
+      tags: [Matches]
+      summary: Cancel match (Organizer Only)
+      description: >
+        Cancel a match. Only the match organizer can cancel their match.
+        This endpoint is now restricted to match organizers only.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Match cancelled
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only the match organizer can cancel
+
+  /matches/{id}/join:
+    post:
+      tags: [Matches]
+      summary: Join a match
+      description: >
+        Join a scheduled match as a participant. Users can join matches that are not full
+        and are in 'scheduled' status. Cannot join if already a participant.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Match ID
+      responses:
+        "200":
+          description: Successfully joined match
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Successfully joined match
+        "400":
+          description: Bad request - Cannot join (already joined, match full, or not scheduled)
+        "401":
+          description: Authentication required
+        "404":
+          description: Match not found
+
+  /matches/{id}/leave:
+    post:
+      tags: [Matches]
+      summary: Leave a match
+      description: >
+        Leave a match as a participant. Participants can leave scheduled matches before
+        they start. Organizers cannot leave their own match (they must cancel it instead).
+        Cannot leave matches that are live or finished.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Match ID
+      responses:
+        "200":
+          description: Successfully left match
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Successfully left match
+        "400":
+          description: Bad request - Cannot leave (not a participant, organizer, or match already started)
+        "401":
+          description: Authentication required
+        "404":
+          description: Match not found
+
+  /matches/{id}/score:
+    put:
+      tags: [Matches]
+      summary: Update match score
+      description: >
+        Update the score for a live or finished match. Only the match organizer or 
+        participants can update scores. Scores can be updated for matches in 'live' 
+        or 'finished' status.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Match ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - scores
+              properties:
+                scores:
+                  type: object
+                  description: Score object with participant IDs as keys
+                  additionalProperties: true
+                  example:
+                    "userId1": 5
+                    "userId2": 3
+            examples:
+              simpleScores:
+                summary: Simple numeric scores
+                value:
+                  scores:
+                    "507f1f77bcf86cd799439011": 5
+                    "507f1f77bcf86cd799439012": 3
+              detailedScores:
+                summary: Detailed performance stats
+                value:
+                  scores:
+                    "507f1f77bcf86cd799439011":
+                      goals: 3
+                      assists: 2
+                      fouls: 1
+                    "507f1f77bcf86cd799439012":
+                      goals: 1
+                      assists: 0
+                      fouls: 3
+      responses:
+        "200":
+          description: Score updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Score updated successfully
+                  data:
+                    $ref: "#/components/schemas/Match"
+        "400":
+          description: Bad request - Invalid scores or match not in valid status
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only organizer or participants can update scores
+        "404":
+          description: Match not found
+
+  /matches/{id}/status:
+    put:
+      tags: [Matches]
+      summary: Update match status
+      description: >
+        Update the status of a match. Only the match organizer can update the status.
+        Valid status transitions:
+        - scheduled → live, cancelled
+        - live → finished, cancelled
+        - finished → (no transitions)
+        - cancelled → (no transitions)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Match ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [scheduled, live, finished, cancelled]
+                  description: New match status
+                  example: live
+      responses:
+        "200":
+          description: Status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Match status updated successfully
+                  data:
+                    $ref: "#/components/schemas/Match"
+        "400":
+          description: Bad request - Invalid status transition
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only the match organizer can update status
+        "404":
+          description: Match not found
+
+  /matches/{id}/start:
+    post:
+      tags: [Matches]
+      summary: Mark match as live (Legacy)
+      description: >
+        Legacy endpoint for marking match as live. Consider using PUT /matches/{id}/status instead.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Match live
+
+  /matches/{id}/finish:
+    post:
+      tags: [Matches]
+      summary: Finish match and automatically update participant stats (Legacy)
+      description: >
+        Legacy endpoint for finishing a match. Consider using PUT /matches/{id}/status 
+        and PUT /matches/{id}/score instead for more granular control.
+
+        **Original Description:**
+        Marks match as finished with final scores. Automatically triggers stats updates
+        for all participants including wins/losses/draws, ELO ratings, streaks, and
+        detailed performance metrics (goals, assists, fouls). Stats are updated via
+        event-driven architecture for reliability and scalability.
+
+        **Event-Driven Auto-Update System:**
+        - Publishes `match.finished` event to EventBus
+        - StatsUpdateHandler subscribes and processes updates asynchronously
+        - Parallel processing of all participants for performance
+        - Atomic database updates with MongoDB $inc operator
+        - Graceful error handling per participant
+        - Multi-sport support with separate stat tracking
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Match ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchResult"
+            examples:
+              simpleScores:
+                summary: Simple numeric scores
+                value:
+                  scores:
+                    "user1_id": 5
+                    "user2_id": 3
+                    "user3_id": 4
+              detailedScores:
+                summary: Detailed performance stats
+                value:
+                  scores:
+                    "user1_id":
+                      goals: 3
+                      assists: 2
+                      fouls: 1
+                    "user2_id":
+                      goals: 1
+                      assists: 0
+                      fouls: 3
+      responses:
+        "200":
+          description: >
+            Match finished successfully. Stats for all participants have been
+            automatically updated via event system. Updates include match outcome,
+            ELO rating changes, streaks, and detailed performance metrics.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+              example:
+                success: true
+                message: "Match finished, stats updated"
+        "401":
+          description: Unauthorized - must be match organizer
+        "404":
+          description: Match not found
+
+  ################################################################
+  # TOURNAMENTS                                                    #
+  ################################################################
+  /tournaments:
+    post:
+      tags: [Tournaments]
+      summary: Create tournament
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TournamentCreate"
+      responses:
+        "201":
+          description: Tournament created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+    get:
+      tags: [Tournaments]
+      summary: List tournaments
+      parameters:
+        - name: sport
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [knockout, league]
+      responses:
+        "200":
+          description: Tournaments array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tournament"
+
+  /tournaments/{id}:
+    get:
+      tags: [Tournaments]
+      summary: Get tournament details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Tournament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+    put:
+      tags: [Tournaments]
+      summary: Update tournament
+      description: >
+        Update tournament details. Only the tournament organizer or admin can update.
+        Cannot modify tournament structure (type, sport, team limits) after it has started.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Tournament ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  description: Tournament title
+                sport:
+                  type: string
+                  enum:
+                    [
+                      football,
+                      basketball,
+                      volleyball,
+                      tennis,
+                      badminton,
+                      cricket,
+                      other,
+                    ]
+                  description: Sport type
+                type:
+                  type: string
+                  enum: [knockout, league]
+                  description: Tournament type (cannot be changed after start)
+                registrationWindow:
+                  type: object
+                  properties:
+                    start:
+                      type: string
+                      format: date-time
+                    end:
+                      type: string
+                      format: date-time
+                minTeams:
+                  type: integer
+                  minimum: 2
+                  maximum: 100
+                maxTeams:
+                  type: integer
+                  minimum: 2
+                  maximum: 100
+                entryFee:
+                  type: number
+                  minimum: 0
+                prizePool:
+                  type: string
+                  maxLength: 500
+                rules:
+                  type: string
+                  maxLength: 2000
+                visibility:
+                  type: string
+                  enum: [public, private]
+                status:
+                  type: string
+                  enum: [registration, ongoing, completed, cancelled]
+            examples:
+              updateBasicInfo:
+                summary: Update basic tournament info
+                value:
+                  title: "Updated Summer Basketball Championship"
+                  prizePool: "$2000 + Trophy"
+                  rules: "Updated tournament rules..."
+              extendRegistration:
+                summary: Extend registration window
+                value:
+                  registrationWindow:
+                    end: "2025-12-31T23:59:59Z"
+      responses:
+        "200":
+          description: Tournament updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Tournament updated successfully
+                  data:
+                    $ref: "#/components/schemas/Tournament"
+        "400":
+          description: Bad request - Cannot modify tournament structure after it has started
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only organizer or admin can update
+        "404":
+          description: Tournament not found
+    delete:
+      tags: [Tournaments]
+      summary: Cancel tournament (Organizer or Admin Only)
+      description: >
+        Cancel a tournament. Only the tournament organizer or admin can cancel.
+        Cannot cancel a completed tournament.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Tournament ID
+      responses:
+        "204":
+          description: Tournament cancelled successfully
+        "400":
+          description: Bad request - Cannot cancel completed tournament
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only organizer or admin can cancel
+        "404":
+          description: Tournament not found
+
+  /tournaments/{id}/join:
+    post:
+      tags: [Tournaments]
+      summary: Join tournament with a team
+      description: >
+        Register a team to join the tournament. The tournament must be in registration phase
+        and within the registration window. Cannot join if tournament is full or team is already registered.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Tournament ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - teamId
+              properties:
+                teamId:
+                  type: string
+                  description: ID of the team to register
+                  example: "507f1f77bcf86cd799439011"
+      responses:
+        "200":
+          description: Successfully joined tournament
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Successfully joined tournament
+        "400":
+          description: Bad request - Not in registration phase, registration window closed, tournament full, or already registered
+        "401":
+          description: Authentication required
+        "404":
+          description: Tournament not found
+
+  /tournaments/{id}/leave:
+    post:
+      tags: [Tournaments]
+      summary: Leave tournament
+      description: >
+        Remove a team from the tournament. Can only leave during registration phase
+        before the tournament has started. Cannot leave after tournament is ongoing or completed.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Tournament ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - teamId
+              properties:
+                teamId:
+                  type: string
+                  description: ID of the team to remove
+                  example: "507f1f77bcf86cd799439011"
+      responses:
+        "200":
+          description: Successfully left tournament
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Successfully left tournament
+        "400":
+          description: Bad request - Not registered, or tournament already started
+        "401":
+          description: Authentication required
+        "404":
+          description: Tournament not found
+
+  /tournaments/{id}/register:
+    post:
+      tags: [Tournaments]
+      summary: Register team/user (Legacy)
+      description: Legacy endpoint for team registration. Consider using POST /tournaments/{id}/join instead.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TournamentRegister"
+      responses:
+        "200":
+          description: Registered
+
+  /tournaments/{id}/start:
+    put:
+      tags: [Tournaments]
+      summary: Start tournament and generate bracket
+      description: >
+        Starts the tournament and automatically generates the bracket based on tournament type 
+        (knockout or league) and registered teams. Validates minimum team requirements.
+        Only the tournament organizer can start the tournament.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Tournament ID
+      responses:
+        "200":
+          description: Tournament started with generated bracket
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Tournament started successfully
+                  bracket:
+                    $ref: "#/components/schemas/TournamentBracket"
+                  totalRounds:
+                    type: integer
+                    example: 4
+                  currentRound:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad request - Not enough teams, tournament already started, or registration not closed
+        "401":
+          description: Authentication required
+        "403":
+          description: Not authorized - Only tournament organizer can start
+        "404":
+          description: Tournament not found
+
+  /tournaments/{id}/bracket:
+    get:
+      tags: [Tournaments]
+      summary: Get tournament bracket
+      description: Retrieve the current bracket state with all rounds, matches, and standings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Tournament bracket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TournamentBracket"
+        "404":
+          description: Tournament or bracket not found
+
+  /tournaments/{id}/match-result:
+    post:
+      tags: [Tournaments]
+      summary: Update match result
+      description: >
+        Updates a match result in the tournament bracket. For knockout tournaments, 
+        automatically advances the winner to the next round. For league tournaments,
+        updates the standings table.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchResultUpdate"
+      responses:
+        "200":
+          description: Match result updated, returns updated bracket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TournamentBracket"
+        "400":
+          description: Invalid match result
+        "401":
+          description: Unauthorized
+        "404":
+          description: Tournament or match not found
+
+  ################################################################
+  # CHAT                                                           #
+  ################################################################
+  /chat/rooms:
+    get:
+      tags: [Chat]
+      summary: List user's chat rooms
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Chat rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatRoom"
+    post:
+      tags: [Chat]
+      summary: Create chat room
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRoomCreate"
+      responses:
+        "201":
+          description: Chat room created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatRoom"
+
+  /chat/rooms/{roomId}/messages:
+    get:
+      tags: [Chat]
+      summary: Fetch messages
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+        - name: before
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Messages array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+    post:
+      tags: [Chat]
+      summary: Send message
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageCreate"
+      responses:
+        "201":
+          description: Message saved
+
+  /chat/messages/{messageId}:
+    patch:
+      tags: [Chat]
+      summary: Edit message
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        "200":
+          description: Message edited
+    delete:
+      tags: [Chat]
+      summary: Delete (soft) message
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Message deleted
+
+  ################################################################
+  # VENUES (USER-FACING)                                           #
+  ################################################################
+  /venues:
+    get:
+      tags: [Venues]
+      summary: List approved/public venues
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Venues array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VenueSummary"
+
+  /venues/search:
+    get:
+      tags: [Venues]
+      summary: Search venues by name, sport, city
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: sport
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VenueSummary"
+
+  /venues/nearby:
+    get:
+      tags: [Venues]
+      summary: Find nearby venues by coordinates
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema: { type: number }
+        - name: lng
+          in: query
+          required: true
+          schema: { type: number }
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: sport
+          in: query
+          schema: { type: string }
+        - name: available
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: Nearby venues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VenueSummary"
+
+  /venues/{venueId}:
+    get:
+      tags: [Venues]
+      summary: Get venue details
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Venue details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VenueDetail"
+
+  /venues/{venueId}/availability:
+    get:
+      tags: [Venues]
+      summary: Check venue availability on a date
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Slots availability
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SlotAvailability"
+
+  /venues/{venueId}/book:
+    post:
+      tags: [Venues]
+      summary: Book a slot at venue
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingCreate"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  ################################################################
+  # VENUE MANAGEMENT (OWNER-FACING)                               #
+  ################################################################
+  /venue-management/venues:
+    get:
+      tags: [Venue Management]
+      summary: List venues owned/managed by current user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Owned venues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Venue"
+    post:
+      tags: [Venue Management]
+      summary: Create a new venue (owner)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VenueCreate"
+      responses:
+        "201":
+          description: Venue created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Venue"
+
+  /venue-management/venues/{venueId}:
+    get:
+      tags: [Venue Management]
+      summary: Get venue detail (owner)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Venue detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Venue"
+    patch:
+      tags: [Venue Management]
+      summary: Update venue (owner)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VenueUpdate"
+      responses:
+        "200":
+          description: Venue updated
+    delete:
+      tags: [Venue Management]
+      summary: Delete or deactivate venue (owner)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Venue removed
+
+  /venue-management/venues/{venueId}/slots:
+    get:
+      tags: [Venue Management]
+      summary: Get all slots for a venue (owner)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Slots array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SlotAvailability"
+    post:
+      tags: [Venue Management]
+      summary: Add or update bulk slots for venue
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/SlotAvailability"
+      responses:
+        "200":
+          description: Slots saved
+
+  /venue-management/venues/{venueId}/bookings:
+    get:
+      tags: [Venue Management]
+      summary: List bookings for a venue (owner)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Bookings array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+
+  /venue-management/bookings/{bookingId}/approve:
+    post:
+      tags: [Venue Management]
+      summary: Approve a booking
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Booking approved
+
+  /venue-management/bookings/{bookingId}/reject:
+    post:
+      tags: [Venue Management]
+      summary: Reject a booking
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Booking rejected
+
+  ################################################################
+  # MAPS                                                           #
+  ################################################################
+  /maps/nearby:
+    get:
+      tags: [Maps]
+      summary: Fetch nearby venue pins for maps
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema: { type: number }
+        - name: lng
+          in: query
+          required: true
+          schema: { type: number }
+        - name: radius
+          in: query
+          schema: { type: number, default: 5 }
+      responses:
+        "200":
+          description: Venue pins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VenueMapData"
+
+  /maps/submit:
+    post:
+      tags: [Maps]
+      summary: Mobile submits chosen location for an entity (match/tournament)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MapSubmission"
+      responses:
+        "201":
+          description: Location saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+
+  /maps/{entityType}/{entityId}:
+    get:
+      tags: [Maps]
+      summary: Get stored location for a match or tournament
+      parameters:
+        - name: entityType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [match, tournament]
+        - name: entityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Location returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+
+  ################################################################
+  # CALENDAR                                                       #
+  ################################################################
+  /calendar/events:
+    get:
+      tags: [Calendar]
+      summary: Fetch backend events for user (for device sync)
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Events array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+    post:
+      tags: [Calendar]
+      summary: Create or update an event from device (sync)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventSync"
+      responses:
+        "201":
+          description: Event created/updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+  /calendar/sync:
+    post:
+      tags: [Calendar]
+      summary: Sync device events with backend (merge)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceEvents:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Event"
+      responses:
+        "200":
+          description: Sync result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  syncedEvents:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+
+  /calendar/google/auth:
+    get:
+      tags: [Calendar]
+      summary: Get Google Calendar OAuth authorization URL
+      description: >
+        Returns the Google OAuth2 authorization URL for connecting user's Google Calendar.
+        After authorization, Google redirects to the callback URL with an authorization code.
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Authorization URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authUrl:
+                    type: string
+                    format: uri
+                    description: Google OAuth2 authorization URL
+                example:
+                  authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id=..."
+        "400":
+          description: Google Calendar integration not enabled
+        "401":
+          description: Not authenticated
+
+  /calendar/google/callback:
+    get:
+      tags: [Calendar]
+      summary: Google Calendar OAuth callback
+      description: >
+        Handles the OAuth2 callback from Google Calendar. Exchanges the authorization
+        code for access and refresh tokens, then stores them for the user. This endpoint
+        is called by Google after user grants calendar permissions.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Google OAuth2
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+          description: User ID passed as state parameter
+      responses:
+        "200":
+          description: Successfully connected to Google Calendar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                example:
+                  success: true
+                  message: "Google Calendar connected successfully"
+        "400":
+          description: Invalid authorization code
+        "401":
+          description: Not authenticated
+
+  /calendar/google/sync:
+    post:
+      tags: [Calendar]
+      summary: Sync events with Google Calendar
+      description: >
+        Imports events from user's Google Calendar into the Milokhelo backend calendar.
+        Fetches events within a specified time range and creates corresponding events
+        in the backend. Requires Google Calendar to be connected first.
+      security:
+        - cookieAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timeMin:
+                  type: string
+                  format: date-time
+                  description: Start time for events to import (optional, defaults to now)
+                timeMax:
+                  type: string
+                  format: date-time
+                  description: End time for events to import (optional, defaults to 30 days from now)
+            examples:
+              default:
+                summary: Default sync (next 30 days)
+                value: {}
+              custom_range:
+                summary: Custom time range
+                value:
+                  timeMin: "2025-10-30T00:00:00Z"
+                  timeMax: "2025-12-31T23:59:59Z"
+      responses:
+        "200":
+          description: Events imported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  importedCount:
+                    type: integer
+                    description: Number of events imported from Google Calendar
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                example:
+                  success: true
+                  message: "Imported 5 events from Google Calendar"
+                  importedCount: 5
+                  events: []
+        "400":
+          description: Google Calendar not connected or sync failed
+        "401":
+          description: Not authenticated
+
+  /calendar/google/disconnect:
+    delete:
+      tags: [Calendar]
+      summary: Disconnect Google Calendar integration
+      description: >
+        Removes Google Calendar access tokens for the user, disconnecting the integration.
+        User will need to re-authorize to sync with Google Calendar again.
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Google Calendar disconnected successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                example:
+                  success: true
+                  message: "Google Calendar disconnected successfully"
+        "401":
+          description: Not authenticated
+
+  ################################################################
+  # NOTIFICATIONS                                                  #
+  ################################################################
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications
+      description: Get all notifications for the authenticated user with pagination support
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50, minimum: 1, maximum: 100 }
+          description: Maximum number of notifications to return
+        - name: skip
+          in: query
+          schema: { type: integer, default: 0, minimum: 0 }
+          description: Number of notifications to skip (for pagination)
+        - name: unreadOnly
+          in: query
+          schema: { type: boolean, default: false }
+          description: Return only unread notifications
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+        "401":
+          description: Not authenticated
+
+  /notifications/{id}:
+    get:
+      tags: [Notifications]
+      summary: Get notification by ID
+      description: Get a specific notification by its ID. User can only view their own notifications.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Notification ID
+      responses:
+        "200":
+          description: Notification details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    $ref: "#/components/schemas/Notification"
+        "403":
+          description: Not authorized to view this notification
+        "404":
+          description: Notification not found
+    delete:
+      tags: [Notifications]
+      summary: Delete notification
+      description: Delete a specific notification. User can only delete their own notifications.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Notification ID
+      responses:
+        "204":
+          description: Notification deleted successfully
+        "403":
+          description: Not authorized to delete this notification
+        "404":
+          description: Notification not found
+
+  /notifications/{id}/read:
+    put:
+      tags: [Notifications]
+      summary: Mark notification as read
+      description: Mark a specific notification as read. User can only mark their own notifications.
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Notification ID
+      responses:
+        "200":
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  data:
+                    $ref: "#/components/schemas/Notification"
+        "403":
+          description: Not authorized to modify this notification
+        "404":
+          description: Notification not found
+
+  /notifications/unread/count:
+    get:
+      tags: [Notifications]
+      summary: Get unread notifications count
+      description: Returns the count of unread notifications for the authenticated user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Unread count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of unread notifications
+                example:
+                  count: 5
+        "401":
+          description: Not authenticated
+
+  /notifications/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Mark all notifications as read
+      description: Marks all unread notifications as read for the authenticated user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  modifiedCount:
+                    type: integer
+                    description: Number of notifications marked as read
+                example:
+                  success: true
+                  message: "All notifications marked as read"
+                  modifiedCount: 5
+        "401":
+          description: Not authenticated
+
+  /notifications/push-token:
+    post:
+      tags: [Notifications]
+      summary: Register device push token for push notifications
+      description: >
+        Registers a device token (FCM for Android/Web, APNS for iOS) to receive
+        push notifications. The system supports Firebase Cloud Messaging (FCM) for
+        Android and Web platforms, and Apple Push Notification Service (APNS) for iOS.
+        Users can register multiple devices.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceTokenRegister"
+            examples:
+              ios:
+                summary: iOS device registration
+                value:
+                  token: "apns-token-here-64-chars-hex"
+                  platform: "ios"
+                  deviceName: "iPhone 14 Pro"
+              android:
+                summary: Android device registration
+                value:
+                  token: "fcm-token-here-152-chars"
+                  platform: "android"
+                  deviceName: "Samsung Galaxy S23"
+              web:
+                summary: Web browser registration
+                value:
+                  token: "fcm-web-token-here-152-chars"
+                  platform: "web"
+                  deviceName: "Chrome on MacBook"
+      responses:
+        "201":
+          description: Device token registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  deviceId:
+                    type: string
+                    description: Unique identifier for the registered device
+                example:
+                  success: true
+                  message: "Device token registered successfully"
+                  deviceId: "device123abc"
+        "400":
+          description: Invalid token or platform
+        "401":
+          description: Not authenticated
+    delete:
+      tags: [Notifications]
+      summary: Unregister device push token
+      description: >
+        Removes a device token from receiving push notifications. This should be called
+        when the user logs out or when the app is uninstalled.
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: The device token to unregister
+            example:
+              token: "fcm-or-apns-token-here"
+      responses:
+        "200":
+          description: Device token unregistered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                example:
+                  success: true
+                  message: "Device token unregistered successfully"
+        "400":
+          description: Invalid request
+        "401":
+          description: Not authenticated
+        "404":
+          description: Token not found
+
+  ################################################################
+  # INVITATIONS                                                    #
+  ################################################################
+  /invitations:
+    post:
+      tags: [Invitations]
+      summary: Send invitation (match/tournament/team)
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationCreate"
+      responses:
+        "201":
+          description: Invitation created
+    get:
+      tags: [Invitations]
+      summary: List invitations for current user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Invitations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invitation"
+
+  /invitations/{id}/respond:
+    post:
+      tags: [Invitations]
+      summary: Respond to invitation (accept/decline)
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [accept, decline]
+      responses:
+        "200":
+          description: Response recorded
+
+  ################################################################
+  # FEEDBACK / REPORTS                                              #
+  ################################################################
+  /feedback:
+    post:
+      tags: [Feedback]
+      summary: Submit feedback or report
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackCreate"
+      responses:
+        "201":
+          description: Feedback submitted
+    get:
+      tags: [Feedback]
+      summary: List feedback (admin)
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Feedback list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Feedback"
+
+  ################################################################
+  # ADMIN                                                           #
+  ################################################################
+  /admin/reports:
+    get:
+      tags: [Admin]
+      summary: List system reports & moderation items (admin only)
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Reports array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oauth2_google:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://oauth2.googleapis.com/token
+          scopes:
+            profile: Access basic profile
+            email: Access email address
+    oauth2_facebook:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://www.facebook.com/v11.0/dialog/oauth
+          tokenUrl: https://graph.facebook.com/v11.0/oauth/access_token
+          scopes:
+            public_profile: Access public profile
+            email: Access email address
+
+  schemas:
+    #########################################################
+    # AUTH / USER SCHEMAS                                   #
+    #########################################################
+    OAuthProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: google
+          description: Provider identifier (google, facebook)
+        displayName:
+          type: string
+          example: Google
+          description: Human-readable provider name
+        authorizationUrl:
+          type: string
+          format: uri
+          example: /api/v1/auth/oauth/google
+          description: URL to initiate OAuth flow
+
+    RegisterUser:
+      type: object
+      required: [name, email, password]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+
+    LoginUser:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    UserCreate:
+      type: object
+      properties:
+        username: { type: string }
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        bio: { type: string }
+        sportsPreferences:
+          type: array
+          items: { type: string }
+
+    UserProfile:
+      type: object
+      properties:
+        id: { type: string }
+        username: { type: string }
+        name: { type: string }
+        email: { type: string, format: email }
+        avatar: { type: string, format: uri }
+        phone: { type: string }
+        bio:
+          type: string
+          description: User biography or description
+        roles:
+          type: array
+          items: { type: string }
+        verified:
+          type: boolean
+          description: True if user verified email or authenticated via OAuth
+        privacy:
+          type: object
+          properties:
+            showPhone: { type: boolean }
+            showStats: { type: boolean }
+            showLocation: { type: boolean }
+        sportsPreferences:
+          type: array
+          items: { type: string }
+        location:
+          type: object
+          properties:
+            city: { type: string }
+            coordinates:
+              type: object
+              properties:
+                lat: { type: number }
+                lng: { type: number }
+        oauthProviders:
+          type: object
+          description: Linked OAuth providers (not including sensitive data)
+          properties:
+            google:
+              type: object
+              properties:
+                id: { type: string }
+                email: { type: string }
+            facebook:
+              type: object
+              properties:
+                id: { type: string }
+                email: { type: string }
+        friends:
+          type: array
+          items: { type: string }
+          description: Array of friend user IDs
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        lastLogin: { type: string, format: date-time }
+        achievements:
+          type: array
+          items: { type: string }
+        stats:
+          type: array
+          items: { type: string }
+
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 30
+          pattern: "^[a-zA-Z0-9_-]+$"
+          description: Username (3-30 chars, alphanumeric with underscores/hyphens)
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Full name
+        bio:
+          type: string
+          maxLength: 500
+          description: User biography
+        phone:
+          type: string
+          description: Phone number
+        avatar:
+          type: string
+          format: uri
+          description: Avatar image URL
+        sportsPreferences:
+          type: array
+          items: { type: string }
+          description: List of preferred sports
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              maxLength: 100
+            coordinates:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [Point]
+                coordinates:
+                  type: array
+                  items: { type: number }
+                  minItems: 2
+                  maxItems: 2
+                  description: "[longitude, latitude]"
+        privacy:
+          type: object
+          properties:
+            showPhone: { type: boolean }
+            showStats: { type: boolean }
+            showLocation: { type: boolean }
+
+    #########################################################
+    # TEAM SCHEMAS                                          #
+    #########################################################
+    TeamCreate:
+      type: object
+      required: [name, sport]
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: Team name (3-50 characters)
+          example: "Thunder Strikers"
+        sport:
+          type: string
+          enum:
+            [
+              football,
+              basketball,
+              volleyball,
+              tennis,
+              badminton,
+              cricket,
+              other,
+            ]
+          description: Sport type
+          example: "football"
+        description:
+          type: string
+          maxLength: 500
+          description: Team description (optional, max 500 characters)
+          example: "Competitive football team looking for skilled players"
+        joinCode:
+          type: string
+          minLength: 4
+          maxLength: 20
+          description: Optional join code for private teams
+          example: "THUNDER2024"
+        isPrivate:
+          type: boolean
+          description: Whether the team is private (requires join code)
+          default: false
+
+    TeamUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: Team name
+          example: "Thunder Strikers United"
+        description:
+          type: string
+          maxLength: 500
+          description: Team description
+          example: "Updated team description"
+        captainId:
+          type: string
+          description: Transfer captaincy to another team member (must be existing member)
+          example: "507f1f77bcf86cd799439011"
+        joinCode:
+          type: string
+          minLength: 4
+          maxLength: 20
+          description: Join code for private teams
+          example: "NEWCODE2024"
+        isPrivate:
+          type: boolean
+          description: Whether the team is private
+        avatar:
+          type: string
+          format: uri
+          description: Team avatar URL
+          example: "https://example.com/avatar.jpg"
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Team ID
+          example: "507f1f77bcf86cd799439011"
+        name:
+          type: string
+          description: Team name
+          example: "Thunder Strikers"
+        sport:
+          type: string
+          description: Sport type
+          example: "football"
+        description:
+          type: string
+          description: Team description
+          example: "Competitive football team"
+        captainId:
+          type: string
+          description: Team captain user ID
+          example: "507f191e810c19729de860ea"
+        members:
+          type: array
+          description: Team members
+          items:
+            type: object
+            properties:
+              userId: { type: string, example: "507f191e810c19729de860ea" }
+              role: { type: string, enum: [captain, member], example: "member" }
+              joinedAt:
+                {
+                  type: string,
+                  format: date-time,
+                  example: "2024-01-15T10:00:00Z",
+                }
+        joinCode:
+          type: string
+          description: Join code (only shown to captain)
+          example: "THUNDER2024"
+        isPrivate:
+          type: boolean
+          description: Whether team is private
+          example: false
+        avatar:
+          type: string
+          format: uri
+          description: Team avatar URL
+          example: "https://example.com/avatar.jpg"
+        stats:
+          type: object
+          description: Team statistics
+          properties:
+            matchesPlayed: { type: integer, example: 25 }
+            wins: { type: integer, example: 15 }
+            losses: { type: integer, example: 8 }
+            draws: { type: integer, example: 2 }
+            rating: { type: number, example: 1450.5 }
+            elo: { type: number, example: 1050 }
+        createdAt:
+          type: string
+          format: date-time
+          description: Team creation timestamp
+          example: "2024-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-03-15T14:30:00Z"
+
+    #########################################################
+    # MATCH / TOURNAMENT SCHEMAS                            #
+    #########################################################
+    Location:
+      type: object
+      properties:
+        venue: { type: string }
+        address: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        geo:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [Point]
+            coordinates:
+              type: array
+              items:
+                type: number
+              description: string
+
+    MatchCreate:
+      type: object
+      required: [title, sport, startAt, location]
+      properties:
+        title: { type: string }
+        sport: { type: string }
+        type:
+          type: string
+          enum: [friendly, competitive]
+        sportCategory: { type: string }
+        startAt: { type: string, format: date-time }
+        endAt: { type: string, format: date-time }
+        location:
+          $ref: "#/components/schemas/Location"
+        maxPlayers: { type: integer }
+        skillLevel:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        entryFee: { type: number }
+        prize: { type: string }
+        teamBased: { type: boolean }
+        visibility:
+          type: string
+          enum: [public, private]
+
+    MatchUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        startAt: { type: string, format: date-time }
+        endAt: { type: string, format: date-time }
+        location:
+          $ref: "#/components/schemas/Location"
+        maxPlayers: { type: integer }
+        status:
+          type: string
+          enum: [scheduled, live, finished, cancelled]
+        cancelReason: { type: string }
+
+    MatchResult:
+      type: object
+      required: [scores]
+      properties:
+        scores:
+          type: object
+          description: >
+            Match scores by participant ID. Can be simple numeric scores or detailed
+            objects with performance metrics. Stats auto-update system processes both formats.
+          additionalProperties:
+            oneOf:
+              - type: integer
+                description: Simple numeric score
+              - type: object
+                description: Detailed performance stats
+                properties:
+                  goals: { type: integer, description: Goals/points scored }
+                  assists: { type: integer, description: Assists }
+                  fouls: { type: integer, description: Fouls committed }
+          example:
+            "user1_id": 5
+            "user2_id":
+              goals: 3
+              assists: 2
+              fouls: 1
+
+    Match:
+      allOf:
+        - $ref: "#/components/schemas/MatchCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            organizerId: { type: string }
+            participants:
+              type: array
+              items: { type: string }
+            status:
+              type: string
+              enum: [scheduled, live, finished, cancelled]
+            chatRoomId: { type: string }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    TournamentCreate:
+      type: object
+      required: [title, sport, type, registrationWindow]
+      properties:
+        title: { type: string }
+        sport: { type: string }
+        sportCategory: { type: string }
+        type:
+          type: string
+          enum: [knockout, league]
+        rules: { type: string }
+        registrationWindow:
+          type: object
+          required: [start, end]
+          properties:
+            start: { type: string, format: date-time }
+            end: { type: string, format: date-time }
+        entryFee: { type: number }
+        prizePool: { type: string }
+        minTeams: { type: integer }
+        maxTeams: { type: integer }
+        visibility:
+          type: string
+          enum: [public, private]
+
+    TournamentUpdate:
+      type: object
+      properties:
+        rules: { type: string }
+        entryFee: { type: number }
+        prizePool: { type: string }
+        visibility:
+          type: string
+          enum: [public, private]
+        status:
+          type: string
+          enum: [registration, ongoing, completed, cancelled]
+        currentRound: { type: integer }
+
+    TournamentRegister:
+      type: object
+      required: [teamId]
+      properties:
+        teamId: { type: string }
+
+    Tournament:
+      allOf:
+        - $ref: "#/components/schemas/TournamentCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            organizerId: { type: string }
+            teams:
+              type: array
+              items: { type: string }
+            matches:
+              type: array
+              items: { type: string }
+            rounds: { type: integer }
+            currentRound: { type: integer }
+            bracket:
+              $ref: "#/components/schemas/TournamentBracket"
+            status:
+              type: string
+              enum: [registration, ongoing, completed, cancelled]
+            chatRoomId: { type: string }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    TournamentBracket:
+      oneOf:
+        - $ref: "#/components/schemas/KnockoutBracket"
+        - $ref: "#/components/schemas/LeagueBracket"
+
+    KnockoutBracket:
+      type: object
+      description: Single-elimination knockout tournament bracket
+      properties:
+        type:
+          type: string
+          enum: [knockout]
+        totalRounds:
+          type: integer
+          description: Total number of rounds in the tournament
+        currentRound:
+          type: integer
+          description: Current active round
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnockoutRound"
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              teamId: { type: string }
+              seed:
+                type: integer
+                description: Team seeding (1-N)
+              eliminated:
+                type: boolean
+                description: Whether team has been eliminated
+        winners:
+          type: object
+          properties:
+            champion:
+              type: string
+              nullable: true
+              description: Tournament champion team ID
+            runnerUp:
+              type: string
+              nullable: true
+              description: Runner-up team ID
+            thirdPlace:
+              type: string
+              nullable: true
+              description: Third place team ID
+
+    KnockoutRound:
+      type: object
+      properties:
+        roundNumber: { type: integer }
+        name:
+          type: string
+          description: Human-readable round name (Final, Semi-Final, etc.)
+        matches:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnockoutMatch"
+        completed:
+          type: boolean
+          description: Whether all matches in this round are completed
+
+    KnockoutMatch:
+      type: object
+      properties:
+        matchNumber:
+          type: integer
+          description: Unique match number in tournament
+        round: { type: integer }
+        team1:
+          type: string
+          nullable: true
+          description: First team ID (null if awaiting previous round)
+        team2:
+          type: string
+          nullable: true
+          description: Second team ID (null if awaiting previous round)
+        winner:
+          type: string
+          nullable: true
+          description: Winner team ID
+        score:
+          type: object
+          properties:
+            team1:
+              type: integer
+              nullable: true
+            team2:
+              type: integer
+              nullable: true
+        status:
+          type: string
+          enum: [pending, completed, bye]
+          description: Match status (bye = team advanced automatically)
+        startTime:
+          type: string
+          format: date-time
+          nullable: true
+        nextMatch:
+          type: integer
+          nullable: true
+          description: Match number in next round for winner
+        nextMatchPosition:
+          type: string
+          enum: [team1, team2]
+          nullable: true
+          description: Position (team1 or team2) in next match
+
+    LeagueBracket:
+      type: object
+      description: Round-robin league tournament bracket
+      properties:
+        type:
+          type: string
+          enum: [league]
+        totalRounds:
+          type: integer
+          description: Total number of rounds (each team plays every other once)
+        currentRound:
+          type: integer
+          description: Current active round
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeagueRound"
+        standings:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeagueStanding"
+
+    LeagueRound:
+      type: object
+      properties:
+        roundNumber: { type: integer }
+        name:
+          type: string
+          description: Round name (e.g., "Round 1")
+        matches:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeagueMatch"
+        completed:
+          type: boolean
+          description: Whether all matches in this round are completed
+
+    LeagueMatch:
+      type: object
+      properties:
+        matchNumber:
+          type: integer
+          description: Unique match number in tournament
+        round: { type: integer }
+        team1: { type: string }
+        team2: { type: string }
+        score:
+          type: object
+          properties:
+            team1:
+              type: integer
+              nullable: true
+            team2:
+              type: integer
+              nullable: true
+        status:
+          type: string
+          enum: [pending, completed]
+        startTime:
+          type: string
+          format: date-time
+          nullable: true
+        played:
+          type: boolean
+          description: Whether the match has been played
+
+    LeagueStanding:
+      type: object
+      description: Team standing in league table
+      properties:
+        teamId: { type: string }
+        position:
+          type: integer
+          description: Current position in table
+        played:
+          type: integer
+          description: Matches played
+        won:
+          type: integer
+          description: Matches won
+        drawn:
+          type: integer
+          description: Matches drawn
+        lost:
+          type: integer
+          description: Matches lost
+        goalsFor:
+          type: integer
+          description: Goals scored
+        goalsAgainst:
+          type: integer
+          description: Goals conceded
+        goalDifference:
+          type: integer
+          description: Goal difference (GF - GA)
+        points:
+          type: integer
+          description: Total points (3 for win, 1 for draw)
+
+    MatchResultUpdate:
+      type: object
+      required: [matchNumber, result]
+      properties:
+        matchNumber:
+          type: integer
+          description: Match number in the bracket
+        result:
+          type: object
+          required: [score]
+          properties:
+            winner:
+              type: string
+              description: Winner team ID (required for knockout, optional for league)
+            score:
+              type: object
+              required: [team1, team2]
+              properties:
+                team1:
+                  type: integer
+                  minimum: 0
+                team2:
+                  type: integer
+                  minimum: 0
+
+    #########################################################
+    # CHAT SCHEMAS                                           #
+    #########################################################
+    ChatRoomCreate:
+      type: object
+      properties:
+        name: { type: string }
+        type:
+          type: string
+          enum: [match, tournament, team, dm, group]
+        participants:
+          type: array
+          items: { type: string }
+
+    ChatRoom:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type:
+          type: string
+          enum: [match, tournament, team, dm, group]
+        participants:
+          type: array
+          items: { type: string }
+        lastMessage: { type: string }
+        mutedBy:
+          type: array
+          items: { type: string }
+        isArchived: { type: boolean }
+        presence:
+          type: array
+          items:
+            type: object
+            properties:
+              userId: { type: string }
+              status:
+                type: string
+                enum: [online, offline, typing]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    ChatMessageCreate:
+      type: object
+      required: [content]
+      properties:
+        content: { type: string }
+        messageType:
+          type: string
+          enum: [text, image, video, system]
+        attachments:
+          type: array
+          items: { type: string }
+        replyTo: { type: string }
+
+    ChatMessage:
+      allOf:
+        - $ref: "#/components/schemas/ChatMessageCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            roomId: { type: string }
+            senderId: { type: string }
+            reactions:
+              type: array
+              items:
+                type: object
+                properties:
+                  userId: { type: string }
+                  emoji: { type: string }
+            deleted: { type: boolean }
+            createdAt: { type: string, format: date-time }
+            editedAt: { type: string, format: date-time }
+
+    #########################################################
+    # VENUE / MAP SCHEMAS                                    #
+    #########################################################
+    VenueSummary:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        address: { type: string }
+        city: { type: string }
+        sportsSupported:
+          type: array
+          items: { type: string }
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        distance:
+          type: number
+          description: Distance in kilometers
+        location:
+          $ref: "#/components/schemas/GeoLocation"
+        isAvailable: { type: boolean }
+
+    VenueMapData:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        coordinates:
+          type: array
+          items: { type: number }
+          description: string
+        address: { type: string }
+        sportTypes:
+          type: array
+          items: { type: string }
+        isAvailable: { type: boolean }
+
+    VenueDetail:
+      allOf:
+        - $ref: "#/components/schemas/VenueSummary"
+        - type: object
+          properties:
+            ownerId: { type: string }
+            slots:
+              type: array
+              items:
+                type: object
+                properties:
+                  startAt: { type: string, format: date-time }
+                  endAt: { type: string, format: date-time }
+                  price: { type: number }
+                  isBooked: { type: boolean }
+            amenities:
+              type: array
+              items: { type: string }
+            contact:
+              type: object
+              properties:
+                phone: { type: string }
+                email: { type: string }
+
+    Venue:
+      allOf:
+        - $ref: "#/components/schemas/VenueDetail"
+        - type: object
+          properties:
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+            verified: { type: boolean }
+            status:
+              type: string
+              enum: [active, inactive, pending, banned]
+
+    VenueCreate:
+      type: object
+      required: [name, address, city, sportsSupported, location]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        address: { type: string }
+        city: { type: string }
+        sportsSupported:
+          type: array
+          items: { type: string }
+        contact:
+          type: object
+          properties:
+            phone: { type: string }
+            email: { type: string }
+        location:
+          $ref: "#/components/schemas/GeoLocation"
+        images:
+          type: array
+          items: { type: string }
+
+    VenueUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        address: { type: string }
+        city: { type: string }
+        sportsSupported:
+          type: array
+          items: { type: string }
+        verified: { type: boolean }
+        status:
+          type: string
+          enum: [active, inactive]
+
+    GeoLocation:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+        coordinates:
+          type: array
+          items: { type: number }
+          description: string
+
+    MapSubmission:
+      type: object
+      required: [entityType, entityId, name, lat, lng]
+      properties:
+        entityType:
+          type: string
+          enum: [match, tournament]
+        entityId: { type: string }
+        name: { type: string }
+        lat: { type: number }
+        lng: { type: number }
+        address: { type: string }
+
+    #########################################################
+    # VENUE BOOKING SCHEMAS                                 #
+    #########################################################
+    SlotAvailability:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        endTime:
+          type: string
+        available: { type: boolean }
+        price: { type: number }
+
+    BookingCreate:
+      type: object
+      required: [date, startTime, endTime, sport]
+      properties:
+        date: { type: string, format: date }
+        startTime: { type: string }
+        endTime: { type: string }
+        sport: { type: string }
+        teamSize: { type: integer }
+        notes: { type: string }
+
+    Booking:
+      type: object
+      properties:
+        id: { type: string }
+        venueId: { type: string }
+        userId: { type: string }
+        date: { type: string, format: date }
+        startTime: { type: string }
+        endTime: { type: string }
+        sport: { type: string }
+        teamSize: { type: integer }
+        totalPrice: { type: number }
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    #########################################################
+    # CALENDAR / EVENT SCHEMAS                              #
+    #########################################################
+    EventCreate:
+      type: object
+      required: [title, date]
+      properties:
+        title: { type: string }
+        date: { type: string, format: date-time }
+        relatedTo:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [match, tournament, booking]
+            id: { type: string }
+
+    EventSync:
+      type: object
+      required: [title, date, relatedTo]
+      properties:
+        title: { type: string }
+        date: { type: string, format: date-time }
+        relatedTo:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [match, tournament, booking]
+            id: { type: string }
+        syncedWithMobile: { type: boolean }
+
+    Event:
+      allOf:
+        - $ref: "#/components/schemas/EventCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    #########################################################
+    # NOTIFICATIONS / INVITATIONS / FEEDBACK                 #
+    #########################################################
+    Notification:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        type: { type: string }
+        category:
+          type: string
+          enum: [match, tournament, booking, system, social]
+        payload: { type: object }
+        priority:
+          type: string
+          enum: [low, medium, high]
+        actionType: { type: string }
+        actionUrl: { type: string, format: uri }
+        delivered: { type: boolean }
+        readAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+
+    DeviceTokenRegister:
+      type: object
+      description: >
+        Device token registration payload for push notifications. Supports FCM
+        (Firebase Cloud Messaging) for Android and Web, and APNS (Apple Push 
+        Notification Service) for iOS.
+      required: [token, platform]
+      properties:
+        token:
+          type: string
+          description: >
+            The device-specific push token. For iOS this is the APNS token (64 hex chars),
+            for Android/Web this is the FCM registration token (152+ chars).
+          example: "fcm-registration-token-or-apns-token-here"
+        platform:
+          type: string
+          enum: [ios, android, web]
+          description: >
+            Device platform. 'ios' uses APNS, 'android' and 'web' use FCM.
+          example: "android"
+        deviceName:
+          type: string
+          description: Optional human-readable device name for identification
+          example: "iPhone 14 Pro"
+
+    InvitationCreate:
+      type: object
+      required: [recipientId, type, entityId]
+      properties:
+        recipientId: { type: string }
+        type:
+          type: string
+          enum: [match, tournament, team]
+        entityId: { type: string }
+        message: { type: string }
+
+    Invitation:
+      allOf:
+        - $ref: "#/components/schemas/InvitationCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            senderId: { type: string }
+            status:
+              type: string
+              enum: [pending, accepted, declined]
+            createdAt: { type: string, format: date-time }
+            expiresAt: { type: string, format: date-time }
+
+    FeedbackCreate:
+      type: object
+      required: [type, message]
+      properties:
+        type:
+          type: string
+          enum: [bug, suggestion, report]
+        message: { type: string }
+        relatedTo:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [match, tournament, venue, user]
+            id: { type: string }
+
+    Feedback:
+      allOf:
+        - $ref: "#/components/schemas/FeedbackCreate"
+        - type: object
+          properties:
+            id: { type: string }
+            userId: { type: string }
+            createdAt: { type: string, format: date-time }
+
+    #########################################################
+    # STATS / ACHIEVEMENTS                                  #
+    #########################################################
+    UserStat:
+      type: object
+      description: >
+        User performance statistics per sport. Automatically updated when matches finish
+        via event-driven stats update system. Tracks match outcomes, ratings, and detailed
+        performance metrics.
+      required: [userId, sport]
+      properties:
+        userId:
+          type: string
+          description: Reference to user
+        teamId:
+          type: string
+          description: Optional team reference for team-specific stats
+        sport:
+          type: string
+          description: Sport category (e.g., football, basketball, tennis)
+        matchesPlayed:
+          type: integer
+          default: 0
+          description: Total matches played
+        wins:
+          type: integer
+          default: 0
+          description: Number of wins
+        losses:
+          type: integer
+          default: 0
+          description: Number of losses
+        draws:
+          type: integer
+          default: 0
+          description: Number of draws
+        goalsScored:
+          type: integer
+          default: 0
+          description: Total goals/points scored
+        assists:
+          type: integer
+          default: 0
+          description: Total assists
+        fouls:
+          type: integer
+          default: 0
+          description: Total fouls committed
+        rating:
+          type: number
+          default: 0
+          description: Average user rating from community feedback
+        elo:
+          type: number
+          default: 1000
+          description: >
+            ELO rating calculated from match results. Competitive matches: ±32 points,
+            Friendly matches: ±16 points per win/loss. Base rating is 1000.
+        streak:
+          type: integer
+          default: 0
+          description: >
+            Current win/loss streak. Positive values indicate winning streak,
+            negative values indicate losing streak. Draws maintain streak.
+        rank:
+          type: integer
+          description: User rank within sport category (optional)
+        level:
+          type: integer
+          default: 1
+          description: User level based on experience (optional)
+        createdAt:
+          type: string
+          format: date-time
+          description: When stats record was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last stats update timestamp (automatically set on match finish)
+
+    Achievement:
+      type: object
+      description: >
+        Achievement earned by users for meeting specific criteria. Achievements are
+        automatically evaluated when user stats update via event-driven system.
+      required: [name, category, criteria, rarity, points]
+      properties:
+        id:
+          type: string
+          description: Unique achievement identifier
+        name:
+          type: string
+          description: Achievement name (unique)
+        description:
+          type: string
+          description: Description of what the achievement represents
+        category:
+          type: string
+          enum: [milestone, skill, participation, social, special]
+          description: >
+            Achievement category:
+            - milestone: Progress-based (matches played, experience)
+            - skill: Performance-based (wins, win rate, streaks, ELO)
+            - participation: Activity-based (goals, assists)
+            - social: Team/community achievements
+            - special: Unique accomplishments
+        sport:
+          type: string
+          default: all
+          description: >
+            Sport this achievement applies to. Use 'all' for cross-sport achievements.
+        criteria:
+          type: object
+          description: >
+            Flexible criteria object defining achievement requirements.
+            Supports types: stat_threshold, stat_total, ratio, streak, composite.
+            See docs/ACHIEVEMENTS.md for detailed criteria format.
+          additionalProperties: true
+          example:
+            type: stat_threshold
+            field: wins
+            operator: ">="
+            value: 10
+        badgeUrl:
+          type: string
+          format: uri
+          description: URL to achievement badge image
+        rarity:
+          type: string
+          enum: [common, rare, epic, legendary]
+          description: >
+            Achievement rarity level indicating difficulty:
+            - common: Easy to achieve (10-30 points)
+            - rare: Moderate difficulty (50-100 points)
+            - epic: Challenging (150-250 points)
+            - legendary: Extremely difficult (500-1000 points)
+        points:
+          type: integer
+          minimum: 0
+          description: Points awarded when achievement is earned
+        isActive:
+          type: boolean
+          default: true
+          description: Whether this achievement is currently active and can be earned
+        createdAt:
+          type: string
+          format: date-time
+          description: When achievement was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+security:
+  - cookieAuth: []
+
+externalDocs:
+  description: Full documentation including architecture, guides, and feature details
+  url: https://github.com/SlenderShield/milokhelo-backend/tree/main/docs
