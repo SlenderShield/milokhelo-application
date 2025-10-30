@@ -1,24 +1,41 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useGetMatches } from '@/src/api/hooks/useMatches';
+import { MatchesLoadingState, EmptyState, ErrorState } from '@/src/components/LoadingState';
 
 export default function MatchesScreen() {
   const router = useRouter();
-  const { data: matches, isLoading, error } = useGetMatches();
+  const { data: matches, isLoading, error, refetch } = useGetMatches();
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Matches</Text>
+        </View>
+        <MatchesLoadingState count={5} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error loading matches</Text>
-        <Text style={styles.errorSubtext}>{(error as Error).message}</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Matches</Text>
+        </View>
+        <ErrorState
+          title="Error loading matches"
+          message={(error as Error).message}
+          onRetry={refetch}
+        />
       </View>
     );
   }
@@ -27,12 +44,19 @@ export default function MatchesScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Matches</Text>
-        <TouchableOpacity style={styles.createButton}>
-          <Text style={styles.createButtonText}>+ Create Match</Text>
-        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.list}>
+      <ScrollView
+        style={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={refetch}
+            colors={['#6200ee']}
+            tintColor="#6200ee"
+          />
+        }
+      >
         {matches && matches.length > 0 ? (
           matches.map((match) => (
             <TouchableOpacity
@@ -59,12 +83,25 @@ export default function MatchesScreen() {
             </TouchableOpacity>
           ))
         ) : (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No matches found</Text>
-            <Text style={styles.emptySubtext}>Create or search for matches to get started</Text>
-          </View>
+          <EmptyState
+            icon="⚽"
+            title="No matches found"
+            message="Create or search for matches to get started"
+            action={{
+              label: 'Create Match',
+              onPress: () => router.push('/matches/create'),
+            }}
+          />
         )}
       </ScrollView>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => router.push('/matches/create')}
+      >
+        <Text style={styles.fabText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -199,5 +236,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+  },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#6200ee',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  fabText: {
+    fontSize: 32,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });

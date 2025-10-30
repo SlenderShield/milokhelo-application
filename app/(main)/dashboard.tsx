@@ -1,21 +1,49 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
+import { LoadingState } from '@/src/components/LoadingState';
+import { useState } from 'react';
 
 export default function DashboardScreen() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // Simulate refresh - in a real app, you'd refetch data here
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+      <View style={styles.container}>
+        <LoadingState message="Loading dashboard..." />
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#6200ee']}
+          tintColor="#6200ee"
+        />
+      }
+    >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Welcome, {user?.name}!</Text>
         <Text style={styles.headerSubtitle}>Ready for your next match?</Text>

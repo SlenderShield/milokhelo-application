@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
+import { OAuthButtonsGroup, OAuthDivider } from '@/src/components/OAuthButton';
+import { initiateGoogleOAuth, initiateFacebookOAuth, initiateAppleOAuth, type OAuthProvider } from '@/src/services/oauth';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [oauthLoading, setOAuthLoading] = useState<OAuthProvider | null>(null);
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -41,15 +44,64 @@ export default function RegisterScreen() {
     }
   };
 
+  const handleOAuthRegister = async (provider: OAuthProvider) => {
+    setOAuthLoading(provider);
+    
+    try {
+      let result;
+      
+      switch (provider) {
+        case 'google':
+          result = await initiateGoogleOAuth();
+          break;
+        case 'facebook':
+          result = await initiateFacebookOAuth();
+          break;
+        case 'apple':
+          result = await initiateAppleOAuth();
+          break;
+        default:
+          throw new Error('Unknown provider');
+      }
+
+      if (result.type === 'cancel') {
+        return;
+      }
+
+      if (result.type === 'error') {
+        Alert.alert('Authentication Error', result.error || 'Failed to sign up');
+        return;
+      }
+    } catch (error) {
+      console.error(`${provider} OAuth error:`, error);
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to sign up');
+    } finally {
+      setOAuthLoading(null);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Create Account</Text>
+
+      {/* OAuth Buttons */}
+      <OAuthButtonsGroup
+        onGooglePress={() => handleOAuthRegister('google')}
+        onFacebookPress={() => handleOAuthRegister('facebook')}
+        onApplePress={Platform.OS === 'ios' ? () => handleOAuthRegister('apple') : undefined}
+        loadingProvider={oauthLoading}
+        disabled={isLoading || oauthLoading !== null}
+        showApple={Platform.OS === 'ios'}
+      />
+
+      <OAuthDivider text="Or register with email" />
 
       <TextInput
         style={styles.input}
         placeholder="Full Name"
         value={name}
         onChangeText={setName}
+        editable={!isLoading && oauthLoading === null}
       />
 
       <TextInput
@@ -59,6 +111,7 @@ export default function RegisterScreen() {
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
+        editable={!isLoading && oauthLoading === null}
       />
 
       <TextInput
@@ -67,6 +120,7 @@ export default function RegisterScreen() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        editable={!isLoading && oauthLoading === null}
       />
 
       <TextInput
@@ -75,15 +129,16 @@ export default function RegisterScreen() {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
+        editable={!isLoading && oauthLoading === null}
       />
 
       <TouchableOpacity
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+        style={[styles.button, (isLoading || oauthLoading !== null) && styles.buttonDisabled]}
         onPress={handleRegister}
-        disabled={isLoading}
+        disabled={isLoading || oauthLoading !== null}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? 'Creating Account...' : 'Register'}
+          {isLoading ? 'Registering...' : 'Register'}
         </Text>
       </TouchableOpacity>
 
