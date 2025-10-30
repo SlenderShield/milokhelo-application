@@ -20,12 +20,14 @@
 
 #### **HIGH PRIORITY** - Code Fixes & Quality
 
-- [x] **Fix TypeScript Errors** - 🟡 SIGNIFICANT PROGRESS (90 → 84 → ongoing)
+- [x] **Fix TypeScript Errors** - ✅ 68% COMPLETE (90 → 29, only 29 remaining!)
   - ✅ Fixed API hook parameter mismatches in oauth-callback, reset-password
   - ✅ Fixed missing exports and imports (useAuth locations)
-  - ✅ Fixed chat room and notification API parameter issues
-  - ✅ Updated models to match backend openapi.yaml
-  - 🔄 Continuing to fix remaining model-screen mismatches
+  - ✅ Fixed chat room and notification API parameter issues  
+  - ✅ Updated models to match backend openapi.yaml (User, Venue, Booking, Team, Tournament)
+  - ✅ Fixed venue/tournament screens (property names, API calls, bracket rendering)
+  - ✅ Fixed team screens (stats handling, members union types)
+  - 🔄 Finishing last 29 errors (mostly edit screens and notifications)
 
 - [ ] **Create Reusable Form Components Library** (8-10 hours)
   - FormInput, FormSelect, FormDatePicker, FormTimePicker
