@@ -35,7 +35,7 @@ export function useLocation() {
 
       // Request foreground location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
+
       if (status !== 'granted') {
         setState(prev => ({
           ...prev,
@@ -111,10 +111,7 @@ export function useLocation() {
  * Calculate distance between two coordinates using Haversine formula
  * Returns distance in kilometers
  */
-export function calculateDistance(
-  coord1: LocationCoords,
-  coord2: LocationCoords
-): number {
+export function calculateDistance(coord1: LocationCoords, coord2: LocationCoords): number {
   const R = 6371; // Earth's radius in kilometers
   const dLat = toRad(coord2.latitude - coord1.latitude);
   const dLon = toRad(coord2.longitude - coord1.longitude);

@@ -12,8 +12,7 @@ import {
 export const tournamentKeys = {
   all: ['tournaments'] as const,
   lists: () => [...tournamentKeys.all, 'list'] as const,
-  list: (params?: SearchQuery & { type?: string }) =>
-    [...tournamentKeys.lists(), params] as const,
+  list: (params?: SearchQuery & { type?: string }) => [...tournamentKeys.lists(), params] as const,
   details: () => [...tournamentKeys.all, 'detail'] as const,
   detail: (id: string) => [...tournamentKeys.details(), id] as const,
   bracket: (id: string) => [...tournamentKeys.detail(id), 'bracket'] as const,
@@ -69,12 +68,9 @@ export const useUpdateTournament = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: TournamentUpdate }) =>
       tournamentsApi.updateTournament(id, data),
-    onSuccess: (updatedTournament) => {
+    onSuccess: updatedTournament => {
       // Update the specific tournament in cache
-      queryClient.setQueryData(
-        tournamentKeys.detail(updatedTournament.id),
-        updatedTournament
-      );
+      queryClient.setQueryData(tournamentKeys.detail(updatedTournament.id), updatedTournament);
       // Invalidate lists to refetch
       queryClient.invalidateQueries({ queryKey: tournamentKeys.lists() });
     },
@@ -151,12 +147,9 @@ export const useStartTournament = () => {
 
   return useMutation({
     mutationFn: (id: string) => tournamentsApi.startTournament(id),
-    onSuccess: (updatedTournament) => {
+    onSuccess: updatedTournament => {
       // Update the tournament in cache
-      queryClient.setQueryData(
-        tournamentKeys.detail(updatedTournament.id),
-        updatedTournament
-      );
+      queryClient.setQueryData(tournamentKeys.detail(updatedTournament.id), updatedTournament);
       // Invalidate bracket to refetch generated bracket
       queryClient.invalidateQueries({
         queryKey: tournamentKeys.bracket(updatedTournament.id),

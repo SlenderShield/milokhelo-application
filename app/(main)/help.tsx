@@ -12,52 +12,62 @@ const faqs: FAQItem[] = [
   {
     id: '1',
     question: 'How do I create a team?',
-    answer: 'Go to the Teams tab and tap the "Create Team" button. Fill in the team details including name, sport, and description. As the captain, you can then invite players to join your team.',
+    answer:
+      'Go to the Teams tab and tap the "Create Team" button. Fill in the team details including name, sport, and description. As the captain, you can then invite players to join your team.',
   },
   {
     id: '2',
     question: 'How do I join a tournament?',
-    answer: 'Navigate to the tournament details page and tap the "Join Tournament" button. Your team must meet the tournament requirements (sport, team size, etc.) to participate.',
+    answer:
+      'Navigate to the tournament details page and tap the "Join Tournament" button. Your team must meet the tournament requirements (sport, team size, etc.) to participate.',
   },
   {
     id: '3',
     question: 'How do I book a venue?',
-    answer: 'Go to the venue details page, select an available time slot in green, and tap "Book Selected Slot". Confirm your booking and you\'ll receive a confirmation.',
+    answer:
+      'Go to the venue details page, select an available time slot in green, and tap "Book Selected Slot". Confirm your booking and you\'ll receive a confirmation.',
   },
   {
     id: '4',
     question: 'Can I edit my team after creation?',
-    answer: 'Yes! If you\'re the team captain, you can edit team details from the team detail screen by tapping the edit button.',
+    answer:
+      "Yes! If you're the team captain, you can edit team details from the team detail screen by tapping the edit button.",
   },
   {
     id: '5',
     question: 'How do match invitations work?',
-    answer: 'When someone creates a match and invites your team, you\'ll see the invitation in the Matches tab. You can accept or decline the invitation. Both teams must accept for the match to be confirmed.',
+    answer:
+      "When someone creates a match and invites your team, you'll see the invitation in the Matches tab. You can accept or decline the invitation. Both teams must accept for the match to be confirmed.",
   },
   {
     id: '6',
     question: 'What are the different tournament formats?',
-    answer: 'Tournaments can be single elimination (lose once and you\'re out), double elimination (two chances), or round-robin (everyone plays everyone). The format is set when creating the tournament.',
+    answer:
+      "Tournaments can be single elimination (lose once and you're out), double elimination (two chances), or round-robin (everyone plays everyone). The format is set when creating the tournament.",
   },
   {
     id: '7',
     question: 'How do I view my upcoming matches?',
-    answer: 'Use the Calendar tab to see all your upcoming matches, tournaments, and bookings in a timeline view. You can also check the Matches tab for detailed match information.',
+    answer:
+      'Use the Calendar tab to see all your upcoming matches, tournaments, and bookings in a timeline view. You can also check the Matches tab for detailed match information.',
   },
   {
     id: '8',
     question: 'Can I cancel a venue booking?',
-    answer: 'Contact the venue owner directly using the contact information on the venue details page. Cancellation policies vary by venue.',
+    answer:
+      'Contact the venue owner directly using the contact information on the venue details page. Cancellation policies vary by venue.',
   },
   {
     id: '9',
     question: 'How do I become a venue owner?',
-    answer: 'Contact our admin team through the support email below. You\'ll need to provide venue details and verification documents.',
+    answer:
+      "Contact our admin team through the support email below. You'll need to provide venue details and verification documents.",
   },
   {
     id: '10',
     question: 'What if I find a bug or have feedback?',
-    answer: 'We\'d love to hear from you! Use the contact information below to report bugs or share your feedback.',
+    answer:
+      "We'd love to hear from you! Use the contact information below to report bugs or share your feedback.",
   },
 ];
 
@@ -78,16 +88,11 @@ export default function HelpScreen() {
       {/* FAQs Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>📚 Frequently Asked Questions</Text>
-        {faqs.map((faq) => (
+        {faqs.map(faq => (
           <View key={faq.id} style={styles.faqItem}>
-            <TouchableOpacity
-              style={styles.faqQuestion}
-              onPress={() => toggleFAQ(faq.id)}
-            >
+            <TouchableOpacity style={styles.faqQuestion} onPress={() => toggleFAQ(faq.id)}>
               <Text style={styles.questionText}>{faq.question}</Text>
-              <Text style={styles.expandIcon}>
-                {expandedId === faq.id ? '▼' : '▶'}
-              </Text>
+              <Text style={styles.expandIcon}>{expandedId === faq.id ? '▼' : '▶'}</Text>
             </TouchableOpacity>
             {expandedId === faq.id && (
               <View style={styles.faqAnswer}>
@@ -160,15 +165,11 @@ export default function HelpScreen() {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Version:</Text>
-            <Text style={styles.infoValue}>
-              {Constants.expoConfig?.version || '1.0.0'}
-            </Text>
+            <Text style={styles.infoValue}>{Constants.expoConfig?.version || '1.0.0'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Platform:</Text>
-            <Text style={styles.infoValue}>
-              {Constants.platform?.ios ? 'iOS' : 'Android'}
-            </Text>
+            <Text style={styles.infoValue}>{Constants.platform?.ios ? 'iOS' : 'Android'}</Text>
           </View>
         </View>
       </View>
@@ -197,9 +198,7 @@ export default function HelpScreen() {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Thank you for using Milokhe.lo! 🏆⚽🏀
-        </Text>
+        <Text style={styles.footerText}>Thank you for using Milokhe.lo! 🏆⚽🏀</Text>
         <Text style={styles.footerSubtext}>
           We're here to make sports management easier for everyone.
         </Text>

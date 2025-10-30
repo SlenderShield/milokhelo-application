@@ -12,9 +12,7 @@ const SETTINGS_SECTIONS = [
   },
   {
     title: 'Account',
-    items: [
-      { id: 'account', label: 'Account Management', icon: '⚙️' },
-    ],
+    items: [{ id: 'account', label: 'Account Management', icon: '⚙️' }],
   },
 ];
 
@@ -50,10 +48,10 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {SETTINGS_SECTIONS.map((section) => (
+      {SETTINGS_SECTIONS.map(section => (
         <View key={section.title} style={styles.section}>
           <Text style={styles.sectionTitle}>{section.title}</Text>
-          {section.items.map((item) => (
+          {section.items.map(item => (
             <TouchableOpacity
               key={item.id}
               style={styles.item}

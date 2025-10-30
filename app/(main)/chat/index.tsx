@@ -15,12 +15,7 @@ export default function ChatRoomsScreen() {
   const router = useRouter();
 
   // Fetch chat rooms
-  const {
-    data: chatRooms,
-    isLoading,
-    error,
-    refetch,
-  } = useGetChatRooms();
+  const { data: chatRooms, isLoading, error, refetch } = useGetChatRooms();
 
   const createRoom = useCreateChatRoom();
 
@@ -40,7 +35,7 @@ export default function ChatRoomsScreen() {
 
             try {
               // TODO: Add participant selection UI, for now create with empty participants array
-              const room = await createRoom.mutateAsync({ 
+              const room = await createRoom.mutateAsync({
                 name: roomName.trim(),
                 participants: [], // Should select participants in a proper UI
               });
@@ -85,11 +80,7 @@ export default function ChatRoomsScreen() {
   if (error) {
     return (
       <View style={styles.container}>
-        <ErrorState
-          title="Failed to load chat rooms"
-          message={error.message}
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load chat rooms" message={error.message} onRetry={refetch} />
       </View>
     );
   }
@@ -120,7 +111,7 @@ export default function ChatRoomsScreen() {
     <View style={styles.container}>
       <FlatList
         data={chatRooms}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -130,10 +121,7 @@ export default function ChatRoomsScreen() {
           />
         }
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.roomCard}
-            onPress={() => router.push(`/chat/${item.id}`)}
-          >
+          <TouchableOpacity style={styles.roomCard} onPress={() => router.push(`/chat/${item.id}`)}>
             <View style={styles.roomAvatar}>
               <Text style={styles.roomAvatarText}>
                 {(item.name || 'CR').substring(0, 2).toUpperCase()}
@@ -144,9 +132,7 @@ export default function ChatRoomsScreen() {
               <View style={styles.roomHeader}>
                 <Text style={styles.roomName}>{item.name || 'Chat Room'}</Text>
                 {item.lastMessage?.timestamp && (
-                  <Text style={styles.roomTime}>
-                    {formatTime(item.lastMessage.timestamp)}
-                  </Text>
+                  <Text style={styles.roomTime}>{formatTime(item.lastMessage.timestamp)}</Text>
                 )}
               </View>
 

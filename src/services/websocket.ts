@@ -1,6 +1,6 @@
 /**
  * WebSocket Service for Real-time Chat
- * 
+ *
  * Provides WebSocket connection management, message handling,
  * and automatic reconnection for real-time chat functionality.
  */
@@ -18,18 +18,18 @@ export enum SocketEvents {
   RECONNECT_ATTEMPT = 'reconnect_attempt',
   RECONNECT_ERROR = 'reconnect_error',
   RECONNECT_FAILED = 'reconnect_failed',
-  
+
   // Authentication
   AUTHENTICATE = 'authenticate',
   AUTHENTICATED = 'authenticated',
   UNAUTHORIZED = 'unauthorized',
-  
+
   // Chat room events
   JOIN_ROOM = 'join_room',
   LEAVE_ROOM = 'leave_room',
   ROOM_JOINED = 'room_joined',
   ROOM_LEFT = 'room_left',
-  
+
   // Message events
   SEND_MESSAGE = 'send_message',
   NEW_MESSAGE = 'new_message',
@@ -37,13 +37,13 @@ export enum SocketEvents {
   MESSAGE_DELIVERED = 'message_delivered',
   MESSAGE_READ = 'message_read',
   MESSAGE_DELETED = 'message_deleted',
-  
+
   // Typing indicators
   TYPING_START = 'typing_start',
   TYPING_STOP = 'typing_stop',
   USER_TYPING = 'user_typing',
   USER_STOPPED_TYPING = 'user_stopped_typing',
-  
+
   // Presence
   USER_ONLINE = 'user_online',
   USER_OFFLINE = 'user_offline',
@@ -123,7 +123,7 @@ class WebSocketService {
 
     try {
       this.isConnecting = true;
-      
+
       // Get authentication token
       const token = await AsyncStorage.getItem('auth_token');
       if (!token) {
@@ -194,7 +194,7 @@ class WebSocketService {
       console.log('[WebSocket] Disconnected:', reason);
       this.isAuthenticated = false;
       this.emit('connection_status', { status: 'disconnected', reason });
-      
+
       // Attempt to reconnect
       if (this.config.reconnection && reason === 'io server disconnect') {
         this.reconnect();
@@ -209,7 +209,7 @@ class WebSocketService {
     this.socket.on(SocketEvents.RECONNECT, (attemptNumber: number) => {
       console.log('[WebSocket] Reconnected after', attemptNumber, 'attempts');
       this.emit('reconnected', { attempts: attemptNumber });
-      
+
       // Rejoin rooms after reconnection
       this.rejoinRooms();
     });

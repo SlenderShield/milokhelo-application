@@ -1,14 +1,24 @@
 /**
  * WebSocket Hook for Real-time Chat
- * 
+ *
  * Custom React hook to manage WebSocket connections and events
  * in chat components with automatic cleanup.
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { websocketService, SocketEvents, ChatMessage, TypingIndicator } from '@/src/services/websocket';
+import {
+  websocketService,
+  SocketEvents,
+  ChatMessage,
+  TypingIndicator,
+} from '@/src/services/websocket';
 
-export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'reconnecting' | 'error';
+export type ConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting'
+  | 'error';
 
 interface UseWebSocketOptions {
   autoConnect?: boolean;
@@ -33,13 +43,13 @@ interface UseWebSocketReturn {
  */
 export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketReturn {
   const { autoConnect = true, roomId } = options;
-  
+
   const [isConnected, setIsConnected] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<TypingIndicator[]>([]);
   const [error, setError] = useState<Error | null>(null);
-  
+
   const currentRoomRef = useRef<string | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -135,7 +145,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
     const handleNewMessage = (message: ChatMessage) => {
       console.log('[useWebSocket] New message:', message);
       setMessages(prev => [...prev, message]);
-      
+
       // Mark as delivered
       websocketService.markDelivered(message.id);
     };
@@ -182,7 +192,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
         content,
         type: 'text',
       });
-      
+
       // Add to local messages immediately for optimistic update
       setMessages(prev => [...prev, message]);
     } catch (err) {
@@ -194,14 +204,14 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
   // Start typing
   const startTyping = useCallback(() => {
     if (!currentRoomRef.current) return;
-    
+
     websocketService.startTyping(currentRoomRef.current);
-    
+
     // Auto-stop typing after 3 seconds
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     typingTimeoutRef.current = setTimeout(() => {
       stopTyping();
     }, 3000);
@@ -210,12 +220,12 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
   // Stop typing
   const stopTyping = useCallback(() => {
     if (!currentRoomRef.current) return;
-    
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = null;
     }
-    
+
     websocketService.stopTyping(currentRoomRef.current);
   }, []);
 
@@ -226,11 +236,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       if (currentRoomRef.current) {
         await websocketService.leaveRoom(currentRoomRef.current);
       }
-      
+
       // Join new room
       await websocketService.joinRoom(newRoomId);
       currentRoomRef.current = newRoomId;
-      
+
       // Clear messages when switching rooms
       setMessages([]);
       setTypingUsers([]);
@@ -352,9 +362,7 @@ export function useRoomUsers(roomId: string | null) {
     const handleUserOffline = (data: any) => {
       if (data.roomId === roomId) {
         setUsers(prev =>
-          prev.map(u =>
-            u.userId === data.userId ? { ...u, status: 'offline' } : u
-          )
+          prev.map(u => (u.userId === data.userId ? { ...u, status: 'offline' } : u))
         );
       }
     };

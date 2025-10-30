@@ -4,11 +4,15 @@ import { z } from 'zod';
 export const ApiErrorSchema = z.object({
   status: z.literal('error'),
   message: z.string(),
-  errors: z.array(z.object({
-    field: z.string().optional(),
-    message: z.string(),
-    value: z.any().optional(),
-  })).optional(),
+  errors: z
+    .array(
+      z.object({
+        field: z.string().optional(),
+        message: z.string(),
+        value: z.any().optional(),
+      })
+    )
+    .optional(),
   code: z.string().optional(),
 });
 

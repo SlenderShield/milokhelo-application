@@ -14,7 +14,7 @@
 
 2. **OAuth Service** (`src/services/oauth.ts`)
    - Google OAuth integration
-   - Facebook OAuth integration  
+   - Facebook OAuth integration
    - Apple OAuth integration (iOS)
    - OAuth flow initiation with expo-web-browser
    - Redirect URI generation
@@ -161,7 +161,7 @@ const appId = 'YOUR_FACEBOOK_APP_ID';
 // Exchange code for token
 const tokenResponse = await fetch(
   `https://graph.facebook.com/v18.0/oauth/access_token?` +
-  `client_id=${appId}&client_secret=${appSecret}&code=${code}&redirect_uri=${redirectUri}`
+    `client_id=${appId}&client_secret=${appSecret}&code=${code}&redirect_uri=${redirectUri}`
 );
 
 // Get user data
@@ -236,15 +236,15 @@ const googleClient = new OAuth2Client(
 router.post('/oauth/google', async (req, res) => {
   try {
     const { code } = req.body;
-    
+
     // Exchange code for tokens
     const { tokens } = await googleClient.getToken(code);
     googleClient.setCredentials(tokens);
-    
+
     // Get user info
     const oauth2 = google.oauth2({ version: 'v2', auth: googleClient });
     const { data } = await oauth2.userinfo.get();
-    
+
     // Find or create user
     let user = await User.findOne({ email: data.email });
     if (!user) {
@@ -256,10 +256,10 @@ router.post('/oauth/google', async (req, res) => {
         oauthId: data.id,
       });
     }
-    
+
     // Generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-    
+
     res.json({ token, user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -313,15 +313,11 @@ import { initiateGoogleOAuth, exchangeOAuthCode } from '@/src/services/oauth';
 
 const handleLogin = async () => {
   const result = await initiateGoogleOAuth();
-  
+
   if (result.type === 'success' && result.token) {
     // Exchange with backend
-    const auth = await exchangeOAuthCode(
-      'google',
-      result.token,
-      'https://api.milokhelo.com'
-    );
-    
+    const auth = await exchangeOAuthCode('google', result.token, 'https://api.milokhelo.com');
+
     if (auth.success) {
       // Login user with token
       await login(auth.token);
@@ -404,7 +400,7 @@ Create a mock OAuth service for testing without providers:
 // src/services/oauth.mock.ts
 export async function mockGoogleOAuth(): Promise<OAuthResult> {
   await new Promise(resolve => setTimeout(resolve, 2000));
-  
+
   return {
     type: 'success',
     token: 'mock_auth_code_123',

@@ -60,18 +60,19 @@ milokhelo-application/
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
+| Document                                             | Description                                       |
+| ---------------------------------------------------- | ------------------------------------------------- |
 | **[Feature Checklist](./docs/feature_checklist.md)** | ✅ Complete implementation tracker with TODO list |
-| **[Setup Guide](./docs/README.md)** | Installation, configuration, troubleshooting |
-| **[API Reference](./docs/api_reference.md)** | All endpoints mapped to hooks |
-| **[Navigation Map](./docs/navigation_map.md)** | Route-to-screen-to-API mapping |
+| **[Setup Guide](./docs/README.md)**                  | Installation, configuration, troubleshooting      |
+| **[API Reference](./docs/api_reference.md)**         | All endpoints mapped to hooks                     |
+| **[Navigation Map](./docs/navigation_map.md)**       | Route-to-screen-to-API mapping                    |
 
 ---
 
 ## ✨ What's Implemented
 
 ### ✅ Core Infrastructure (100%)
+
 - **Configuration**: package.json, tsconfig, Expo config, environment variables
 - **API Layer**: 99+ React Query hooks across 12 modules with full error handling
 - **Models**: 50+ Zod schemas for runtime validation
@@ -79,6 +80,7 @@ milokhelo-application/
 - **Navigation**: Expo Router v6 with tab + stack navigation
 
 ### ✅ Complete Feature Set (97%)
+
 - **Authentication**: Login, Register, Password Reset, OAuth (Google/Facebook), Session Management
 - **User Management**: Profile, Stats, Achievements, Friends System
 - **Teams**: Create, Edit, Join/Leave, Member Management, Captain Controls
@@ -97,6 +99,7 @@ milokhelo-application/
 ## � What's Remaining
 
 ### Optional Enhancements
+
 - [ ] Uncomment venue owner actions (needs useAuth import fix)
 - [ ] Fix TypeScript implicit 'any' warnings (cosmetic)
 - [ ] Implement social media button links (Help screen)
@@ -108,6 +111,7 @@ milokhelo-application/
 - [ ] CI/CD pipeline setup
 
 ### Production Checklist
+
 - [ ] Update API_BASE_URL for production environment
 - [ ] Add error tracking (Sentry or similar)
 - [ ] Implement analytics tracking
@@ -122,22 +126,23 @@ milokhelo-application/
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Framework** | React Native 0.82 + Expo 54 |
-| **Routing** | Expo Router v6 (file-based) |
-| **Language** | TypeScript 5.9 (strict mode) |
-| **State** | @tanstack/react-query v5.28 |
-| **HTTP** | Axios 1.6.7 |
-| **Validation** | Zod 4.1.12 |
-| **Auth Storage** | expo-secure-store 15.0.7 |
-| **Icons** | @expo/vector-icons 15.0.3 |
+| Category         | Technology                   |
+| ---------------- | ---------------------------- |
+| **Framework**    | React Native 0.82 + Expo 54  |
+| **Routing**      | Expo Router v6 (file-based)  |
+| **Language**     | TypeScript 5.9 (strict mode) |
+| **State**        | @tanstack/react-query v5.28  |
+| **HTTP**         | Axios 1.6.7                  |
+| **Validation**   | Zod 4.1.12                   |
+| **Auth Storage** | expo-secure-store 15.0.7     |
+| **Icons**        | @expo/vector-icons 15.0.3    |
 
 ---
 
 ## 📖 API Documentation
 
 All 90+ API endpoints are fully documented with:
+
 - Request/response schemas
 - Authentication requirements
 - React Query hook mappings
@@ -173,18 +178,21 @@ app/
 ## 🎯 Development Phases Complete
 
 ### ✅ Phase 1: Infrastructure & API Layer (100%)
+
 - React Query hooks for all 12 modules (99+ hooks)
 - Zod schemas and TypeScript types
 - API client with interceptors and error handling
 - Authentication context and session management
 
 ### ✅ Phase 2: Essential Screens (100%)
+
 - Auth screens: Login, Register, Password Reset
 - Main screens: Dashboard, Profile
 - Match screens: List, Detail, Create, Edit
 - Teams, Tournaments, Venues, Chat, Notifications
 
 ### ✅ Phase 3: Create/Edit Forms (100%)
+
 - Team Create/Edit with captain controls
 - Match Create/Edit with participant management
 - Tournament Create/Edit with bracket generation
@@ -192,6 +200,7 @@ app/
 - Profile Edit with settings
 
 ### ✅ Phase 4: Advanced Features (100%)
+
 - Tournament bracket visualization (Knockout/League)
 - Venue booking system with availability
 - Calendar integration with Google sync
@@ -199,6 +208,7 @@ app/
 - Settings screens (Notifications, Privacy)
 
 ### ✅ Phase 5: Polish & Production Ready (100%)
+
 - Floating Action Buttons (FAB) for quick actions
 - Edit buttons with permission checks
 - Calendar tab in main navigation

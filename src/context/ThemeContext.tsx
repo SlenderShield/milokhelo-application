@@ -1,6 +1,6 @@
 /**
  * Theme Context for MiloKhelo
- * 
+ *
  * Provides theme state management and persistence
  */
 
@@ -38,7 +38,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const loadThemePreference = async () => {
     try {
       const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
+      if (
+        savedTheme &&
+        (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')
+      ) {
         setThemeModeState(savedTheme as ThemeMode);
       }
     } catch (error) {
@@ -65,9 +68,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Toggle between light and dark
   const toggleTheme = () => {
-    const newMode = themeMode === 'dark' || (themeMode === 'system' && systemColorScheme === 'dark')
-      ? 'light'
-      : 'dark';
+    const newMode =
+      themeMode === 'dark' || (themeMode === 'system' && systemColorScheme === 'dark')
+        ? 'light'
+        : 'dark';
     setThemeMode(newMode);
   };
 

@@ -142,9 +142,7 @@ export default function EditTeamScreen() {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>🔒</Text>
         <Text style={styles.errorTitle}>Access Denied</Text>
-        <Text style={styles.errorText}>
-          Only the team captain can edit this team
-        </Text>
+        <Text style={styles.errorText}>Only the team captain can edit this team</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -169,7 +167,7 @@ export default function EditTeamScreen() {
               setLogoUri(uri);
               Alert.alert('Success', `Team logo selected (${(size / 1024).toFixed(0)}KB)`);
             }}
-            onError={(error) => {
+            onError={error => {
               Alert.alert('Error', error.message);
             }}
             compressionOptions={{
@@ -181,13 +179,7 @@ export default function EditTeamScreen() {
             disabled={updateTeam.isPending}
           >
             <View style={styles.avatarWrapper}>
-              <Avatar
-                uri={logoUri}
-                name={name}
-                size={100}
-                borderWidth={3}
-                borderColor="#6200ee"
-              />
+              <Avatar uri={logoUri} name={name} size={100} borderWidth={3} borderColor="#6200ee" />
               <View style={styles.avatarBadge}>
                 <Text style={styles.avatarBadgeText}>📷</Text>
               </View>
@@ -205,7 +197,7 @@ export default function EditTeamScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter team name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -227,7 +219,7 @@ export default function EditTeamScreen() {
             Sport <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.sportGrid}>
-            {SPORTS.map((sportOption) => (
+            {SPORTS.map(sportOption => (
               <TouchableOpacity
                 key={sportOption}
                 style={[
@@ -289,10 +281,7 @@ export default function EditTeamScreen() {
 
         {/* Update Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            updateTeam.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, updateTeam.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={updateTeam.isPending}
         >

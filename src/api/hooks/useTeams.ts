@@ -50,9 +50,8 @@ export const useUpdateTeam = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TeamUpdate }) =>
-      teamsApi.updateTeam(id, data),
-    onSuccess: (updatedTeam) => {
+    mutationFn: ({ id, data }: { id: string; data: TeamUpdate }) => teamsApi.updateTeam(id, data),
+    onSuccess: updatedTeam => {
       // Update the specific team in cache
       queryClient.setQueryData(teamKeys.detail(updatedTeam.id), updatedTeam);
       // Invalidate lists to refetch
@@ -81,8 +80,7 @@ export const useJoinTeam = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data?: TeamJoin }) =>
-      teamsApi.joinTeam(id, data),
+    mutationFn: ({ id, data }: { id: string; data?: TeamJoin }) => teamsApi.joinTeam(id, data),
     onSuccess: (_, { id }) => {
       // Invalidate the specific team to refetch updated members
       queryClient.invalidateQueries({ queryKey: teamKeys.detail(id) });

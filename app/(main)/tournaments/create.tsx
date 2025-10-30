@@ -123,7 +123,7 @@ export default function CreateTournamentScreen() {
       }
 
       const tournament = await createTournament.mutateAsync(tournamentData);
-      
+
       Alert.alert('Success', 'Tournament created successfully!', [
         {
           text: 'OK',
@@ -154,7 +154,7 @@ export default function CreateTournamentScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter tournament name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -176,7 +176,7 @@ export default function CreateTournamentScreen() {
             Type <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.typeContainer}>
-            {TOURNAMENT_TYPES.map((typeOption) => (
+            {TOURNAMENT_TYPES.map(typeOption => (
               <TouchableOpacity
                 key={typeOption.value}
                 style={[
@@ -193,10 +193,7 @@ export default function CreateTournamentScreen() {
                 disabled={createTournament.isPending}
               >
                 <Text
-                  style={[
-                    styles.typeLabel,
-                    type === typeOption.value && styles.typeLabelSelected,
-                  ]}
+                  style={[styles.typeLabel, type === typeOption.value && styles.typeLabelSelected]}
                 >
                   {typeOption.label}
                 </Text>
@@ -220,7 +217,7 @@ export default function CreateTournamentScreen() {
             Sport <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.sportGrid}>
-            {SPORTS.map((sportOption) => (
+            {SPORTS.map(sportOption => (
               <TouchableOpacity
                 key={sportOption}
                 style={[
@@ -274,7 +271,7 @@ export default function CreateTournamentScreen() {
             style={[styles.input, errors.maxParticipants ? styles.inputError : null]}
             placeholder="e.g., 16"
             value={maxParticipants}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setMaxParticipants(text);
               if (errors.maxParticipants) {
                 setErrors({ ...errors, maxParticipants: undefined });
@@ -287,9 +284,7 @@ export default function CreateTournamentScreen() {
           {errors.maxParticipants ? (
             <Text style={styles.errorText}>{errors.maxParticipants}</Text>
           ) : (
-            <Text style={styles.hintText}>
-              Leave empty for unlimited participants
-            </Text>
+            <Text style={styles.hintText}>Leave empty for unlimited participants</Text>
           )}
         </View>
 
@@ -300,7 +295,7 @@ export default function CreateTournamentScreen() {
             style={[styles.input, errors.startDate ? styles.inputError : null]}
             placeholder="YYYY-MM-DD"
             value={startDate}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setStartDate(text);
               if (errors.startDate) {
                 setErrors({ ...errors, startDate: undefined });
@@ -345,10 +340,7 @@ export default function CreateTournamentScreen() {
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            createTournament.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, createTournament.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={createTournament.isPending}
         >

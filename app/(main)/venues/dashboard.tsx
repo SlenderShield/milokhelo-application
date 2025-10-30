@@ -14,7 +14,7 @@ import { useGetMyVenues, useGetVenueBookings } from '@/src/api/hooks';
 export default function VenueDashboardScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const { data: venues, isLoading, refetch } = useGetMyVenues();
 
   const onRefresh = async () => {
@@ -36,9 +36,7 @@ export default function VenueDashboardScreen() {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyIcon}>🏟️</Text>
         <Text style={styles.emptyTitle}>No Venues Yet</Text>
-        <Text style={styles.emptyText}>
-          Create your first venue to start managing bookings
-        </Text>
+        <Text style={styles.emptyText}>Create your first venue to start managing bookings</Text>
         <TouchableOpacity
           style={styles.createButton}
           onPress={() => router.push('/venues/create' as any)}
@@ -52,9 +50,7 @@ export default function VenueDashboardScreen() {
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Venues</Text>
@@ -80,10 +76,7 @@ function VenueCard({ venue, router }: { venue: any; router: any }) {
   const approvedCount = bookings?.filter((b: any) => b.status === 'approved').length || 0;
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => router.push(`/venues/${venue.id}`)}
-    >
+    <TouchableOpacity style={styles.card} onPress={() => router.push(`/venues/${venue.id}`)}>
       <View style={styles.cardHeader}>
         <Text style={styles.venueName}>{venue.name}</Text>
         <Text style={styles.venueType}>{venue.sport}</Text>
@@ -91,9 +84,7 @@ function VenueCard({ venue, router }: { venue: any; router: any }) {
 
       <View style={styles.cardContent}>
         <Text style={styles.venueLocation}>📍 {venue.location}</Text>
-        <Text style={styles.venuePrice}>
-          💰 ${venue.pricePerHour}/hour
-        </Text>
+        <Text style={styles.venuePrice}>💰 ${venue.pricePerHour}/hour</Text>
       </View>
 
       <View style={styles.statsContainer}>
@@ -116,7 +107,7 @@ function VenueCard({ venue, router }: { venue: any; router: any }) {
       <View style={styles.cardActions}>
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={(e) => {
+          onPress={e => {
             e.stopPropagation();
             router.push(`/venues/${venue.id}/bookings` as any);
           }}
@@ -125,7 +116,7 @@ function VenueCard({ venue, router }: { venue: any; router: any }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionButton, styles.actionButtonSecondary]}
-          onPress={(e) => {
+          onPress={e => {
             e.stopPropagation();
             router.push(`/venues/${venue.id}/edit` as any);
           }}

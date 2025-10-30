@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useGetMatchById } from '@/src/api/hooks/useMatches';
 
@@ -43,9 +50,7 @@ export default function MatchDetailScreen() {
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Date:</Text>
-          <Text style={styles.detailValue}>
-            {new Date(match.startAt).toLocaleString()}
-          </Text>
+          <Text style={styles.detailValue}>{new Date(match.startAt).toLocaleString()}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Location:</Text>

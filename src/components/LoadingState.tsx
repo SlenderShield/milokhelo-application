@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  ViewStyle,
-  StyleProp,
-} from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import {
   SkeletonCard,
   SkeletonListItem,
@@ -20,7 +13,7 @@ import {
 
 /**
  * Loading State Component
- * 
+ *
  * Provides consistent loading states across the application.
  * Supports different loading types: spinner, skeleton, and custom content.
  */
@@ -33,40 +26,32 @@ interface LoadingStateProps {
    * - 'inline': Small inline spinner for buttons/actions
    */
   type?: 'spinner' | 'skeleton' | 'inline';
-  
+
   /**
    * Optional loading message to display
    */
   message?: string;
-  
+
   /**
    * Number of skeleton items to show (for skeleton type)
    */
   count?: number;
-  
+
   /**
    * Skeleton variant to use
    */
-  skeletonType?:
-    | 'card'
-    | 'list'
-    | 'team'
-    | 'tournament'
-    | 'venue'
-    | 'match'
-    | 'profile'
-    | 'chat';
-  
+  skeletonType?: 'card' | 'list' | 'team' | 'tournament' | 'venue' | 'match' | 'profile' | 'chat';
+
   /**
    * Custom style for the container
    */
   style?: StyleProp<ViewStyle>;
-  
+
   /**
    * Spinner color
    */
   color?: string;
-  
+
   /**
    * Spinner size
    */
@@ -86,22 +71,14 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   size = 'large',
 }) => {
   if (type === 'inline') {
-    return (
-      <ActivityIndicator
-        size="small"
-        color={color}
-        style={[styles.inline, style]}
-      />
-    );
+    return <ActivityIndicator size="small" color={color} style={[styles.inline, style]} />;
   }
 
   if (type === 'skeleton') {
     return (
       <View style={[styles.skeletonContainer, style]}>
         {Array.from({ length: count }).map((_, index) => (
-          <React.Fragment key={index}>
-            {renderSkeletonByType(skeletonType)}
-          </React.Fragment>
+          <React.Fragment key={index}>{renderSkeletonByType(skeletonType)}</React.Fragment>
         ))}
       </View>
     );
@@ -151,44 +128,24 @@ const renderSkeletonByType = (type: LoadingStateProps['skeletonType']) => {
  * Specialized loading states for common scenarios
  */
 
-export const ListLoadingState: React.FC<{ count?: number }> = ({
-  count = 5,
-}) => {
-  return (
-    <LoadingState type="skeleton" skeletonType="list" count={count} />
-  );
+export const ListLoadingState: React.FC<{ count?: number }> = ({ count = 5 }) => {
+  return <LoadingState type="skeleton" skeletonType="list" count={count} />;
 };
 
-export const TeamsLoadingState: React.FC<{ count?: number }> = ({
-  count = 3,
-}) => {
-  return (
-    <LoadingState type="skeleton" skeletonType="team" count={count} />
-  );
+export const TeamsLoadingState: React.FC<{ count?: number }> = ({ count = 3 }) => {
+  return <LoadingState type="skeleton" skeletonType="team" count={count} />;
 };
 
-export const TournamentsLoadingState: React.FC<{ count?: number }> = ({
-  count = 3,
-}) => {
-  return (
-    <LoadingState type="skeleton" skeletonType="tournament" count={count} />
-  );
+export const TournamentsLoadingState: React.FC<{ count?: number }> = ({ count = 3 }) => {
+  return <LoadingState type="skeleton" skeletonType="tournament" count={count} />;
 };
 
-export const VenuesLoadingState: React.FC<{ count?: number }> = ({
-  count = 3,
-}) => {
-  return (
-    <LoadingState type="skeleton" skeletonType="venue" count={count} />
-  );
+export const VenuesLoadingState: React.FC<{ count?: number }> = ({ count = 3 }) => {
+  return <LoadingState type="skeleton" skeletonType="venue" count={count} />;
 };
 
-export const MatchesLoadingState: React.FC<{ count?: number }> = ({
-  count = 3,
-}) => {
-  return (
-    <LoadingState type="skeleton" skeletonType="match" count={count} />
-  );
+export const MatchesLoadingState: React.FC<{ count?: number }> = ({ count = 3 }) => {
+  return <LoadingState type="skeleton" skeletonType="match" count={count} />;
 };
 
 export const ProfileLoadingState: React.FC = () => {
@@ -202,9 +159,7 @@ export const ChatLoadingState: React.FC = () => {
 /**
  * Button loading state (inline spinner)
  */
-export const ButtonLoadingState: React.FC<{ color?: string }> = ({
-  color = '#fff',
-}) => {
+export const ButtonLoadingState: React.FC<{ color?: string }> = ({ color = '#fff' }) => {
   return <LoadingState type="inline" color={color} />;
 };
 
@@ -216,12 +171,7 @@ export const FullScreenLoadingState: React.FC<{
   transparent?: boolean;
 }> = ({ message, transparent = false }) => {
   return (
-    <View
-      style={[
-        styles.fullScreen,
-        transparent && styles.fullScreenTransparent,
-      ]}
-    >
+    <View style={[styles.fullScreen, transparent && styles.fullScreenTransparent]}>
       <ActivityIndicator size="large" color="#007AFF" />
       {message && <Text style={styles.fullScreenMessage}>{message}</Text>}
     </View>
@@ -247,10 +197,7 @@ export const EmptyState: React.FC<{
       {message && <Text style={styles.emptyStateMessage}>{message}</Text>}
       {action && (
         <View style={styles.emptyStateAction}>
-          <Text
-            style={styles.emptyStateActionText}
-            onPress={action.onPress}
-          >
+          <Text style={styles.emptyStateActionText} onPress={action.onPress}>
             {action.label}
           </Text>
         </View>

@@ -117,7 +117,7 @@ export default function VenueMap({
 
           const isSelected = selectedVenueId === venue.id;
           const coords = geoLocationToCoords(venue.location);
-          
+
           return (
             <Marker
               key={venue.id}
@@ -142,7 +142,7 @@ export default function VenueMap({
             <Text style={styles.controlButtonText}>📍</Text>
           </TouchableOpacity>
         )}
-        
+
         {venues.length > 0 && (
           <TouchableOpacity
             style={styles.controlButton}
@@ -162,7 +162,10 @@ export default function VenueMap({
             <Text style={styles.venueAddress}>{selectedVenue.address}</Text>
             {userLocation && selectedVenue.location && (
               <Text style={styles.venueDistance}>
-                {formatDistance(calculateDistance(userLocation, geoLocationToCoords(selectedVenue.location)))} away
+                {formatDistance(
+                  calculateDistance(userLocation, geoLocationToCoords(selectedVenue.location))
+                )}{' '}
+                away
               </Text>
             )}
           </View>

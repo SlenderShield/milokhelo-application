@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  
+
   const { data: user, isLoading, refetch } = useGetCurrentUser();
   const loginMutation = useLogin();
   const registerMutation = useRegister();

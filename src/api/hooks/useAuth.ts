@@ -41,10 +41,10 @@ export const useValidateSession = () =>
 // Register
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: RegisterUser) => authEndpoints.register(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(authKeys.me(), data);
     },
   });
@@ -53,10 +53,10 @@ export const useRegister = () => {
 // Login
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: LoginUser) => authEndpoints.login(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(authKeys.me(), data);
     },
   });
@@ -65,7 +65,7 @@ export const useLogin = () => {
 // Logout
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: authEndpoints.logout,
     onSuccess: async () => {
@@ -117,7 +117,7 @@ export const useChangePassword = () =>
 // Deactivate Account
 export const useDeactivateAccount = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: authEndpoints.deactivateAccount,
     onSuccess: async () => {

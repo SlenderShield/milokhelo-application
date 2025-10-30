@@ -15,11 +15,7 @@ export const mapKeys = {
 // ===== QUERIES =====
 
 // Get Nearby Venue Pins
-export const useGetNearbyVenuePins = (params: {
-  lat: number;
-  lng: number;
-  radius?: number;
-}) =>
+export const useGetNearbyVenuePins = (params: { lat: number; lng: number; radius?: number }) =>
   useQuery({
     queryKey: mapKeys.nearby(params),
     queryFn: () => mapsApi.getNearbyVenuePins(params),
@@ -28,10 +24,7 @@ export const useGetNearbyVenuePins = (params: {
   });
 
 // Get Entity Location
-export const useGetEntityLocation = (
-  entityType: 'match' | 'tournament',
-  entityId: string
-) =>
+export const useGetEntityLocation = (entityType: 'match' | 'tournament', entityId: string) =>
   useQuery({
     queryKey: mapKeys.entity(entityType, entityId),
     queryFn: () => mapsApi.getEntityLocation(entityType, entityId),

@@ -26,16 +26,16 @@ export function usePushNotifications() {
 
   useEffect(() => {
     // Register for push notifications
-    registerForPushNotificationsAsync().then(async (token) => {
+    registerForPushNotificationsAsync().then(async token => {
       if (token) {
         setExpoPushToken(token);
         setIsRegistered(true);
 
         // Register token with backend (use 'android' or 'ios' based on platform)
         try {
-          await registerToken.mutateAsync({ 
-            token, 
-            platform: 'android' // This would be determined by Platform.OS
+          await registerToken.mutateAsync({
+            token,
+            platform: 'android', // This would be determined by Platform.OS
           });
           console.log('Push token registered with backend');
         } catch (error) {
@@ -47,11 +47,11 @@ export function usePushNotifications() {
     // Set up notification listeners
     const listeners = setupNotificationListeners(
       // When notification is received (app in foreground)
-      (notification) => {
+      notification => {
         setNotification(notification);
       },
       // When user taps on notification
-      (response) => {
+      response => {
         handleNotificationResponse(response);
       }
     );

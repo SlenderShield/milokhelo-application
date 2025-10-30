@@ -44,26 +44,14 @@ export function Avatar({
   if (uri) {
     return (
       <View style={[containerStyle, style]}>
-        <Image
-          source={{ uri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <Image source={{ uri }} style={styles.image} resizeMode="cover" />
       </View>
     );
   }
 
   return (
     <View style={[containerStyle, style]}>
-      <Text
-        style={[
-          styles.initialsText,
-          { fontSize },
-          textStyle,
-        ]}
-      >
-        {initials}
-      </Text>
+      <Text style={[styles.initialsText, { fontSize }, textStyle]}>{initials}</Text>
     </View>
   );
 }
@@ -77,15 +65,12 @@ function getInitials(name: string): string {
   }
 
   const parts = name.trim().split(' ');
-  
+
   if (parts.length === 1) {
     return parts[0].charAt(0).toUpperCase();
   }
 
-  return (
-    parts[0].charAt(0).toUpperCase() +
-    parts[parts.length - 1].charAt(0).toUpperCase()
-  );
+  return parts[0].charAt(0).toUpperCase() + parts[parts.length - 1].charAt(0).toUpperCase();
 }
 
 /**
@@ -173,7 +158,7 @@ export function AvatarGroup({
           />
         </View>
       ))}
-      
+
       {remainingCount > 0 && (
         <View
           style={[
@@ -191,14 +176,7 @@ export function AvatarGroup({
             },
           ]}
         >
-          <Text
-            style={[
-              styles.remainingText,
-              { fontSize: size * 0.35 },
-            ]}
-          >
-            +{remainingCount}
-          </Text>
+          <Text style={[styles.remainingText, { fontSize: size * 0.35 }]}>+{remainingCount}</Text>
         </View>
       )}
     </View>

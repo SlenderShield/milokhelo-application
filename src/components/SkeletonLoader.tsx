@@ -1,15 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  Animated,
-  ViewStyle,
-  StyleProp,
-} from 'react-native';
+import { View, StyleSheet, Animated, ViewStyle, StyleProp } from 'react-native';
 
 /**
  * Skeleton Loader Component
- * 
+ *
  * Provides animated skeleton placeholders for loading states.
  * Supports different shapes and sizes for various content types.
  */
@@ -262,16 +256,9 @@ export const SkeletonProfileHeader: React.FC = () => {
 /**
  * Skeleton for chat message
  */
-export const SkeletonChatMessage: React.FC<{ isOwn?: boolean }> = ({
-  isOwn = false,
-}) => {
+export const SkeletonChatMessage: React.FC<{ isOwn?: boolean }> = ({ isOwn = false }) => {
   return (
-    <View
-      style={[
-        styles.chatMessage,
-        isOwn ? styles.chatMessageOwn : styles.chatMessageOther,
-      ]}
-    >
+    <View style={[styles.chatMessage, isOwn ? styles.chatMessageOwn : styles.chatMessageOther]}>
       {!isOwn && <SkeletonAvatar size={30} />}
       <View style={styles.chatMessageContent}>
         <SkeletonText lines={2} width="100%" lastLineWidth="60%" />

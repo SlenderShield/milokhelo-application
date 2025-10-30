@@ -5,6 +5,7 @@ A comprehensive collection of reusable form components for React Native with Rea
 ## Components
 
 ### FormInput
+
 Text input field with label, placeholder, error handling, and multiline support.
 
 ```tsx
@@ -17,10 +18,11 @@ import { FormInput } from '@/src/components/forms';
   placeholder="Enter your name"
   required
   error={errors.name?.message}
-/>
+/>;
 ```
 
 ### FormTextArea
+
 Multi-line text input, built on top of FormInput.
 
 ```tsx
@@ -33,10 +35,11 @@ import { FormTextArea } from '@/src/components/forms';
   placeholder="Enter description"
   numberOfLines={4}
   maxLength={500}
-/>
+/>;
 ```
 
 ### FormSelect
+
 Single-select dropdown with modal picker.
 
 ```tsx
@@ -53,10 +56,11 @@ import { FormSelect } from '@/src/components/forms';
   ]}
   required
   error={errors.sport?.message}
-/>
+/>;
 ```
 
 ### FormMultiSelect
+
 Multi-select dropdown with checkboxes.
 
 ```tsx
@@ -73,10 +77,11 @@ import { FormMultiSelect } from '@/src/components/forms';
   ]}
   required
   error={errors.sports?.message}
-/>
+/>;
 ```
 
 ### FormSwitch
+
 Toggle switch with label and description.
 
 ```tsx
@@ -87,10 +92,11 @@ import { FormSwitch } from '@/src/components/forms';
   control={control}
   label="Private"
   description="Only invited members can join"
-/>
+/>;
 ```
 
 ### FormDatePicker
+
 Date, time, or datetime picker using @react-native-community/datetimepicker.
 
 ```tsx
@@ -105,10 +111,11 @@ import { FormDatePicker } from '@/src/components/forms';
   minimumDate={new Date()}
   required
   error={errors.startDate?.message}
-/>
+/>;
 ```
 
 ### LocationPicker
+
 Location picker with GPS and manual entry support.
 
 ```tsx
@@ -120,10 +127,11 @@ import { LocationPicker } from '@/src/components/forms';
   label="Location"
   required
   error={errors.location?.message}
-/>
+/>;
 ```
 
 ### SportSelector
+
 Pre-configured multi-select for sports selection.
 
 ```tsx
@@ -135,7 +143,7 @@ import { SportSelector } from '@/src/components/forms';
   label="Supported Sports"
   required
   error={errors.sportsSupported?.message}
-/>
+/>;
 ```
 
 ## Usage Example
@@ -152,7 +160,11 @@ interface FormData {
 }
 
 export default function MyForm() {
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -217,6 +229,7 @@ Make sure these are installed in your project.
 ## Styling
 
 All components use a consistent design system with:
+
 - Primary color: #6200ee
 - Error color: #F44336
 - Border radius: 8px

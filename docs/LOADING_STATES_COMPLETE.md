@@ -57,7 +57,7 @@ This implementation adds comprehensive loading states and skeleton loaders acros
 #### Main LoadingState
 
 ```tsx
-<LoadingState 
+<LoadingState
   type="spinner" | "skeleton" | "inline"
   message="Loading..."
   count={3}
@@ -113,10 +113,10 @@ All list screens now support pull-to-refresh:
 ### Skeleton Loaders
 
 ```tsx
-import { 
+import {
   TeamsLoadingState,
   TournamentsLoadingState,
-  VenuesLoadingState 
+  VenuesLoadingState,
 } from '@/src/components/LoadingState';
 
 // In your component
@@ -151,13 +151,7 @@ if (!data || data.length === 0) {
 import { ErrorState } from '@/src/components/LoadingState';
 
 if (error) {
-  return (
-    <ErrorState
-      title="Failed to load data"
-      message={error.message}
-      onRetry={refetch}
-    />
-  );
+  return <ErrorState title="Failed to load data" message={error.message} onRetry={refetch} />;
 }
 ```
 
@@ -167,28 +161,20 @@ if (error) {
 import { ButtonLoadingState } from '@/src/components/LoadingState';
 
 <TouchableOpacity disabled={isLoading}>
-  {isLoading ? (
-    <ButtonLoadingState color="#fff" />
-  ) : (
-    <Text>Submit</Text>
-  )}
-</TouchableOpacity>
+  {isLoading ? <ButtonLoadingState color="#fff" /> : <Text>Submit</Text>}
+</TouchableOpacity>;
 ```
 
 ### Custom Skeleton Components
 
 ```tsx
-import { 
-  Skeleton,
-  SkeletonAvatar,
-  SkeletonText 
-} from '@/src/components/SkeletonLoader';
+import { Skeleton, SkeletonAvatar, SkeletonText } from '@/src/components/SkeletonLoader';
 
 <View>
   <SkeletonAvatar size={60} />
   <SkeletonText lines={2} width="80%" />
   <Skeleton width={120} height={30} borderRadius={15} />
-</View>
+</View>;
 ```
 
 ---
@@ -407,12 +393,7 @@ export const MyCustomSkeleton = () => {
 ```tsx
 import { LoadingState } from '@/src/components/LoadingState';
 
-<LoadingState 
-  type="spinner"
-  message="Processing your request..."
-  color="#FF5722"
-  size="large"
-/>
+<LoadingState type="spinner" message="Processing your request..." color="#FF5722" size="large" />;
 ```
 
 ### Custom Empty State

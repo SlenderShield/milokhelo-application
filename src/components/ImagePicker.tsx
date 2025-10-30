@@ -47,9 +47,7 @@ export function ImagePickerComponent({
 
       // Pick image from source
       const result: ImagePickerResult | null =
-        source === 'camera'
-          ? await pickImageFromCamera()
-          : await pickImageFromGallery();
+        source === 'camera' ? await pickImageFromCamera() : await pickImageFromGallery();
 
       if (!result) {
         setProcessing(false);
@@ -57,17 +55,13 @@ export function ImagePickerComponent({
       }
 
       // Prepare image for upload (compress and validate)
-      const { uri, size } = await prepareImageForUpload(
-        result.uri,
-        compressionOptions
-      );
+      const { uri, size } = await prepareImageForUpload(result.uri, compressionOptions);
 
       setProcessing(false);
       onImageSelected(uri, size);
     } catch (error) {
       setProcessing(false);
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to process image';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process image';
 
       if (errorMessage.includes('permission')) {
         Alert.alert(

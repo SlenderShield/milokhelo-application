@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import * as Location from 'expo-location';
 
@@ -35,7 +29,7 @@ export function LocationPicker<T extends FieldValues>({
   const getCurrentLocation = async () => {
     try {
       setLoading(true);
-      
+
       // Request permission
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -45,7 +39,7 @@ export function LocationPicker<T extends FieldValues>({
 
       // Get current location
       const location = await Location.getCurrentPositionAsync({});
-      
+
       // Reverse geocode to get address
       const [address] = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
@@ -89,15 +83,12 @@ export function LocationPicker<T extends FieldValues>({
         render={({ field: { onChange, value } }) => (
           <View>
             <View style={[styles.locationDisplay, error && styles.locationDisplayError]}>
-              <Text style={[
-                styles.locationText,
-                !value && styles.placeholder
-              ]}>
+              <Text style={[styles.locationText, !value && styles.placeholder]}>
                 {value ? formatLocation(value) : 'No location selected'}
               </Text>
               <Text style={styles.icon}>📍</Text>
             </View>
-            
+
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, loading && styles.buttonDisabled]}
@@ -113,7 +104,7 @@ export function LocationPicker<T extends FieldValues>({
                   {loading ? 'Getting location...' : '📍 Use Current Location'}
                 </Text>
               </TouchableOpacity>
-              
+
               {value && (
                 <TouchableOpacity
                   style={[styles.button, styles.clearButton]}

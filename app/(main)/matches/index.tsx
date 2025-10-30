@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useGetMatches } from '@/src/api/hooks/useMatches';
 import { MatchesLoadingState, EmptyState, ErrorState } from '@/src/components/LoadingState';
@@ -58,7 +51,7 @@ export default function MatchesScreen() {
         }
       >
         {matches && matches.length > 0 ? (
-          matches.map((match) => (
+          matches.map(match => (
             <TouchableOpacity
               key={match.id}
               style={styles.matchCard}
@@ -96,10 +89,7 @@ export default function MatchesScreen() {
       </ScrollView>
 
       {/* Floating Action Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push('/matches/create')}
-      >
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/matches/create')}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
     </View>

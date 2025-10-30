@@ -29,9 +29,7 @@ export default function VenuesScreen() {
     isLoading,
     error,
     refetch,
-  } = shouldSearch
-    ? useSearchVenues(searchParams)
-    : useGetVenues();
+  } = shouldSearch ? useSearchVenues(searchParams) : useGetVenues();
 
   const sports = ['Football', 'Basketball', 'Tennis', 'Volleyball', 'Cricket'];
 
@@ -47,10 +45,7 @@ export default function VenuesScreen() {
             onChangeText={setSearchQuery}
             placeholderTextColor="#999"
           />
-          <TouchableOpacity
-            style={styles.mapButton}
-            onPress={() => router.push('/venues/map')}
-          >
+          <TouchableOpacity style={styles.mapButton} onPress={() => router.push('/venues/map')}>
             <Text style={styles.mapButtonText}>🗺️ Map</Text>
           </TouchableOpacity>
         </View>
@@ -63,7 +58,7 @@ export default function VenuesScreen() {
               All
             </Text>
           </TouchableOpacity>
-          {sports.map((sport) => (
+          {sports.map(sport => (
             <TouchableOpacity
               key={sport}
               style={[styles.filterChip, filterSport === sport && styles.filterChipActive]}
@@ -97,18 +92,11 @@ export default function VenuesScreen() {
             onChangeText={setSearchQuery}
             placeholderTextColor="#999"
           />
-          <TouchableOpacity
-            style={styles.mapButton}
-            onPress={() => router.push('/venues/map')}
-          >
+          <TouchableOpacity style={styles.mapButton} onPress={() => router.push('/venues/map')}>
             <Text style={styles.mapButtonText}>🗺️ Map</Text>
           </TouchableOpacity>
         </View>
-        <ErrorState
-          title="Failed to load venues"
-          message={error.message}
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load venues" message={error.message} onRetry={refetch} />
       </View>
     );
   }
@@ -138,7 +126,7 @@ export default function VenuesScreen() {
               All
             </Text>
           </TouchableOpacity>
-          {sports.map((sport) => (
+          {sports.map(sport => (
             <TouchableOpacity
               key={sport}
               style={[styles.filterChip, filterSport === sport && styles.filterChipActive]}
@@ -210,17 +198,14 @@ export default function VenuesScreen() {
             All
           </Text>
         </TouchableOpacity>
-        {sports.map((sport) => (
+        {sports.map(sport => (
           <TouchableOpacity
             key={sport}
             style={[styles.filterChip, filterSport === sport && styles.filterChipActive]}
             onPress={() => setFilterSport(sport)}
           >
             <Text
-              style={[
-                styles.filterChipText,
-                filterSport === sport && styles.filterChipTextActive,
-              ]}
+              style={[styles.filterChipText, filterSport === sport && styles.filterChipTextActive]}
             >
               {sport}
             </Text>
@@ -231,7 +216,7 @@ export default function VenuesScreen() {
       {/* Venues List */}
       <FlatList
         data={venues}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}

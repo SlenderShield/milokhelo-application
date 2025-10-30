@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  FlatList,
-  Pressable,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, Pressable } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
 export interface SelectOption {
@@ -49,17 +41,14 @@ export function FormSelect<T extends FieldValues>({
         name={name}
         render={({ field: { onChange, value } }) => {
           const selectedOption = options.find(opt => opt.value === value);
-          
+
           return (
             <>
               <TouchableOpacity
                 style={[styles.select, error && styles.selectError]}
                 onPress={() => setModalVisible(true)}
               >
-                <Text style={[
-                  styles.selectText,
-                  !selectedOption && styles.placeholder
-                ]}>
+                <Text style={[styles.selectText, !selectedOption && styles.placeholder]}>
                   {selectedOption?.label || placeholder}
                 </Text>
                 <Text style={styles.arrow}>▼</Text>
@@ -71,10 +60,7 @@ export function FormSelect<T extends FieldValues>({
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
               >
-                <Pressable 
-                  style={styles.modalOverlay}
-                  onPress={() => setModalVisible(false)}
-                >
+                <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
                   <View style={styles.modalContent}>
                     <View style={styles.modalHeader}>
                       <Text style={styles.modalTitle}>{label || 'Select'}</Text>
@@ -84,27 +70,24 @@ export function FormSelect<T extends FieldValues>({
                     </View>
                     <FlatList
                       data={options}
-                      keyExtractor={(item) => item.value}
+                      keyExtractor={item => item.value}
                       renderItem={({ item }) => (
                         <TouchableOpacity
-                          style={[
-                            styles.option,
-                            value === item.value && styles.selectedOption,
-                          ]}
+                          style={[styles.option, value === item.value && styles.selectedOption]}
                           onPress={() => {
                             onChange(item.value);
                             setModalVisible(false);
                           }}
                         >
-                          <Text style={[
-                            styles.optionText,
-                            value === item.value && styles.selectedOptionText,
-                          ]}>
+                          <Text
+                            style={[
+                              styles.optionText,
+                              value === item.value && styles.selectedOptionText,
+                            ]}
+                          >
                             {item.label}
                           </Text>
-                          {value === item.value && (
-                            <Text style={styles.checkmark}>✓</Text>
-                          )}
+                          {value === item.value && <Text style={styles.checkmark}>✓</Text>}
                         </TouchableOpacity>
                       )}
                     />

@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TextInputProps,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
-interface FormInputProps<T extends FieldValues> extends Omit<TextInputProps, 'value' | 'onChangeText'> {
+interface FormInputProps<T extends FieldValues>
+  extends Omit<TextInputProps, 'value' | 'onChangeText'> {
   name: Path<T>;
   control: Control<T>;
   label?: string;
@@ -43,11 +38,7 @@ export function FormInput<T extends FieldValues>({
         name={name}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={[
-              styles.input,
-              multiline && styles.multilineInput,
-              error && styles.inputError,
-            ]}
+            style={[styles.input, multiline && styles.multilineInput, error && styles.inputError]}
             placeholder={placeholder}
             placeholderTextColor="#999"
             onBlur={onBlur}

@@ -76,7 +76,7 @@ export default function CreateTeamScreen() {
       }
 
       const team = await createTeam.mutateAsync(teamData);
-      
+
       Alert.alert('Success', 'Team created successfully!', [
         {
           text: 'OK',
@@ -115,7 +115,7 @@ export default function CreateTeamScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter team name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -137,7 +137,7 @@ export default function CreateTeamScreen() {
             Sport <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.sportGrid}>
-            {SPORTS.map((sportOption) => (
+            {SPORTS.map(sportOption => (
               <TouchableOpacity
                 key={sportOption}
                 style={[
@@ -199,10 +199,7 @@ export default function CreateTeamScreen() {
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            createTeam.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, createTeam.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={createTeam.isPending}
         >

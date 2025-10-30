@@ -28,7 +28,7 @@ const SPORTS = [
 export default function CreateMatchScreen() {
   const router = useRouter();
   const createMatch = useCreateMatch();
-  
+
   // Fetch user's teams for selection
   const { data: teams, isLoading: teamsLoading } = useGetTeams();
 
@@ -100,7 +100,7 @@ export default function CreateMatchScreen() {
       }
 
       const match = await createMatch.mutateAsync(matchData);
-      
+
       Alert.alert('Success', 'Match created successfully!', [
         {
           text: 'OK',
@@ -130,7 +130,7 @@ export default function CreateMatchScreen() {
             Sport <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.sportGrid}>
-            {SPORTS.map((sportOption) => (
+            {SPORTS.map(sportOption => (
               <TouchableOpacity
                 key={sportOption}
                 style={[
@@ -169,7 +169,7 @@ export default function CreateMatchScreen() {
             style={[styles.input, errors.opponent ? styles.inputError : null]}
             placeholder="Team or player name"
             value={opponent}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setOpponent(text);
               if (errors.opponent) {
                 setErrors({ ...errors, opponent: undefined });
@@ -178,9 +178,7 @@ export default function CreateMatchScreen() {
             maxLength={100}
             editable={!createMatch.isPending}
           />
-          {errors.opponent && (
-            <Text style={styles.errorText}>{errors.opponent}</Text>
-          )}
+          {errors.opponent && <Text style={styles.errorText}>{errors.opponent}</Text>}
         </View>
 
         {/* Date */}
@@ -192,7 +190,7 @@ export default function CreateMatchScreen() {
             style={[styles.input, errors.date ? styles.inputError : null]}
             placeholder="YYYY-MM-DD"
             value={date}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setDate(text);
               if (errors.date) {
                 setErrors({ ...errors, date: undefined });
@@ -217,7 +215,7 @@ export default function CreateMatchScreen() {
             style={[styles.input, errors.time ? styles.inputError : null]}
             placeholder="HH:MM"
             value={time}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setTime(text);
               if (errors.time) {
                 setErrors({ ...errors, time: undefined });
@@ -265,10 +263,7 @@ export default function CreateMatchScreen() {
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            createMatch.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, createMatch.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={createMatch.isPending}
         >

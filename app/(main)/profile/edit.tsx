@@ -81,7 +81,7 @@ export default function EditProfileScreen() {
       }
 
       await updateUser.mutateAsync(userData);
-      
+
       // Refresh user data in auth context
       refetch();
 
@@ -113,7 +113,7 @@ export default function EditProfileScreen() {
               setAvatarUri(uri);
               Alert.alert('Success', `Image selected (${(size / 1024).toFixed(0)}KB)`);
             }}
-            onError={(error) => {
+            onError={error => {
               Alert.alert('Error', error.message);
             }}
             compressionOptions={{
@@ -125,12 +125,7 @@ export default function EditProfileScreen() {
             disabled={updateUser.isPending || uploadingImage}
           >
             <View style={styles.avatarContainer}>
-              <Avatar
-                uri={avatarUri}
-                name={user?.name}
-                size={100}
-                borderWidth={3}
-              />
+              <Avatar uri={avatarUri} name={user?.name} size={100} borderWidth={3} />
               <View style={styles.avatarBadge}>
                 <Text style={styles.avatarBadgeText}>📷</Text>
               </View>
@@ -157,7 +152,7 @@ export default function EditProfileScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter your name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -201,10 +196,7 @@ export default function EditProfileScreen() {
 
         {/* Save Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            updateUser.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, updateUser.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={updateUser.isPending}
         >

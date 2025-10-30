@@ -38,18 +38,23 @@ export default function TournamentDetailScreen() {
   const registerForTournament = useRegisterForTournament();
 
   // Check if user is a participant
-  const isParticipant = tournament?.participants?.some(
-    (participant) => typeof participant === 'string' ? participant === user?.id : participant === user?.id
-  ) || tournament?.teams?.includes(user?.id || '');
+  const isParticipant =
+    tournament?.participants?.some(participant =>
+      typeof participant === 'string' ? participant === user?.id : participant === user?.id
+    ) || tournament?.teams?.includes(user?.id || '');
 
   // Check if user is the organizer
-  const isOrganizer = tournament && user && (tournament.organizerId === user.id || tournament.organizer === user.id);
+  const isOrganizer =
+    tournament && user && (tournament.organizerId === user.id || tournament.organizer === user.id);
 
   const handleJoinTournament = async () => {
     if (!id) return;
 
     // TODO: Add team selection UI - tournaments require a teamId
-    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    Alert.alert(
+      'Info',
+      'Tournament registration requires team selection. This feature will be available soon.'
+    );
     return;
 
     /* Commented out until team selection UI is added
@@ -67,7 +72,10 @@ export default function TournamentDetailScreen() {
     if (!id) return;
 
     // TODO: Add team selection UI - tournaments require a teamId
-    Alert.alert('Info', 'Tournament registration requires team selection. This feature will be available soon.');
+    Alert.alert(
+      'Info',
+      'Tournament registration requires team selection. This feature will be available soon.'
+    );
     return;
 
     /* Commented out until team selection UI is added
@@ -143,9 +151,7 @@ export default function TournamentDetailScreen() {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Failed to load tournament</Text>
-        <Text style={styles.errorSubtext}>
-          {error?.message || 'Tournament not found'}
-        </Text>
+        <Text style={styles.errorSubtext}>{error?.message || 'Tournament not found'}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
@@ -159,12 +165,7 @@ export default function TournamentDetailScreen() {
       <View style={styles.header}>
         <Text style={styles.tournamentName}>{tournament.title || tournament.name}</Text>
         <Text style={styles.tournamentSport}>{tournament.sport}</Text>
-        <View
-          style={[
-            styles.statusBadge,
-            { backgroundColor: getStatusColor(tournament.status) },
-          ]}
-        >
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(tournament.status) }]}>
           <Text style={styles.statusText}>
             {tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}
           </Text>
@@ -247,7 +248,7 @@ export default function TournamentDetailScreen() {
                       // Handle both team1/team2 (backend) and teamA/teamB (legacy)
                       const team1 = match.team1 || match.teamA || null;
                       const team2 = match.team2 || match.teamB || null;
-                      
+
                       // Handle score formats
                       let score1, score2;
                       if (match.score1 !== undefined && match.score2 !== undefined) {
@@ -262,7 +263,7 @@ export default function TournamentDetailScreen() {
                           score2 = match.score.teamB;
                         }
                       }
-                      
+
                       return (
                         <View key={matchIndex} style={styles.matchCard}>
                           <View style={styles.matchTeam}>

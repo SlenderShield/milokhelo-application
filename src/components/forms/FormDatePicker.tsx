@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
@@ -37,7 +31,7 @@ export function FormDatePicker<T extends FieldValues>({
   const formatDate = (date: Date | string | undefined) => {
     if (!date) return '';
     const d = typeof date === 'string' ? new Date(date) : date;
-    
+
     if (mode === 'time') {
       return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } else if (mode === 'datetime') {
@@ -69,18 +63,19 @@ export function FormDatePicker<T extends FieldValues>({
         control={control}
         name={name}
         render={({ field: { onChange, value } }) => {
-          const dateValue = value ? (typeof value === 'string' ? new Date(value) : value) : new Date();
-          
+          const dateValue = value
+            ? typeof value === 'string'
+              ? new Date(value)
+              : value
+            : new Date();
+
           return (
             <>
               <TouchableOpacity
                 style={[styles.dateButton, error && styles.dateButtonError]}
                 onPress={() => setShow(true)}
               >
-                <Text style={[
-                  styles.dateText,
-                  !value && styles.placeholder
-                ]}>
+                <Text style={[styles.dateText, !value && styles.placeholder]}>
                   {value ? formatDate(value) : placeholder}
                 </Text>
                 <Text style={styles.icon}>📅</Text>

@@ -79,7 +79,7 @@ export const useMarkNotificationAsRead = () => {
 
   return useMutation({
     mutationFn: (id: string) => notificationsApi.markNotificationAsRead(id),
-    onSuccess: (updatedNotification) => {
+    onSuccess: updatedNotification => {
       // Update the specific notification in cache
       queryClient.setQueryData(
         notificationKeys.detail(updatedNotification.id),
@@ -111,8 +111,7 @@ export const useRegisterPushToken = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: DeviceTokenRegister) =>
-      notificationsApi.registerPushToken(data),
+    mutationFn: (data: DeviceTokenRegister) => notificationsApi.registerPushToken(data),
     // No need to invalidate queries - this is just registration
   });
 };

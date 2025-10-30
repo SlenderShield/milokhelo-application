@@ -22,9 +22,12 @@ export default function TournamentsScreen() {
   if (searchQuery) params.q = searchQuery;
   if (filterType !== 'all') params.type = filterType;
 
-  const { data: tournaments, isLoading, error, refetch } = useGetTournaments(
-    Object.keys(params).length > 0 ? params : undefined
-  );
+  const {
+    data: tournaments,
+    isLoading,
+    error,
+    refetch,
+  } = useGetTournaments(Object.keys(params).length > 0 ? params : undefined);
 
   // Status badge colors
   const getStatusColor = (status: string) => {
@@ -62,7 +65,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
             onPress={() => setFilterType('all')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'all' && styles.filterButtonTextActive,
+              ]}
+            >
               All
             </Text>
           </TouchableOpacity>
@@ -70,7 +78,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'knockout' && styles.filterButtonActive]}
             onPress={() => setFilterType('knockout')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'knockout' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'knockout' && styles.filterButtonTextActive,
+              ]}
+            >
               🏆 Knockout
             </Text>
           </TouchableOpacity>
@@ -78,7 +91,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'league' && styles.filterButtonActive]}
             onPress={() => setFilterType('league')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'league' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'league' && styles.filterButtonTextActive,
+              ]}
+            >
               📊 League
             </Text>
           </TouchableOpacity>
@@ -101,11 +119,7 @@ export default function TournamentsScreen() {
             placeholderTextColor="#999"
           />
         </View>
-        <ErrorState
-          title="Failed to load tournaments"
-          message={error.message}
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load tournaments" message={error.message} onRetry={refetch} />
       </View>
     );
   }
@@ -131,7 +145,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
             onPress={() => setFilterType('all')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'all' && styles.filterButtonTextActive,
+              ]}
+            >
               All
             </Text>
           </TouchableOpacity>
@@ -139,7 +158,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'knockout' && styles.filterButtonActive]}
             onPress={() => setFilterType('knockout')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'knockout' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'knockout' && styles.filterButtonTextActive,
+              ]}
+            >
               🏆 Knockout
             </Text>
           </TouchableOpacity>
@@ -147,7 +171,12 @@ export default function TournamentsScreen() {
             style={[styles.filterButton, filterType === 'league' && styles.filterButtonActive]}
             onPress={() => setFilterType('league')}
           >
-            <Text style={[styles.filterButtonText, filterType === 'league' && styles.filterButtonTextActive]}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterType === 'league' && styles.filterButtonTextActive,
+              ]}
+            >
               📊 League
             </Text>
           </TouchableOpacity>
@@ -175,10 +204,7 @@ export default function TournamentsScreen() {
         />
 
         {/* Floating Action Button */}
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => router.push('/tournaments/create')}
-        >
+        <TouchableOpacity style={styles.fab} onPress={() => router.push('/tournaments/create')}>
           <Text style={styles.fabText}>+ Create Tournament</Text>
         </TouchableOpacity>
       </View>
@@ -204,7 +230,9 @@ export default function TournamentsScreen() {
           style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
           onPress={() => setFilterType('all')}
         >
-          <Text style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}>
+          <Text
+            style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}
+          >
             All
           </Text>
         </TouchableOpacity>
@@ -212,7 +240,12 @@ export default function TournamentsScreen() {
           style={[styles.filterButton, filterType === 'knockout' && styles.filterButtonActive]}
           onPress={() => setFilterType('knockout')}
         >
-          <Text style={[styles.filterButtonText, filterType === 'knockout' && styles.filterButtonTextActive]}>
+          <Text
+            style={[
+              styles.filterButtonText,
+              filterType === 'knockout' && styles.filterButtonTextActive,
+            ]}
+          >
             🏆 Knockout
           </Text>
         </TouchableOpacity>
@@ -220,7 +253,12 @@ export default function TournamentsScreen() {
           style={[styles.filterButton, filterType === 'league' && styles.filterButtonActive]}
           onPress={() => setFilterType('league')}
         >
-          <Text style={[styles.filterButtonText, filterType === 'league' && styles.filterButtonTextActive]}>
+          <Text
+            style={[
+              styles.filterButtonText,
+              filterType === 'league' && styles.filterButtonTextActive,
+            ]}
+          >
             📊 League
           </Text>
         </TouchableOpacity>
@@ -229,7 +267,7 @@ export default function TournamentsScreen() {
       {/* Tournaments List */}
       <FlatList
         data={tournaments}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -251,12 +289,7 @@ export default function TournamentsScreen() {
                   <Text style={styles.tournamentSport}>{item.sport}</Text>
                 </View>
               </View>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: getStatusColor(item.status) },
-                ]}
-              >
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
                 <Text style={styles.statusText}>
                   {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                 </Text>
@@ -304,10 +337,7 @@ export default function TournamentsScreen() {
       />
 
       {/* Floating Action Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push('/tournaments/create')}
-      >
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/tournaments/create')}>
         <Text style={styles.fabText}>+ Create Tournament</Text>
       </TouchableOpacity>
     </View>

@@ -74,7 +74,7 @@ export const TokenManager = {
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = await TokenManager.getToken();
-    
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -126,13 +126,12 @@ apiClient.interceptors.response.use(
 
       try {
         const refreshToken = await TokenManager.getRefreshToken();
-        
+
         if (refreshToken) {
           // Attempt to refresh the token
-          const response = await axios.post(
-            `${API_CONFIG.BASE_URL}/auth/refresh-token`,
-            { refreshToken }
-          );
+          const response = await axios.post(`${API_CONFIG.BASE_URL}/auth/refresh-token`, {
+            refreshToken,
+          });
 
           const { accessToken } = response.data;
           await TokenManager.setToken(accessToken);
@@ -141,7 +140,7 @@ apiClient.interceptors.response.use(
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           }
-          
+
           return apiClient(originalRequest);
         }
       } catch (refreshError) {
@@ -154,10 +153,8 @@ apiClient.interceptors.response.use(
     }
 
     // Parse error message
-    const errorMessage = 
-      (error.response?.data as any)?.message || 
-      error.message || 
-      'An unexpected error occurred';
+    const errorMessage =
+      (error.response?.data as any)?.message || error.message || 'An unexpected error occurred';
 
     // Create formatted error object
     const formattedError = {
@@ -172,9 +169,7 @@ apiClient.interceptors.response.use(
 );
 
 // Helper function to handle API calls with error formatting
-export async function apiCall<T>(
-  apiFunction: () => Promise<AxiosResponse<T>>
-): Promise<T> {
+export async function apiCall<T>(apiFunction: () => Promise<AxiosResponse<T>>): Promise<T> {
   try {
     const response = await apiFunction();
     return response.data;

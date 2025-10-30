@@ -83,7 +83,7 @@ export default function EditVenueScreen() {
 
   const toggleSport = (sport: string) => {
     if (selectedSports.includes(sport)) {
-      setSelectedSports(selectedSports.filter((s) => s !== sport));
+      setSelectedSports(selectedSports.filter(s => s !== sport));
     } else {
       setSelectedSports([...selectedSports, sport]);
     }
@@ -91,7 +91,7 @@ export default function EditVenueScreen() {
 
   const toggleAmenity = (amenity: string) => {
     if (selectedAmenities.includes(amenity)) {
-      setSelectedAmenities(selectedAmenities.filter((a) => a !== amenity));
+      setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
     } else {
       setSelectedAmenities([...selectedAmenities, amenity]);
     }
@@ -196,9 +196,7 @@ export default function EditVenueScreen() {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>🔒</Text>
         <Text style={styles.errorTitle}>Access Denied</Text>
-        <Text style={styles.errorText}>
-          Only the venue owner can edit this venue
-        </Text>
+        <Text style={styles.errorText}>Only the venue owner can edit this venue</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -225,7 +223,7 @@ export default function EditVenueScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter venue name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -246,7 +244,7 @@ export default function EditVenueScreen() {
             style={[styles.input, errors.address ? styles.inputError : null]}
             placeholder="Full address"
             value={address}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setAddress(text);
               if (errors.address) {
                 setErrors({ ...errors, address: undefined });
@@ -281,13 +279,10 @@ export default function EditVenueScreen() {
             Sports Available <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.chipGrid}>
-            {SPORTS.map((sport) => (
+            {SPORTS.map(sport => (
               <TouchableOpacity
                 key={sport}
-                style={[
-                  styles.chip,
-                  selectedSports.includes(sport) && styles.chipSelected,
-                ]}
+                style={[styles.chip, selectedSports.includes(sport) && styles.chipSelected]}
                 onPress={() => toggleSport(sport)}
                 disabled={updateVenue.isPending}
               >
@@ -309,13 +304,10 @@ export default function EditVenueScreen() {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Amenities (Optional)</Text>
           <View style={styles.chipGrid}>
-            {AMENITIES.map((amenity) => (
+            {AMENITIES.map(amenity => (
               <TouchableOpacity
                 key={amenity}
-                style={[
-                  styles.chip,
-                  selectedAmenities.includes(amenity) && styles.chipSelected,
-                ]}
+                style={[styles.chip, selectedAmenities.includes(amenity) && styles.chipSelected]}
                 onPress={() => toggleAmenity(amenity)}
                 disabled={updateVenue.isPending}
               >
@@ -341,7 +333,7 @@ export default function EditVenueScreen() {
             style={[styles.input, errors.pricePerHour ? styles.inputError : null]}
             placeholder="e.g., 25.00"
             value={pricePerHour}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setPricePerHour(text.replace(/[^0-9.]/g, ''));
               if (errors.pricePerHour) {
                 setErrors({ ...errors, pricePerHour: undefined });
@@ -350,9 +342,7 @@ export default function EditVenueScreen() {
             keyboardType="decimal-pad"
             editable={!updateVenue.isPending}
           />
-          {errors.pricePerHour && (
-            <Text style={styles.errorText}>{errors.pricePerHour}</Text>
-          )}
+          {errors.pricePerHour && <Text style={styles.errorText}>{errors.pricePerHour}</Text>}
         </View>
 
         {/* Capacity */}
@@ -362,7 +352,7 @@ export default function EditVenueScreen() {
             style={styles.input}
             placeholder="Maximum number of people"
             value={capacity}
-            onChangeText={(text) => setCapacity(text.replace(/[^0-9]/g, ''))}
+            onChangeText={text => setCapacity(text.replace(/[^0-9]/g, ''))}
             keyboardType="number-pad"
             editable={!updateVenue.isPending}
           />
@@ -397,10 +387,7 @@ export default function EditVenueScreen() {
 
         {/* Update Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            updateVenue.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, updateVenue.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={updateVenue.isPending}
         >

@@ -63,10 +63,12 @@ export const TournamentUpdateSchema = z.object({
   description: z.string().max(1000).optional(),
   rules: z.string().optional(),
   prizePool: z.string().optional(),
-  registrationWindow: z.object({
-    start: z.string(),
-    end: z.string(),
-  }).optional(),
+  registrationWindow: z
+    .object({
+      start: z.string(),
+      end: z.string(),
+    })
+    .optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   maxTeams: z.number().min(4).optional(),
@@ -104,16 +106,18 @@ export const KnockoutMatchSchema = z.object({
   team1: z.string().nullable().optional(), // Backend uses team1
   team2: z.string().nullable().optional(), // Backend uses team2
   winner: z.string().nullable().optional(),
-  score: z.union([
-    z.object({
-      teamA: z.number(),
-      teamB: z.number(),
-    }),
-    z.object({
-      team1: z.number(),
-      team2: z.number(),
-    }),
-  ]).optional(),
+  score: z
+    .union([
+      z.object({
+        teamA: z.number(),
+        teamB: z.number(),
+      }),
+      z.object({
+        team1: z.number(),
+        team2: z.number(),
+      }),
+    ])
+    .optional(),
   score1: z.number().optional(), // Some screens use score1/score2
   score2: z.number().optional(),
   scheduledAt: z.string().optional(),
@@ -136,10 +140,12 @@ export const LeagueMatchSchema = z.object({
   round: z.number(),
   teamA: z.string(),
   teamB: z.string(),
-  score: z.object({
-    teamA: z.number(),
-    teamB: z.number(),
-  }).optional(),
+  score: z
+    .object({
+      teamA: z.number(),
+      teamB: z.number(),
+    })
+    .optional(),
   winner: z.string().nullable().optional(),
   scheduledAt: z.string().optional(),
   playedAt: z.string().optional(),
@@ -168,10 +174,7 @@ export const LeagueBracketSchema = z.object({
   standings: z.array(LeagueStandingSchema),
 });
 
-export const TournamentBracketSchema = z.union([
-  KnockoutBracketSchema,
-  LeagueBracketSchema,
-]);
+export const TournamentBracketSchema = z.union([KnockoutBracketSchema, LeagueBracketSchema]);
 
 export type KnockoutMatch = z.infer<typeof KnockoutMatchSchema>;
 export type KnockoutRound = z.infer<typeof KnockoutRoundSchema>;

@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
 import { LoadingState } from '@/src/components/LoadingState';
@@ -50,37 +43,25 @@ export default function DashboardScreen() {
       </View>
 
       <View style={styles.grid}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(main)/matches')}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/(main)/matches')}>
           <Text style={styles.cardIcon}>⚽</Text>
           <Text style={styles.cardTitle}>Matches</Text>
           <Text style={styles.cardSubtitle}>Find and join matches</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(main)/tournaments')}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/(main)/tournaments')}>
           <Text style={styles.cardIcon}>🏆</Text>
           <Text style={styles.cardTitle}>Tournaments</Text>
           <Text style={styles.cardSubtitle}>Compete and win</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(main)/teams')}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/(main)/teams')}>
           <Text style={styles.cardIcon}>👥</Text>
           <Text style={styles.cardTitle}>Teams</Text>
           <Text style={styles.cardSubtitle}>Join or create teams</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(main)/profile')}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/(main)/profile')}>
           <Text style={styles.cardIcon}>👤</Text>
           <Text style={styles.cardTitle}>Profile</Text>
           <Text style={styles.cardSubtitle}>View your stats</Text>

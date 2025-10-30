@@ -23,22 +23,16 @@ export default function HomeScreen() {
       {isAuthenticated ? (
         <>
           <Text style={styles.welcomeText}>Hello, {user?.name}!</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/(main)/dashboard')}
-          >
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/(main)/dashboard')}>
             <Text style={styles.buttonText}>Go to Dashboard</Text>
           </TouchableOpacity>
         </>
       ) : (
         <>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/(auth)/login')}
-          >
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/(auth)/login')}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[styles.button, styles.buttonSecondary]}
             onPress={() => router.push('/(auth)/register')}

@@ -33,7 +33,7 @@ export const useGetMatchById = (id: string) =>
 // Create Match
 export const useCreateMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: MatchCreate) => matchEndpoints.createMatch(data),
     onSuccess: () => {
@@ -45,11 +45,11 @@ export const useCreateMatch = () => {
 // Update Match
 export const useUpdateMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: MatchUpdate }) =>
       matchEndpoints.updateMatch(id, data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(matchKeys.detail(data.id), data);
       queryClient.invalidateQueries({ queryKey: matchKeys.lists() });
     },
@@ -59,7 +59,7 @@ export const useUpdateMatch = () => {
 // Delete Match
 export const useDeleteMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => matchEndpoints.deleteMatch(id),
     onSuccess: () => {
@@ -71,7 +71,7 @@ export const useDeleteMatch = () => {
 // Join Match
 export const useJoinMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => matchEndpoints.joinMatch(id),
     onSuccess: (_, id) => {
@@ -84,7 +84,7 @@ export const useJoinMatch = () => {
 // Leave Match
 export const useLeaveMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => matchEndpoints.leaveMatch(id),
     onSuccess: (_, id) => {
@@ -97,11 +97,11 @@ export const useLeaveMatch = () => {
 // Update Match Score
 export const useUpdateMatchScore = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: MatchResult }) =>
       matchEndpoints.updateMatchScore(id, data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(matchKeys.detail(data.id), data);
     },
   });
@@ -110,11 +110,11 @@ export const useUpdateMatchScore = () => {
 // Update Match Status
 export const useUpdateMatchStatus = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: MatchStatusUpdate }) =>
       matchEndpoints.updateMatchStatus(id, data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(matchKeys.detail(data.id), data);
       queryClient.invalidateQueries({ queryKey: matchKeys.lists() });
     },
@@ -124,10 +124,10 @@ export const useUpdateMatchStatus = () => {
 // Start Match (Legacy)
 export const useStartMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => matchEndpoints.startMatch(id),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(matchKeys.detail(data.id), data);
     },
   });
@@ -136,11 +136,11 @@ export const useStartMatch = () => {
 // Finish Match (Legacy)
 export const useFinishMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: MatchResult }) =>
       matchEndpoints.finishMatch(id, data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(matchKeys.detail(data.id), data);
       queryClient.invalidateQueries({ queryKey: ['users'] }); // Invalidate user stats
     },

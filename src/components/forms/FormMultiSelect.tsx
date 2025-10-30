@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  FlatList,
-  Pressable,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, Pressable } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
 export interface MultiSelectOption {
@@ -52,7 +44,7 @@ export function FormMultiSelect<T extends FieldValues>({
           const selectedLabels = options
             .filter(opt => selectedValues.includes(opt.value))
             .map(opt => opt.label);
-          
+
           const toggleOption = (optionValue: string) => {
             const newValues = selectedValues.includes(optionValue)
               ? selectedValues.filter(v => v !== optionValue)
@@ -66,14 +58,10 @@ export function FormMultiSelect<T extends FieldValues>({
                 style={[styles.select, error && styles.selectError]}
                 onPress={() => setModalVisible(true)}
               >
-                <Text style={[
-                  styles.selectText,
-                  selectedLabels.length === 0 && styles.placeholder
-                ]}>
-                  {selectedLabels.length > 0 
-                    ? selectedLabels.join(', ')
-                    : placeholder
-                  }
+                <Text
+                  style={[styles.selectText, selectedLabels.length === 0 && styles.placeholder]}
+                >
+                  {selectedLabels.length > 0 ? selectedLabels.join(', ') : placeholder}
                 </Text>
                 <Text style={styles.arrow}>▼</Text>
               </TouchableOpacity>
@@ -84,10 +72,7 @@ export function FormMultiSelect<T extends FieldValues>({
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
               >
-                <Pressable 
-                  style={styles.modalOverlay}
-                  onPress={() => setModalVisible(false)}
-                >
+                <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
                   <View style={styles.modalContent}>
                     <View style={styles.modalHeader}>
                       <Text style={styles.modalTitle}>
@@ -99,7 +84,7 @@ export function FormMultiSelect<T extends FieldValues>({
                     </View>
                     <FlatList
                       data={options}
-                      keyExtractor={(item) => item.value}
+                      keyExtractor={item => item.value}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={[
@@ -108,16 +93,20 @@ export function FormMultiSelect<T extends FieldValues>({
                           ]}
                           onPress={() => toggleOption(item.value)}
                         >
-                          <Text style={[
-                            styles.optionText,
-                            selectedValues.includes(item.value) && styles.selectedOptionText,
-                          ]}>
+                          <Text
+                            style={[
+                              styles.optionText,
+                              selectedValues.includes(item.value) && styles.selectedOptionText,
+                            ]}
+                          >
                             {item.label}
                           </Text>
-                          <View style={[
-                            styles.checkbox,
-                            selectedValues.includes(item.value) && styles.checkboxChecked,
-                          ]}>
+                          <View
+                            style={[
+                              styles.checkbox,
+                              selectedValues.includes(item.value) && styles.checkboxChecked,
+                            ]}
+                          >
                             {selectedValues.includes(item.value) && (
                               <Text style={styles.checkmark}>✓</Text>
                             )}

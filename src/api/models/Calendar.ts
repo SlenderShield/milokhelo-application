@@ -11,10 +11,12 @@ export const EventSchema = z.object({
   endTime: z.string().optional(),
   location: z.string().optional(),
   type: z.enum(['match', 'tournament', 'training', 'meeting', 'other']).optional(),
-  relatedTo: z.object({
-    type: z.enum(['match', 'tournament']).optional(),
-    id: z.string().optional(),
-  }).optional(),
+  relatedTo: z
+    .object({
+      type: z.enum(['match', 'tournament']).optional(),
+      id: z.string().optional(),
+    })
+    .optional(),
   color: z.string().optional(),
   isAllDay: z.boolean().default(false),
   reminder: z.number().optional(),
@@ -37,10 +39,12 @@ export const EventCreateSchema = z.object({
   endTime: z.string().optional(),
   location: z.string().optional(),
   type: z.enum(['match', 'tournament', 'training', 'meeting', 'other']).optional(),
-  relatedTo: z.object({
-    type: z.enum(['match', 'tournament']),
-    id: z.string(),
-  }).optional(),
+  relatedTo: z
+    .object({
+      type: z.enum(['match', 'tournament']),
+      id: z.string(),
+    })
+    .optional(),
   color: z.string().optional(),
   isAllDay: z.boolean().optional(),
   reminder: z.number().optional(),

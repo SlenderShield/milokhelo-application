@@ -20,7 +20,7 @@ export default function PrivacyScreen() {
 
   const handleToggle = (key: keyof PrivacySettings) => {
     if (key === 'profileVisibility') return; // Handled separately
-    
+
     const newSettings = { ...settings, [key]: !settings[key] };
     setSettings(newSettings);
     Alert.alert('Settings Updated', `Privacy settings updated`);
@@ -61,22 +61,18 @@ export default function PrivacyScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Profile Visibility</Text>
-        
+
         <View style={styles.radioGroup}>
           <TouchableOpacity
             style={styles.radioItem}
             onPress={() => handleVisibilityChange('public')}
           >
             <View style={styles.radio}>
-              {settings.profileVisibility === 'public' && (
-                <View style={styles.radioSelected} />
-              )}
+              {settings.profileVisibility === 'public' && <View style={styles.radioSelected} />}
             </View>
             <View style={styles.radioText}>
               <Text style={styles.radioLabel}>Public</Text>
-              <Text style={styles.radioDescription}>
-                Anyone can see your profile
-              </Text>
+              <Text style={styles.radioDescription}>Anyone can see your profile</Text>
             </View>
           </TouchableOpacity>
 
@@ -85,15 +81,11 @@ export default function PrivacyScreen() {
             onPress={() => handleVisibilityChange('friends')}
           >
             <View style={styles.radio}>
-              {settings.profileVisibility === 'friends' && (
-                <View style={styles.radioSelected} />
-              )}
+              {settings.profileVisibility === 'friends' && <View style={styles.radioSelected} />}
             </View>
             <View style={styles.radioText}>
               <Text style={styles.radioLabel}>Friends Only</Text>
-              <Text style={styles.radioDescription}>
-                Only your friends can see your profile
-              </Text>
+              <Text style={styles.radioDescription}>Only your friends can see your profile</Text>
             </View>
           </TouchableOpacity>
 
@@ -102,15 +94,11 @@ export default function PrivacyScreen() {
             onPress={() => handleVisibilityChange('private')}
           >
             <View style={styles.radio}>
-              {settings.profileVisibility === 'private' && (
-                <View style={styles.radioSelected} />
-              )}
+              {settings.profileVisibility === 'private' && <View style={styles.radioSelected} />}
             </View>
             <View style={styles.radioText}>
               <Text style={styles.radioLabel}>Private</Text>
-              <Text style={styles.radioDescription}>
-                Only you can see your profile
-              </Text>
+              <Text style={styles.radioDescription}>Only you can see your profile</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -118,13 +106,11 @@ export default function PrivacyScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contact Information</Text>
-        
+
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Show Email</Text>
-            <Text style={styles.itemDescription}>
-              Display your email on your profile
-            </Text>
+            <Text style={styles.itemDescription}>Display your email on your profile</Text>
           </View>
           <Switch
             value={settings.showEmail}
@@ -137,9 +123,7 @@ export default function PrivacyScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Show Phone</Text>
-            <Text style={styles.itemDescription}>
-              Display your phone number on your profile
-            </Text>
+            <Text style={styles.itemDescription}>Display your phone number on your profile</Text>
           </View>
           <Switch
             value={settings.showPhone}
@@ -152,13 +136,11 @@ export default function PrivacyScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Interactions</Text>
-        
+
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Allow Team Invites</Text>
-            <Text style={styles.itemDescription}>
-              Let others invite you to join their teams
-            </Text>
+            <Text style={styles.itemDescription}>Let others invite you to join their teams</Text>
           </View>
           <Switch
             value={settings.allowTeamInvites}
@@ -171,9 +153,7 @@ export default function PrivacyScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Allow Friend Requests</Text>
-            <Text style={styles.itemDescription}>
-              Let others send you friend requests
-            </Text>
+            <Text style={styles.itemDescription}>Let others send you friend requests</Text>
           </View>
           <Switch
             value={settings.allowFriendRequests}
@@ -186,16 +166,14 @@ export default function PrivacyScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Data Management</Text>
-        
+
         <TouchableOpacity style={styles.actionItem} onPress={handleExportData}>
           <Text style={styles.actionLabel}>Export My Data</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionItem} onPress={handleDeleteAccount}>
-          <Text style={[styles.actionLabel, styles.actionLabelDanger]}>
-            Delete Account
-          </Text>
+          <Text style={[styles.actionLabel, styles.actionLabelDanger]}>Delete Account</Text>
           <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
       </View>

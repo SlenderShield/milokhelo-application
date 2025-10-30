@@ -1,6 +1,6 @@
 /**
  * Theme System for MiloKhelo
- * 
+ *
  * Provides light and dark color schemes with consistent design tokens
  */
 
@@ -11,40 +11,40 @@ export interface Colors {
   primary: string;
   primaryLight: string;
   primaryDark: string;
-  
+
   // Background colors
   background: string;
   backgroundSecondary: string;
   surface: string;
   surfaceVariant: string;
-  
+
   // Text colors
   text: string;
   textSecondary: string;
   textTertiary: string;
   textDisabled: string;
-  
+
   // Border colors
   border: string;
   borderLight: string;
-  
+
   // Status colors
   success: string;
   error: string;
   warning: string;
   info: string;
-  
+
   // Component-specific colors
   card: string;
   cardShadow: string;
   input: string;
   inputBackground: string;
   placeholder: string;
-  
+
   // Overlay colors
   overlay: string;
   backdrop: string;
-  
+
   // Other
   white: string;
   black: string;
@@ -94,40 +94,40 @@ const lightColors: Colors = {
   primary: '#6200ee',
   primaryLight: '#9d46ff',
   primaryDark: '#0a00b6',
-  
+
   // Background colors
   background: '#f5f5f5',
   backgroundSecondary: '#ffffff',
   surface: '#ffffff',
   surfaceVariant: '#fafafa',
-  
+
   // Text colors
   text: '#333333',
   textSecondary: '#666666',
   textTertiary: '#999999',
   textDisabled: '#cccccc',
-  
+
   // Border colors
   border: '#e0e0e0',
   borderLight: '#f0f0f0',
-  
+
   // Status colors
   success: '#4CAF50',
   error: '#F44336',
   warning: '#FF9800',
   info: '#2196F3',
-  
+
   // Component-specific colors
   card: '#ffffff',
   cardShadow: 'rgba(0, 0, 0, 0.1)',
   input: '#333333',
   inputBackground: '#f9f9f9',
   placeholder: '#999999',
-  
+
   // Overlay colors
   overlay: 'rgba(0, 0, 0, 0.5)',
   backdrop: 'rgba(0, 0, 0, 0.3)',
-  
+
   // Other
   white: '#ffffff',
   black: '#000000',
@@ -139,40 +139,40 @@ const darkColors: Colors = {
   primary: '#BB86FC',
   primaryLight: '#E7B9FF',
   primaryDark: '#8858C8',
-  
+
   // Background colors
   background: '#121212',
   backgroundSecondary: '#1E1E1E',
   surface: '#1E1E1E',
   surfaceVariant: '#2C2C2C',
-  
+
   // Text colors
   text: '#E1E1E1',
   textSecondary: '#B3B3B3',
   textTertiary: '#808080',
   textDisabled: '#4D4D4D',
-  
+
   // Border colors
   border: '#2C2C2C',
   borderLight: '#3D3D3D',
-  
+
   // Status colors
   success: '#66BB6A',
   error: '#EF5350',
   warning: '#FFA726',
   info: '#42A5F5',
-  
+
   // Component-specific colors
   card: '#1E1E1E',
   cardShadow: 'rgba(0, 0, 0, 0.5)',
   input: '#E1E1E1',
   inputBackground: '#2C2C2C',
   placeholder: '#808080',
-  
+
   // Overlay colors
   overlay: 'rgba(0, 0, 0, 0.7)',
   backdrop: 'rgba(0, 0, 0, 0.5)',
-  
+
   // Other
   white: '#ffffff',
   black: '#000000',

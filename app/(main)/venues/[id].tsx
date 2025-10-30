@@ -9,19 +9,13 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-  useGetVenueById,
-  useGetVenueAvailability,
-  useBookVenueSlot,
-} from '@/src/api/hooks';
+import { useGetVenueById, useGetVenueAvailability, useBookVenueSlot } from '@/src/api/hooks';
 
 export default function VenueDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0]
-  );
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Fetch venue details
   const { data: venue, isLoading, error, refetch } = useGetVenueById(id);
@@ -41,33 +35,29 @@ export default function VenueDetailScreen() {
   const bookSlot = useBookVenueSlot();
 
   const handleBookSlot = (slotId: string, startTime: string, endTime: string) => {
-    Alert.alert(
-      'Confirm Booking',
-      `Book this slot from ${startTime} to ${endTime}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Book',
-          onPress: async () => {
-            try {
-              await bookSlot.mutateAsync({
-                venueId: id,
-                data: {
-                  date: selectedDate,
-                  startTime,
-                  endTime,
-                  sport: 'Football', // TODO: Add sport selection
-                },
-              });
-              Alert.alert('Success', 'Slot booked successfully!');
-              refetchAvailability();
-            } catch (err: any) {
-              Alert.alert('Error', err.message || 'Failed to book slot');
-            }
-          },
+    Alert.alert('Confirm Booking', `Book this slot from ${startTime} to ${endTime}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Book',
+        onPress: async () => {
+          try {
+            await bookSlot.mutateAsync({
+              venueId: id,
+              data: {
+                date: selectedDate,
+                startTime,
+                endTime,
+                sport: 'Football', // TODO: Add sport selection
+              },
+            });
+            Alert.alert('Success', 'Slot booked successfully!');
+            refetchAvailability();
+          } catch (err: any) {
+            Alert.alert('Error', err.message || 'Failed to book slot');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const changeDate = (days: number) => {
@@ -100,9 +90,7 @@ export default function VenueDetailScreen() {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Failed to load venue</Text>
-        <Text style={styles.errorSubtext}>
-          {error?.message || 'Venue not found'}
-        </Text>
+        <Text style={styles.errorSubtext}>{error?.message || 'Venue not found'}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
@@ -138,7 +126,9 @@ export default function VenueDetailScreen() {
         {venue.priceRange && (
           <View style={styles.statItem}>
             <Text style={styles.statIcon}>💰</Text>
-            <Text style={styles.statValue}>${venue.priceRange.min}-${venue.priceRange.max}</Text>
+            <Text style={styles.statValue}>
+              ${venue.priceRange.min}-${venue.priceRange.max}
+            </Text>
             <Text style={styles.statLabel}>Price Range</Text>
           </View>
         )}
@@ -197,10 +187,7 @@ export default function VenueDetailScreen() {
           <View style={styles.dateDisplay}>
             <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
           </View>
-          <TouchableOpacity
-            style={styles.dateArrow}
-            onPress={() => changeDate(1)}
-          >
+          <TouchableOpacity style={styles.dateArrow} onPress={() => changeDate(1)}>
             <Text style={styles.dateArrowText}>→</Text>
           </TouchableOpacity>
         </View>
@@ -216,30 +203,19 @@ export default function VenueDetailScreen() {
             {availability.slots.map((slot: any) => (
               <TouchableOpacity
                 key={slot.id}
-                style={[
-                  styles.slotCard,
-                  !slot.available && styles.slotCardDisabled,
-                ]}
+                style={[styles.slotCard, !slot.available && styles.slotCardDisabled]}
                 onPress={() =>
-                  slot.available &&
-                  handleBookSlot(slot.id, slot.startTime, slot.endTime)
+                  slot.available && handleBookSlot(slot.id, slot.startTime, slot.endTime)
                 }
                 disabled={!slot.available || bookSlot.isPending}
               >
-                <Text
-                  style={[
-                    styles.slotTime,
-                    !slot.available && styles.slotTimeDisabled,
-                  ]}
-                >
+                <Text style={[styles.slotTime, !slot.available && styles.slotTimeDisabled]}>
                   {slot.startTime} - {slot.endTime}
                 </Text>
                 <Text
                   style={[
                     styles.slotStatus,
-                    slot.available
-                      ? styles.slotStatusAvailable
-                      : styles.slotStatusBooked,
+                    slot.available ? styles.slotStatusAvailable : styles.slotStatusBooked,
                   ]}
                 >
                   {slot.available ? 'Available' : 'Booked'}
@@ -248,9 +224,7 @@ export default function VenueDetailScreen() {
             ))}
           </View>
         ) : (
-          <Text style={styles.noSlotsText}>
-            No availability information for this date
-          </Text>
+          <Text style={styles.noSlotsText}>No availability information for this date</Text>
         )}
       </View>
 
@@ -274,19 +248,26 @@ export default function VenueDetailScreen() {
       )} */}
 
       {/* Contact Info */}
-      {(venue.contact?.phone || venue.contactInfo?.phone || venue.contact?.email || venue.contactInfo?.email) && (
+      {(venue.contact?.phone ||
+        venue.contactInfo?.phone ||
+        venue.contact?.email ||
+        venue.contactInfo?.email) && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contact</Text>
           {(venue.contact?.phone || venue.contactInfo?.phone) && (
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>📞</Text>
-              <Text style={styles.contactText}>{venue.contact?.phone || venue.contactInfo?.phone}</Text>
+              <Text style={styles.contactText}>
+                {venue.contact?.phone || venue.contactInfo?.phone}
+              </Text>
             </View>
           )}
           {(venue.contact?.email || venue.contactInfo?.email) && (
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>✉️</Text>
-              <Text style={styles.contactText}>{venue.contact?.email || venue.contactInfo?.email}</Text>
+              <Text style={styles.contactText}>
+                {venue.contact?.email || venue.contactInfo?.email}
+              </Text>
             </View>
           )}
         </View>

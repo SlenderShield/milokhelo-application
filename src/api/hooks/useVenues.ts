@@ -1,19 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as venuesApi from '../endpoints/venues';
-import {
-  VenueCreate,
-  VenueUpdate,
-  BookingCreate,
-  PaginationQuery,
-  SearchQuery,
-} from '../models';
+import { VenueCreate, VenueUpdate, BookingCreate, PaginationQuery, SearchQuery } from '../models';
 
 // Query Keys
 export const venueKeys = {
   all: ['venues'] as const,
   lists: () => [...venueKeys.all, 'list'] as const,
-  list: (params?: PaginationQuery | SearchQuery) =>
-    [...venueKeys.lists(), params] as const,
+  list: (params?: PaginationQuery | SearchQuery) => [...venueKeys.lists(), params] as const,
   nearby: (params: { lat: number; lng: number; radius?: number }) =>
     [...venueKeys.all, 'nearby', params] as const,
   details: () => [...venueKeys.all, 'detail'] as const,
@@ -210,7 +203,7 @@ export const useApproveBooking = () => {
 
   return useMutation({
     mutationFn: (bookingId: string) => venuesApi.approveBooking(bookingId),
-    onSuccess: (booking) => {
+    onSuccess: booking => {
       // Invalidate venue bookings to refetch
       if (booking.venueId) {
         queryClient.invalidateQueries({
@@ -228,7 +221,7 @@ export const useRejectBooking = () => {
   return useMutation({
     mutationFn: ({ bookingId, reason }: { bookingId: string; reason?: string }) =>
       venuesApi.rejectBooking(bookingId, reason),
-    onSuccess: (booking) => {
+    onSuccess: booking => {
       // Invalidate venue bookings to refetch
       if (booking.venueId) {
         queryClient.invalidateQueries({

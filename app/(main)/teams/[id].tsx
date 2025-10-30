@@ -24,11 +24,12 @@ export default function TeamDetailScreen() {
   const leaveTeam = useLeaveTeam();
 
   // Check if user is a member
-  const isMember = team?.members?.some((member) => 
+  const isMember = team?.members?.some(member =>
     typeof member === 'string' ? member === user?.id : member.userId === user?.id
   );
-  const isCaptain = (typeof team?.captain === 'string' ? team?.captain === user?.id : false) || 
-                    team?.captainId === user?.id;
+  const isCaptain =
+    (typeof team?.captain === 'string' ? team?.captain === user?.id : false) ||
+    team?.captainId === user?.id;
 
   const handleJoinTeam = async () => {
     if (!id) return;
@@ -78,9 +79,7 @@ export default function TeamDetailScreen() {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Failed to load team</Text>
-        <Text style={styles.errorSubtext}>
-          {error?.message || 'Team not found'}
-        </Text>
+        <Text style={styles.errorSubtext}>{error?.message || 'Team not found'}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
@@ -93,9 +92,7 @@ export default function TeamDetailScreen() {
       {/* Team Header */}
       <View style={styles.header}>
         <View style={styles.teamAvatar}>
-          <Text style={styles.teamAvatarText}>
-            {team.name.substring(0, 2).toUpperCase()}
-          </Text>
+          <Text style={styles.teamAvatarText}>{team.name.substring(0, 2).toUpperCase()}</Text>
         </View>
         <Text style={styles.teamName}>{team.name}</Text>
         <Text style={styles.teamSport}>{team.sport}</Text>
@@ -152,15 +149,13 @@ export default function TeamDetailScreen() {
 
       {/* Members List */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
-          Members ({team.members?.length || 0})
-        </Text>
+        <Text style={styles.sectionTitle}>Members ({team.members?.length || 0})</Text>
         {team.members && team.members.length > 0 ? (
           team.members.map((member, index) => {
             // Handle both string IDs and member objects
             const memberId = typeof member === 'string' ? member : member.userId;
             const memberRole = typeof member === 'string' ? 'member' : member.role;
-            
+
             return (
               <View key={memberId || index} style={styles.memberCard}>
                 <View style={styles.memberAvatar}>

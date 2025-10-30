@@ -23,22 +23,22 @@ export default function ResetPasswordScreen() {
   const [confirmError, setConfirmError] = useState('');
 
   // Validate token
-  const { data: tokenValid, isLoading: validating, error: tokenError } = useValidateResetToken(token || '');
+  const {
+    data: tokenValid,
+    isLoading: validating,
+    error: tokenError,
+  } = useValidateResetToken(token || '');
 
   const resetPassword = useResetPassword();
 
   useEffect(() => {
     if (tokenError) {
-      Alert.alert(
-        'Invalid Token',
-        'This password reset link is invalid or has expired.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/forgot-password'),
-          },
-        ]
-      );
+      Alert.alert('Invalid Token', 'This password reset link is invalid or has expired.', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/forgot-password'),
+        },
+      ]);
     }
   }, [tokenError]);
 
@@ -84,22 +84,18 @@ export default function ResetPasswordScreen() {
     try {
       await resetPassword.mutateAsync({
         token,
-        data: { 
+        data: {
           password,
           confirmPassword: confirmPassword,
         },
       });
 
-      Alert.alert(
-        'Success',
-        'Your password has been reset successfully.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/login'),
-          },
-        ]
-      );
+      Alert.alert('Success', 'Your password has been reset successfully.', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/login'),
+        },
+      ]);
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to reset password');
     }
@@ -121,9 +117,7 @@ export default function ResetPasswordScreen() {
       <View style={styles.centerContainer}>
         <Text style={styles.errorIcon}>❌</Text>
         <Text style={styles.errorTitle}>Invalid Link</Text>
-        <Text style={styles.errorMessage}>
-          This password reset link is invalid or has expired.
-        </Text>
+        <Text style={styles.errorMessage}>This password reset link is invalid or has expired.</Text>
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={() => router.replace('/forgot-password')}
@@ -141,9 +135,7 @@ export default function ResetPasswordScreen() {
     >
       <View style={styles.content}>
         <Text style={styles.title}>Reset Password</Text>
-        <Text style={styles.subtitle}>
-          Please enter your new password below.
-        </Text>
+        <Text style={styles.subtitle}>Please enter your new password below.</Text>
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
@@ -152,7 +144,7 @@ export default function ResetPasswordScreen() {
               style={[styles.input, passwordError ? styles.inputError : null]}
               placeholder="Enter new password"
               value={password}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setPassword(text);
                 setPasswordError('');
               }}
@@ -174,7 +166,7 @@ export default function ResetPasswordScreen() {
               style={[styles.input, confirmError ? styles.inputError : null]}
               placeholder="Confirm new password"
               value={confirmPassword}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setConfirmPassword(text);
                 setConfirmError('');
               }}
@@ -183,16 +175,11 @@ export default function ResetPasswordScreen() {
               autoCorrect={false}
               editable={!resetPassword.isPending}
             />
-            {confirmError ? (
-              <Text style={styles.errorText}>{confirmError}</Text>
-            ) : null}
+            {confirmError ? <Text style={styles.errorText}>{confirmError}</Text> : null}
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.submitButton,
-              resetPassword.isPending && styles.submitButtonDisabled,
-            ]}
+            style={[styles.submitButton, resetPassword.isPending && styles.submitButtonDisabled]}
             onPress={handleSubmit}
             disabled={resetPassword.isPending}
           >

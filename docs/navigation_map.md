@@ -29,31 +29,35 @@ app/
 
 ## Route → Screen → API Mapping
 
-| Route | Screen | API Hooks | Description |
-|-------|--------|-----------|-------------|
-| `/` | Home | `useAuth()` | Landing page with login/register or dashboard |
-| `/(auth)/login` | Login | `useLogin()` | Email/password login |
-| `/(auth)/register` | Register | `useRegister()` | User registration |
-| `/(auth)/forgot-password` | Forgot Password | `useForgotPassword()`, `useResetPassword()` | Password reset flow |
-| `/(main)/dashboard` | Dashboard | `useAuth()` | Main dashboard with quick actions |
-| `/(main)/matches` | Matches List | `useGetMatches()` | Browse all matches |
-| `/(main)/matches/[id]` | Match Detail | `useGetMatchById(id)`, `useJoinMatch()`, `useLeaveMatch()` | View and interact with match |
-| `/(main)/tournaments` | Tournaments | `useGetTournaments()` | Browse tournaments |
-| `/(main)/teams` | Teams | `useGetTeams()` | Browse and manage teams |
-| `/(main)/profile` | Profile | `useGetMyProfile()`, `useLogout()` | User profile and settings |
+| Route                     | Screen          | API Hooks                                                  | Description                                   |
+| ------------------------- | --------------- | ---------------------------------------------------------- | --------------------------------------------- |
+| `/`                       | Home            | `useAuth()`                                                | Landing page with login/register or dashboard |
+| `/(auth)/login`           | Login           | `useLogin()`                                               | Email/password login                          |
+| `/(auth)/register`        | Register        | `useRegister()`                                            | User registration                             |
+| `/(auth)/forgot-password` | Forgot Password | `useForgotPassword()`, `useResetPassword()`                | Password reset flow                           |
+| `/(main)/dashboard`       | Dashboard       | `useAuth()`                                                | Main dashboard with quick actions             |
+| `/(main)/matches`         | Matches List    | `useGetMatches()`                                          | Browse all matches                            |
+| `/(main)/matches/[id]`    | Match Detail    | `useGetMatchById(id)`, `useJoinMatch()`, `useLeaveMatch()` | View and interact with match                  |
+| `/(main)/tournaments`     | Tournaments     | `useGetTournaments()`                                      | Browse tournaments                            |
+| `/(main)/teams`           | Teams           | `useGetTeams()`                                            | Browse and manage teams                       |
+| `/(main)/profile`         | Profile         | `useGetMyProfile()`, `useLogout()`                         | User profile and settings                     |
 
 ---
 
 ## Navigation Groups
 
 ### (auth) Group - Unauthenticated Routes
+
 Routes accessible without authentication:
+
 - `/login` - Login screen
 - `/register` - Registration screen
 - `/forgot-password` - Password reset
 
 ### (main) Group - Protected Routes
+
 Routes requiring authentication (redirects to login if not authenticated):
+
 - `/dashboard` - Main dashboard
 - `/matches` - Match browsing and management
 - `/tournaments` - Tournament browsing
@@ -69,9 +73,11 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: Landing page that redirects based on auth status
 
 **API Hooks**:
+
 - `useAuth()` - Check authentication state
 
 **Navigation Logic**:
+
 - If authenticated → Show "Go to Dashboard" button
 - If not authenticated → Show "Login" and "Register" buttons
 
@@ -82,13 +88,16 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: User login with email/password
 
 **API Hooks**:
+
 - `useLogin()` - Authenticate user
 
 **Form Fields**:
+
 - Email (validated)
 - Password
 
 **Navigation**:
+
 - Success → Redirect to `/dashboard`
 - "Forgot Password" → Navigate to `/forgot-password`
 - "Register" → Navigate to `/register`
@@ -100,20 +109,24 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: New user registration
 
 **API Hooks**:
+
 - `useRegister()` - Create new account
 
 **Form Fields**:
+
 - Name
 - Email
 - Password
 - Confirm Password
 
 **Validation**:
+
 - Password minimum 6 characters
 - Passwords must match
 - Email format validation
 
 **Navigation**:
+
 - Success → Redirect to `/login`
 - "Login" → Navigate to `/login`
 
@@ -124,9 +137,11 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: Main hub with quick access to features
 
 **API Hooks**:
+
 - `useAuth()` - Get current user
 
 **Features**:
+
 - Welcome message with user name
 - Quick action cards for:
   - Matches
@@ -139,6 +154,7 @@ Routes requiring authentication (redirects to login if not authenticated):
   - Messages
 
 **Navigation**:
+
 - Each card navigates to respective section
 
 ---
@@ -148,9 +164,11 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: Browse and search matches
 
 **API Hooks**:
+
 - `useGetMatches(params)` - Fetch match list
 
 **Features**:
+
 - List of matches with:
   - Title
   - Sport type
@@ -162,9 +180,11 @@ Routes requiring authentication (redirects to login if not authenticated):
 - Empty state when no matches
 
 **Navigation**:
+
 - Tap match → Navigate to `/matches/[id]`
 
 **Match Status Colors**:
+
 - `scheduled` - Blue (#2196F3)
 - `live` - Green (#4CAF50)
 - `finished` - Grey (#9E9E9E)
@@ -177,11 +197,13 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: View match details and take actions
 
 **API Hooks**:
+
 - `useGetMatchById(id)` - Fetch match details
 - `useJoinMatch()` - Join match (planned)
 - `useLeaveMatch()` - Leave match (planned)
 
 **Displayed Data**:
+
 - Match title and status
 - Sport type
 - Match type (friendly/competitive/tournament)
@@ -191,6 +213,7 @@ Routes requiring authentication (redirects to login if not authenticated):
 - Description
 
 **Actions**:
+
 - "Join Match" button
 - "Share" button
 
@@ -205,6 +228,7 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Status**: Placeholder (implementation pending)
 
 **Planned API Hooks**:
+
 - `useGetTeams()`
 - `useCreateTeam()`
 - `useJoinTeam()`
@@ -218,6 +242,7 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Status**: Placeholder (implementation pending)
 
 **Planned API Hooks**:
+
 - `useGetTournaments()`
 - `useGetTournamentById()`
 - `useJoinTournament()`
@@ -229,10 +254,12 @@ Routes requiring authentication (redirects to login if not authenticated):
 **Purpose**: User profile and account management
 
 **API Hooks**:
+
 - `useAuth()` - Get user data
 - `useLogout()` - Sign out
 
 **Features**:
+
 - Avatar (shows first letter of name)
 - User name and email
 - Account section:
@@ -246,6 +273,7 @@ Routes requiring authentication (redirects to login if not authenticated):
 - Logout button
 
 **Navigation**:
+
 - Logout → Clear auth and redirect to home
 
 ---
@@ -254,13 +282,13 @@ Routes requiring authentication (redirects to login if not authenticated):
 
 The main app uses bottom tab navigation with 5 tabs:
 
-| Tab | Icon | Screen | Badge |
-|-----|------|--------|-------|
-| Dashboard | 🏠 home | Dashboard | - |
-| Matches | ⚽ football | Matches | - |
-| Tournaments | 🏆 trophy | Tournaments | - |
-| Teams | 👥 people | Teams | - |
-| Profile | 👤 person | Profile | - |
+| Tab         | Icon        | Screen      | Badge |
+| ----------- | ----------- | ----------- | ----- |
+| Dashboard   | 🏠 home     | Dashboard   | -     |
+| Matches     | ⚽ football | Matches     | -     |
+| Tournaments | 🏆 trophy   | Tournaments | -     |
+| Teams       | 👥 people   | Teams       | -     |
+| Profile     | 👤 person   | Profile     | -     |
 
 ---
 
@@ -294,38 +322,46 @@ The app supports deep linking for:
 Additional screens to be implemented:
 
 ### Matches
+
 - `/matches/create` - Create new match
 - `/matches/[id]/edit` - Edit match (organizer)
 
 ### Tournaments
+
 - `/tournaments/` - List tournaments
 - `/tournaments/[id]` - Tournament details
 - `/tournaments/[id]/bracket` - View bracket
 - `/tournaments/create` - Create tournament
 
 ### Teams
+
 - `/teams/` - List teams
 - `/teams/[id]` - Team details
 - `/teams/create` - Create team
 
 ### Venues
+
 - `/venues/` - Browse venues
 - `/venues/[id]` - Venue details
 - `/venues/search` - Search with map
 - `/venues/nearby` - Nearby venues
 
 ### Chat
+
 - `/chat/` - Chat rooms list
 - `/chat/[roomId]` - Chat conversation
 
 ### Calendar
+
 - `/calendar/` - Calendar view
 - `/calendar/sync` - Google Calendar integration
 
 ### Notifications
+
 - `/notifications/` - Notifications list
 
 ### Settings
+
 - `/settings/` - App settings
 - `/settings/profile` - Edit profile
 - `/settings/notifications` - Notification preferences
@@ -336,16 +372,18 @@ Additional screens to be implemented:
 ## Navigation Utilities
 
 ### Router Methods
+
 ```typescript
 import { useRouter } from 'expo-router';
 
-router.push('/path');     // Navigate forward
-router.replace('/path');  // Replace current route
-router.back();           // Go back
-router.canGoBack();      // Check if can go back
+router.push('/path'); // Navigate forward
+router.replace('/path'); // Replace current route
+router.back(); // Go back
+router.canGoBack(); // Check if can go back
 ```
 
 ### Route Parameters
+
 ```typescript
 import { useLocalSearchParams } from 'expo-router';
 
@@ -357,6 +395,7 @@ const { id } = useLocalSearchParams<{ id: string }>();
 ## Loading & Error States
 
 All screens with API calls handle:
+
 - **Loading**: Show `ActivityIndicator`
 - **Error**: Show error message with retry option
 - **Empty**: Show empty state with call-to-action
@@ -366,6 +405,7 @@ All screens with API calls handle:
 ## Styling Guidelines
 
 ### Colors
+
 - Primary: `#6200ee` (Purple)
 - Success: `#4CAF50` (Green)
 - Error: `#F44336` (Red)
@@ -376,6 +416,7 @@ All screens with API calls handle:
 - Background: `#f5f5f5` (Light Grey)
 
 ### Typography
+
 - Title: 24-28px, Bold
 - Subtitle: 16-18px, Regular
 - Body: 14-16px

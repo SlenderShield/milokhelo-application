@@ -31,24 +31,24 @@ export default function RootLayout() {
             },
           }}
         >
-          <Stack.Screen 
-            name="index" 
-            options={{ 
+          <Stack.Screen
+            name="index"
+            options={{
               title: 'MiloKhelo',
               headerShown: true,
-            }} 
+            }}
           />
-          <Stack.Screen 
-            name="(auth)" 
-            options={{ 
-              headerShown: false 
-            }} 
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false,
+            }}
           />
-          <Stack.Screen 
-            name="(main)" 
-            options={{ 
-              headerShown: false 
-            }} 
+          <Stack.Screen
+            name="(main)"
+            options={{
+              headerShown: false,
+            }}
           />
         </Stack>
         <OfflineIndicator />

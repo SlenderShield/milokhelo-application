@@ -108,11 +108,7 @@ export async function compressImage(
   options: CompressionOptions = {}
 ): Promise<string> {
   try {
-    const {
-      maxWidth = 1024,
-      maxHeight = 1024,
-      quality = 0.8,
-    } = options;
+    const { maxWidth = 1024, maxHeight = 1024, quality = 0.8 } = options;
 
     const manipulatedImage = await ImageManipulator.manipulateAsync(
       uri,
@@ -130,10 +126,7 @@ export async function compressImage(
 /**
  * Generate a thumbnail from an image
  */
-export async function generateThumbnail(
-  uri: string,
-  size: number = 200
-): Promise<string> {
+export async function generateThumbnail(uri: string, size: number = 200): Promise<string> {
   try {
     const manipulatedImage = await ImageManipulator.manipulateAsync(
       uri,
@@ -156,7 +149,7 @@ export async function imageToBase64(uri: string): Promise<string> {
   try {
     const response = await fetch(uri);
     const blob = await response.blob();
-    
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -191,11 +184,11 @@ export async function getImageSize(uri: string): Promise<number> {
  */
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B';
-  
+
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 }
 
@@ -208,7 +201,7 @@ export async function validateImageSize(
 ): Promise<{ valid: boolean; size: number; message?: string }> {
   const size = await getImageSize(uri);
   const maxSize = maxSizeInMB * 1024 * 1024;
-  
+
   if (size > maxSize) {
     return {
       valid: false,
@@ -216,7 +209,7 @@ export async function validateImageSize(
       message: `Image size (${formatFileSize(size)}) exceeds maximum allowed size (${maxSizeInMB}MB)`,
     };
   }
-  
+
   return { valid: true, size };
 }
 
@@ -231,13 +224,10 @@ export async function prepareImageForUpload(
   try {
     // Compress the image first
     const compressedUri = await compressImage(uri, options);
-    
+
     // Validate size
-    const validation = await validateImageSize(
-      compressedUri,
-      options.maxSizeInMB || 5
-    );
-    
+    const validation = await validateImageSize(compressedUri, options.maxSizeInMB || 5);
+
     if (!validation.valid) {
       // If still too large, compress more aggressively
       const moreCompressed = await compressImage(uri, {
@@ -246,19 +236,16 @@ export async function prepareImageForUpload(
         maxHeight: 800,
         quality: 0.6,
       });
-      
-      const revalidation = await validateImageSize(
-        moreCompressed,
-        options.maxSizeInMB || 5
-      );
-      
+
+      const revalidation = await validateImageSize(moreCompressed, options.maxSizeInMB || 5);
+
       if (!revalidation.valid) {
         throw new Error(revalidation.message);
       }
-      
+
       return { uri: moreCompressed, size: revalidation.size };
     }
-    
+
     return { uri: compressedUri, size: validation.size };
   } catch (error) {
     console.error('Error preparing image for upload:', error);

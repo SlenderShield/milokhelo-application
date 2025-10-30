@@ -49,7 +49,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 
     // Get the Expo Push Token
     const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-    
+
     if (!projectId) {
       console.error('Project ID not found in app config');
       return null;
@@ -166,17 +166,15 @@ export function setupNotificationListeners(
   onNotificationReceived?: (notification: Notifications.Notification) => void,
   onNotificationTapped?: (response: Notifications.NotificationResponse) => void
 ) {
-  const receivedSubscription =
-    Notifications.addNotificationReceivedListener((notification) => {
-      console.log('Notification received:', notification);
-      onNotificationReceived?.(notification);
-    });
+  const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
+    console.log('Notification received:', notification);
+    onNotificationReceived?.(notification);
+  });
 
-  const responseSubscription =
-    Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log('Notification tapped:', response);
-      onNotificationTapped?.(response);
-    });
+  const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+    console.log('Notification tapped:', response);
+    onNotificationTapped?.(response);
+  });
 
   return {
     receivedSubscription,

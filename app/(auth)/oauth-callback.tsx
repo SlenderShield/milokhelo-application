@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { handleOAuthRedirect, exchangeOAuthCode, type OAuthProvider } from '@/src/services/oauth';
@@ -32,7 +26,7 @@ export default function OAuthCallbackScreen() {
     try {
       // Get the full URL
       const url = await Linking.getInitialURL();
-      
+
       if (!url) {
         // Fallback: try to reconstruct from params
         const code = params.code as string;
@@ -75,9 +69,7 @@ export default function OAuthCallbackScreen() {
     } catch (error) {
       console.error('OAuth callback error:', error);
       setStatus('error');
-      setMessage(
-        error instanceof Error ? error.message : 'An unexpected error occurred'
-      );
+      setMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   };
 
@@ -99,7 +91,7 @@ export default function OAuthCallbackScreen() {
 
       // Store the JWT token received from backend
       await TokenManager.setToken(result.token);
-      
+
       // Refetch user data to update auth state
       refetch();
 
@@ -113,9 +105,7 @@ export default function OAuthCallbackScreen() {
     } catch (error) {
       console.error('Token exchange error:', error);
       setStatus('error');
-      setMessage(
-        error instanceof Error ? error.message : 'Failed to complete authentication'
-      );
+      setMessage(error instanceof Error ? error.message : 'Failed to complete authentication');
     }
   };
 

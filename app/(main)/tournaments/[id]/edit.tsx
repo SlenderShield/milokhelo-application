@@ -64,8 +64,10 @@ export default function EditTournamentScreen() {
       setType(tournament.type || 'knockout');
       setSport(tournament.sport || '');
       setDescription(tournament.description || '');
-      setMaxParticipants(tournament.maxParticipants?.toString() || tournament.maxTeams?.toString() || '');
-      
+      setMaxParticipants(
+        tournament.maxParticipants?.toString() || tournament.maxTeams?.toString() || ''
+      );
+
       // Format dates if they exist
       if (tournament.startDate) {
         const start = new Date(tournament.startDate);
@@ -75,7 +77,7 @@ export default function EditTournamentScreen() {
         const end = new Date(tournament.endDate);
         setEndDate(end.toISOString().split('T')[0]);
       }
-      
+
       // Tournament model doesn't have location field
       setLocation('');
     }
@@ -191,9 +193,7 @@ export default function EditTournamentScreen() {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>🔒</Text>
         <Text style={styles.errorTitle}>Access Denied</Text>
-        <Text style={styles.errorText}>
-          Only the tournament organizer can edit this tournament
-        </Text>
+        <Text style={styles.errorText}>Only the tournament organizer can edit this tournament</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -220,7 +220,7 @@ export default function EditTournamentScreen() {
             style={[styles.input, errors.name ? styles.inputError : null]}
             placeholder="Enter tournament name"
             value={name}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setName(text);
               if (errors.name) {
                 setErrors({ ...errors, name: undefined });
@@ -242,7 +242,7 @@ export default function EditTournamentScreen() {
             Tournament Type <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.typeContainer}>
-            {TOURNAMENT_TYPES.map((typeOption) => (
+            {TOURNAMENT_TYPES.map(typeOption => (
               <TouchableOpacity
                 key={typeOption.value}
                 style={[
@@ -260,10 +260,7 @@ export default function EditTournamentScreen() {
               >
                 <Text style={styles.typeIcon}>{typeOption.icon}</Text>
                 <Text
-                  style={[
-                    styles.typeLabel,
-                    type === typeOption.value && styles.typeLabelSelected,
-                  ]}
+                  style={[styles.typeLabel, type === typeOption.value && styles.typeLabelSelected]}
                 >
                   {typeOption.label}
                 </Text>
@@ -287,7 +284,7 @@ export default function EditTournamentScreen() {
             Sport <Text style={styles.required}>*</Text>
           </Text>
           <View style={styles.sportGrid}>
-            {SPORTS.map((sportOption) => (
+            {SPORTS.map(sportOption => (
               <TouchableOpacity
                 key={sportOption}
                 style={[
@@ -341,7 +338,7 @@ export default function EditTournamentScreen() {
             style={[styles.input, errors.maxParticipants ? styles.inputError : null]}
             placeholder="e.g., 16"
             value={maxParticipants}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setMaxParticipants(text.replace(/[^0-9]/g, ''));
               if (errors.maxParticipants) {
                 setErrors({ ...errors, maxParticipants: undefined });
@@ -364,7 +361,7 @@ export default function EditTournamentScreen() {
             style={[styles.input, errors.startDate ? styles.inputError : null]}
             placeholder="YYYY-MM-DD"
             value={startDate}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setStartDate(text);
               if (errors.startDate) {
                 setErrors({ ...errors, startDate: undefined });
@@ -409,10 +406,7 @@ export default function EditTournamentScreen() {
 
         {/* Update Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            updateTournament.isPending && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, updateTournament.isPending && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={updateTournament.isPending}
         >

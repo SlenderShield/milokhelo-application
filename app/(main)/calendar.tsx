@@ -115,9 +115,7 @@ export default function CalendarScreen() {
     return (
       <ScrollView
         style={styles.container}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>📅</Text>
@@ -143,9 +141,7 @@ export default function CalendarScreen() {
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Calendar</Text>
@@ -155,8 +151,7 @@ export default function CalendarScreen() {
       {events.map((event: any, index: number) => {
         const showDateHeader =
           index === 0 ||
-          new Date(event.date).toDateString() !==
-            new Date(events[index - 1].date).toDateString();
+          new Date(event.date).toDateString() !== new Date(events[index - 1].date).toDateString();
 
         return (
           <View key={event.id}>
@@ -165,10 +160,7 @@ export default function CalendarScreen() {
                 <Text style={styles.dateHeaderText}>{formatDate(event.date)}</Text>
               </View>
             )}
-            <TouchableOpacity
-              style={styles.eventCard}
-              onPress={() => handleEventPress(event)}
-            >
+            <TouchableOpacity style={styles.eventCard} onPress={() => handleEventPress(event)}>
               <View
                 style={[
                   styles.eventIconContainer,
@@ -179,20 +171,13 @@ export default function CalendarScreen() {
               </View>
               <View style={styles.eventContent}>
                 <Text style={styles.eventTitle}>{event.title}</Text>
-                {event.location && (
-                  <Text style={styles.eventLocation}>📍 {event.location}</Text>
-                )}
+                {event.location && <Text style={styles.eventLocation}>📍 {event.location}</Text>}
                 <View style={styles.eventMeta}>
                   <Text style={styles.eventTime}>{formatTime(event.date)}</Text>
                   <View
-                    style={[
-                      styles.eventTypeBadge,
-                      { backgroundColor: getEventColor(event.type) },
-                    ]}
+                    style={[styles.eventTypeBadge, { backgroundColor: getEventColor(event.type) }]}
                   >
-                    <Text style={styles.eventTypeBadgeText}>
-                      {event.type.toUpperCase()}
-                    </Text>
+                    <Text style={styles.eventTypeBadgeText}>{event.type.toUpperCase()}</Text>
                   </View>
                 </View>
               </View>
@@ -203,9 +188,7 @@ export default function CalendarScreen() {
       })}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Sync with Google Calendar for more features
-        </Text>
+        <Text style={styles.footerText}>Sync with Google Calendar for more features</Text>
         <TouchableOpacity style={styles.syncButton}>
           <Text style={styles.syncButtonText}>🔗 Connect Calendar</Text>
         </TouchableOpacity>

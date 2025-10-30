@@ -77,10 +77,10 @@ export const useGetUserFriends = (id: string) =>
 // Update My Profile
 export const useUpdateMyProfile = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: UserUpdate) => userEndpoints.updateMyProfile(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(userKeys.me(), data);
       queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
@@ -90,7 +90,7 @@ export const useUpdateMyProfile = () => {
 // Add Friend
 export const useAddFriend = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (friendId: string) => userEndpoints.addFriend(friendId),
     onSuccess: () => {
@@ -102,7 +102,7 @@ export const useAddFriend = () => {
 // Remove Friend
 export const useRemoveFriend = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (friendId: string) => userEndpoints.removeFriend(friendId),
     onSuccess: () => {

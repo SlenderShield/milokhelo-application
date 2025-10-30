@@ -17,9 +17,12 @@ export default function TeamsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch teams with optional search
-  const { data: teams, isLoading, error, refetch } = useGetTeams(
-    searchQuery ? { q: searchQuery } : undefined
-  );
+  const {
+    data: teams,
+    isLoading,
+    error,
+    refetch,
+  } = useGetTeams(searchQuery ? { q: searchQuery } : undefined);
 
   // Loading state
   if (isLoading) {
@@ -52,11 +55,7 @@ export default function TeamsScreen() {
             placeholderTextColor="#999"
           />
         </View>
-        <ErrorState
-          title="Failed to load teams"
-          message={error.message}
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load teams" message={error.message} onRetry={refetch} />
       </View>
     );
   }
@@ -77,11 +76,7 @@ export default function TeamsScreen() {
         <EmptyState
           icon="⚽"
           title="No teams found"
-          message={
-            searchQuery
-              ? 'Try adjusting your search'
-              : 'Be the first to create a team!'
-          }
+          message={searchQuery ? 'Try adjusting your search' : 'Be the first to create a team!'}
           action={
             !searchQuery
               ? {
@@ -111,7 +106,7 @@ export default function TeamsScreen() {
       {/* Teams List */}
       <FlatList
         data={teams}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -127,9 +122,7 @@ export default function TeamsScreen() {
           >
             <View style={styles.teamHeader}>
               <View style={styles.teamAvatar}>
-                <Text style={styles.teamAvatarText}>
-                  {item.name.substring(0, 2).toUpperCase()}
-                </Text>
+                <Text style={styles.teamAvatarText}>{item.name.substring(0, 2).toUpperCase()}</Text>
               </View>
               <View style={styles.teamInfo}>
                 <Text style={styles.teamName}>{item.name}</Text>
@@ -163,10 +156,7 @@ export default function TeamsScreen() {
       />
 
       {/* Create Team Button */}
-      <TouchableOpacity
-        style={styles.createButton}
-        onPress={() => router.push('/teams/create')}
-      >
+      <TouchableOpacity style={styles.createButton} onPress={() => router.push('/teams/create')}>
         <Text style={styles.createButtonText}>+ Create Team</Text>
       </TouchableOpacity>
     </View>

@@ -33,10 +33,10 @@ export function getRedirectUri(): string {
 export async function initiateGoogleOAuth(): Promise<OAuthResult> {
   try {
     const redirectUri = getRedirectUri();
-    
+
     // TODO: Replace with your actual Google OAuth client ID
     const clientId = 'YOUR_GOOGLE_CLIENT_ID';
-    
+
     // Construct Google OAuth URL
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
       client_id: clientId,
@@ -85,10 +85,10 @@ export async function initiateGoogleOAuth(): Promise<OAuthResult> {
 export async function initiateFacebookOAuth(): Promise<OAuthResult> {
   try {
     const redirectUri = getRedirectUri();
-    
+
     // TODO: Replace with your actual Facebook App ID
     const appId = 'YOUR_FACEBOOK_APP_ID';
-    
+
     // Construct Facebook OAuth URL
     const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?${new URLSearchParams({
       client_id: appId,
@@ -137,12 +137,12 @@ export async function initiateAppleOAuth(): Promise<OAuthResult> {
   try {
     // Note: Apple Sign In requires native module (expo-apple-authentication)
     // This is a placeholder for the web-based flow
-    
+
     const redirectUri = getRedirectUri();
-    
+
     // TODO: Replace with your actual Apple Service ID
     const clientId = 'YOUR_APPLE_SERVICE_ID';
-    
+
     // Construct Apple OAuth URL
     const authUrl = `https://appleid.apple.com/auth/authorize?${new URLSearchParams({
       client_id: clientId,
@@ -230,7 +230,7 @@ export async function exchangeOAuthCode(
 function generateRandomState(): string {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -243,22 +243,22 @@ export async function handleOAuthRedirect(url: string): Promise<{
 }> {
   try {
     const { queryParams, path } = Linking.parse(url);
-    
+
     // Extract provider from path or query params
     const pathParts = path?.split('/') || [];
     const provider = pathParts[pathParts.indexOf('oauth-callback') + 1] as OAuthProvider;
-    
+
     const code = queryParams?.code as string;
     const error = queryParams?.error as string;
-    
+
     if (error) {
       return { error };
     }
-    
+
     if (code && provider) {
       return { provider, code };
     }
-    
+
     return { error: 'Invalid OAuth response' };
   } catch (error) {
     console.error('OAuth redirect parsing error:', error);

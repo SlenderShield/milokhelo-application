@@ -28,6 +28,7 @@ NODE_ENV=development
 ```
 
 **For device testing**, update `API_BASE_URL` to your local IP:
+
 ```env
 API_BASE_URL=http://192.168.1.X:4000/api/v1
 ```
@@ -229,13 +230,17 @@ npm start
 ## Common Issues & Solutions
 
 ### Issue: "Cannot connect to backend"
-**Solution**: 
+
+**Solution**:
+
 - Verify backend is running
 - Check `.env` file has correct API URL
 - For physical device, use local IP not localhost
 
 ### Issue: "Module not found" errors
+
 **Solution**:
+
 ```bash
 rm -rf node_modules
 npm install
@@ -243,18 +248,22 @@ npm start -- --reset-cache
 ```
 
 ### Issue: TypeScript errors
+
 **Solution**:
+
 ```bash
 npm run type-check
 # Fix reported errors
 ```
 
 ### Issue: "Expo Go incompatibility"
+
 **Solution**: Some features may require custom dev client. See [Expo docs](https://docs.expo.dev/development/getting-started/).
 
 ## 🎯 What to Do Next
 
 ### ✅ Immediate Steps
+
 1. ✅ Install dependencies → `npm install`
 2. ✅ Configure `.env` with backend URL
 3. ✅ Start dev server → `npm start`
@@ -262,6 +271,7 @@ npm run type-check
 5. ✅ Test all major features (matches, teams, tournaments, etc.)
 
 ### 🔧 Optional Enhancements
+
 - [ ] Uncomment venue owner actions (fix useAuth import)
 - [ ] Fix TypeScript 'any' type warnings
 - [ ] Add image upload for profiles/teams/venues
@@ -273,6 +283,7 @@ npm run type-check
 - [ ] Create onboarding flow for new users
 
 ### 🚀 Production Deployment
+
 - [ ] Update `.env` with production API URL
 - [ ] Add error tracking (Sentry)
 - [ ] Configure app icons and splash screens
@@ -288,16 +299,16 @@ npm run type-check
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| Framework | React Native + Expo |
-| Routing | Expo Router v3 |
-| Language | TypeScript (strict) |
+| Category         | Technology            |
+| ---------------- | --------------------- |
+| Framework        | React Native + Expo   |
+| Routing          | Expo Router v3        |
+| Language         | TypeScript (strict)   |
 | State Management | @tanstack/react-query |
-| HTTP Client | Axios |
-| Validation | Zod |
-| Auth Storage | expo-secure-store |
-| Icons | @expo/vector-icons |
+| HTTP Client      | Axios                 |
+| Validation       | Zod                   |
+| Auth Storage     | expo-secure-store     |
+| Icons            | @expo/vector-icons    |
 
 ## 📚 Additional Documentation
 

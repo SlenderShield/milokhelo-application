@@ -87,10 +87,10 @@ import { usePushNotifications } from '@/src/hooks/usePushNotifications';
 
 export default function RootLayout() {
   const { expoPushToken, isRegistered } = usePushNotifications();
-  
+
   // Token is automatically registered with backend
   // Deep linking is automatically handled
-  
+
   return (
     // ... your layout
   );
@@ -103,16 +103,18 @@ export default function RootLayout() {
 const { Expo } = require('expo-server-sdk');
 const expo = new Expo();
 
-await expo.sendPushNotificationsAsync([{
-  to: userPushToken,
-  title: 'New Match Invitation',
-  body: 'You have been invited to a football match',
-  data: {
-    type: 'match',
-    matchId: '123'
+await expo.sendPushNotificationsAsync([
+  {
+    to: userPushToken,
+    title: 'New Match Invitation',
+    body: 'You have been invited to a football match',
+    data: {
+      type: 'match',
+      matchId: '123',
+    },
+    channelId: 'matches', // Android only
   },
-  channelId: 'matches' // Android only
-}]);
+]);
 ```
 
 ## 🎯 Features
@@ -153,11 +155,7 @@ When users tap notifications, they're automatically routed to:
 ```typescript
 import { scheduleLocalNotification } from '@/src/services/pushNotifications';
 
-await scheduleLocalNotification(
-  'Test Title',
-  'Test Body',
-  { type: 'test' }
-);
+await scheduleLocalNotification('Test Title', 'Test Body', { type: 'test' });
 ```
 
 ## 📊 Status

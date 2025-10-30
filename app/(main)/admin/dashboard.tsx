@@ -33,13 +33,8 @@ export default function AdminDashboardScreen() {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>🔒</Text>
         <Text style={styles.errorTitle}>Access Denied</Text>
-        <Text style={styles.errorText}>
-          You need admin privileges to access this page
-        </Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <Text style={styles.errorText}>You need admin privileges to access this page</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -69,16 +64,14 @@ export default function AdminDashboardScreen() {
   }
 
   // Handle reports data - it may be an array or object with stats
-  const stats = Array.isArray(reports) 
+  const stats = Array.isArray(reports)
     ? { totalUsers: 0, totalMatches: 0, totalTournaments: 0, totalVenues: 0 }
     : (reports as any)?.stats || {};
 
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.header}>
         <Text style={styles.welcomeText}>Welcome, Admin</Text>
@@ -149,7 +142,7 @@ export default function AdminDashboardScreen() {
       {/* Quick Actions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
-        
+
         <TouchableOpacity
           style={styles.actionButton}
           onPress={() => router.push('/admin/feedback')}

@@ -291,7 +291,7 @@ import { useTheme, useThemeColors } from '@/src/context/ThemeContext';
 const MyComponent = () => {
   const { theme, toggleTheme, isDarkMode } = useTheme();
   const colors = useThemeColors();
-  
+
   return (
     <View style={{ backgroundColor: colors.background }}>
       <Text style={{ color: colors.text }}>Hello</Text>

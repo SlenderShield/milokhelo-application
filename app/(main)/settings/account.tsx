@@ -64,7 +64,7 @@ export default function AccountScreen() {
       });
 
       Alert.alert('Success', 'Password changed successfully!');
-      
+
       // Clear form
       setCurrentPassword('');
       setNewPassword('');
@@ -88,7 +88,7 @@ export default function AccountScreen() {
         {/* Account Info Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account Information</Text>
-          
+
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Email</Text>
             <Text style={styles.infoValue}>{user?.email}</Text>
@@ -102,9 +102,7 @@ export default function AccountScreen() {
           <View style={styles.infoItem}>
             <Text style={styles.infoLabel}>Member Since</Text>
             <Text style={styles.infoValue}>
-              {user?.createdAt
-                ? new Date(user.createdAt).toLocaleDateString()
-                : 'N/A'}
+              {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
             </Text>
           </View>
         </View>
@@ -116,13 +114,10 @@ export default function AccountScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Current Password</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.currentPassword ? styles.inputError : null,
-              ]}
+              style={[styles.input, errors.currentPassword ? styles.inputError : null]}
               placeholder="Enter current password"
               value={currentPassword}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setCurrentPassword(text);
                 if (errors.currentPassword) {
                   setErrors({ ...errors, currentPassword: undefined });
@@ -139,13 +134,10 @@ export default function AccountScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>New Password</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.newPassword ? styles.inputError : null,
-              ]}
+              style={[styles.input, errors.newPassword ? styles.inputError : null]}
               placeholder="Enter new password"
               value={newPassword}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setNewPassword(text);
                 if (errors.newPassword) {
                   setErrors({ ...errors, newPassword: undefined });
@@ -157,22 +149,17 @@ export default function AccountScreen() {
             {errors.newPassword ? (
               <Text style={styles.errorText}>{errors.newPassword}</Text>
             ) : (
-              <Text style={styles.hintText}>
-                Must be at least 8 characters
-              </Text>
+              <Text style={styles.hintText}>Must be at least 8 characters</Text>
             )}
           </View>
 
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Confirm New Password</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.confirmPassword ? styles.inputError : null,
-              ]}
+              style={[styles.input, errors.confirmPassword ? styles.inputError : null]}
               placeholder="Re-enter new password"
               value={confirmPassword}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setConfirmPassword(text);
                 if (errors.confirmPassword) {
                   setErrors({ ...errors, confirmPassword: undefined });
@@ -187,10 +174,7 @@ export default function AccountScreen() {
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.changePasswordButton,
-              changePassword.isPending && styles.buttonDisabled,
-            ]}
+            style={[styles.changePasswordButton, changePassword.isPending && styles.buttonDisabled]}
             onPress={handleChangePassword}
             disabled={changePassword.isPending}
           >
@@ -204,10 +188,8 @@ export default function AccountScreen() {
 
         {/* Danger Zone */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, styles.dangerTitle]}>
-            Danger Zone
-          </Text>
-          
+          <Text style={[styles.sectionTitle, styles.dangerTitle]}>Danger Zone</Text>
+
           <TouchableOpacity
             style={styles.dangerButton}
             onPress={() => {

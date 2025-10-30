@@ -1,14 +1,28 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
 import { OAuthButtonsGroup, OAuthDivider } from '@/src/components/OAuthButton';
-import { initiateGoogleOAuth, initiateFacebookOAuth, initiateAppleOAuth, type OAuthProvider } from '@/src/services/oauth';
+import {
+  initiateGoogleOAuth,
+  initiateFacebookOAuth,
+  initiateAppleOAuth,
+  type OAuthProvider,
+} from '@/src/services/oauth';
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { register } = useAuth();
-  
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,10 +60,10 @@ export default function RegisterScreen() {
 
   const handleOAuthRegister = async (provider: OAuthProvider) => {
     setOAuthLoading(provider);
-    
+
     try {
       let result;
-      
+
       switch (provider) {
         case 'google':
           result = await initiateGoogleOAuth();
@@ -137,9 +151,7 @@ export default function RegisterScreen() {
         onPress={handleRegister}
         disabled={isLoading || oauthLoading !== null}
       >
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Registering...' : 'Register'}
-        </Text>
+        <Text style={styles.buttonText}>{isLoading ? 'Registering...' : 'Register'}</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>

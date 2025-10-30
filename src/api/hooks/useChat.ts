@@ -1,10 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as chatApi from '../endpoints/chat';
-import {
-  ChatRoomCreate,
-  ChatMessageCreate,
-  ChatMessageUpdate,
-} from '../models';
+import { ChatRoomCreate, ChatMessageCreate, ChatMessageUpdate } from '../models';
 
 // Query Keys
 export const chatKeys = {
@@ -27,10 +23,7 @@ export const useGetChatRooms = () =>
   });
 
 // Get Chat Messages
-export const useGetChatMessages = (
-  roomId: string,
-  params?: { limit?: number; before?: string }
-) =>
+export const useGetChatMessages = (roomId: string, params?: { limit?: number; before?: string }) =>
   useQuery({
     queryKey: chatKeys.messagesList(roomId, params),
     queryFn: () => chatApi.getChatMessages(roomId, params),
@@ -76,7 +69,7 @@ export const useEditChatMessage = () => {
   return useMutation({
     mutationFn: ({ messageId, data }: { messageId: string; data: ChatMessageUpdate }) =>
       chatApi.editChatMessage(messageId, data),
-    onSuccess: (message) => {
+    onSuccess: message => {
       // Invalidate messages for the room to refetch
       if (message.roomId) {
         queryClient.invalidateQueries({

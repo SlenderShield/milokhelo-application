@@ -54,18 +54,13 @@ export default function ForgotPasswordScreen() {
         <View style={styles.successContainer}>
           <Text style={styles.successIcon}>✉️</Text>
           <Text style={styles.successTitle}>Check Your Email</Text>
-          <Text style={styles.successMessage}>
-            We've sent password reset instructions to:
-          </Text>
+          <Text style={styles.successMessage}>We've sent password reset instructions to:</Text>
           <Text style={styles.successEmail}>{email}</Text>
           <Text style={styles.successNote}>
-            Please check your email and follow the link to reset your password.
-            The link will expire in 1 hour.
+            Please check your email and follow the link to reset your password. The link will expire
+            in 1 hour.
           </Text>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.push('/login')}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={() => router.push('/login')}>
             <Text style={styles.backButtonText}>Back to Login</Text>
           </TouchableOpacity>
         </View>
@@ -91,7 +86,7 @@ export default function ForgotPasswordScreen() {
               style={[styles.input, emailError ? styles.inputError : null]}
               placeholder="Enter your email"
               value={email}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setEmail(text);
                 setEmailError('');
               }}
@@ -100,16 +95,11 @@ export default function ForgotPasswordScreen() {
               autoCorrect={false}
               editable={!forgotPassword.isPending}
             />
-            {emailError ? (
-              <Text style={styles.errorText}>{emailError}</Text>
-            ) : null}
+            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.submitButton,
-              forgotPassword.isPending && styles.submitButtonDisabled,
-            ]}
+            style={[styles.submitButton, forgotPassword.isPending && styles.submitButtonDisabled]}
             onPress={handleSubmit}
             disabled={forgotPassword.isPending}
           >

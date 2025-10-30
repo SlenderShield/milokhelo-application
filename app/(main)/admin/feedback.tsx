@@ -37,13 +37,8 @@ export default function FeedbackManagementScreen() {
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>🔒</Text>
         <Text style={styles.errorTitle}>Access Denied</Text>
-        <Text style={styles.errorText}>
-          You need admin privileges to access this page
-        </Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <Text style={styles.errorText}>You need admin privileges to access this page</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -113,18 +108,11 @@ export default function FeedbackManagementScreen() {
             ]}
           >
             <Text style={styles.categoryIcon}>{getCategoryIcon(item.category)}</Text>
-            <Text
-              style={[
-                styles.categoryText,
-                { color: getCategoryColor(item.category) },
-              ]}
-            >
+            <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
               {item.category.toUpperCase()}
             </Text>
           </View>
-          <Text style={styles.timestamp}>
-            {new Date(item.createdAt).toLocaleDateString()}
-          </Text>
+          <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleDateString()}</Text>
         </View>
 
         <Text style={styles.feedbackSubject}>{item.subject}</Text>
@@ -152,26 +140,20 @@ export default function FeedbackManagementScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>User Feedback</Text>
-        <Text style={styles.headerSubtitle}>
-          {feedbackList?.length || 0} total submissions
-        </Text>
+        <Text style={styles.headerSubtitle}>{feedbackList?.length || 0} total submissions</Text>
       </View>
 
       <FlatList
         data={feedbackList}
         renderItem={renderFeedbackItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyIcon}>📭</Text>
             <Text style={styles.emptyTitle}>No Feedback Yet</Text>
-            <Text style={styles.emptyText}>
-              User feedback submissions will appear here
-            </Text>
+            <Text style={styles.emptyText}>User feedback submissions will appear here</Text>
           </View>
         }
       />

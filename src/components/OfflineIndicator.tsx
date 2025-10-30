@@ -4,7 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 
 /**
  * Offline Indicator Component
- * 
+ *
  * Displays a banner at the top of the screen when the device is offline
  */
 export const OfflineIndicator: React.FC = () => {
@@ -13,10 +13,10 @@ export const OfflineIndicator: React.FC = () => {
 
   useEffect(() => {
     // Subscribe to network state updates
-    const unsubscribe = NetInfo.addEventListener((state) => {
+    const unsubscribe = NetInfo.addEventListener(state => {
       const offline = !state.isConnected || !state.isInternetReachable;
       setIsOffline(offline);
-      
+
       // Animate banner in/out
       Animated.spring(slideAnim, {
         toValue: offline ? 0 : -50,

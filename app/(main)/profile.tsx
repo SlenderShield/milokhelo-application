@@ -23,10 +23,7 @@ export default function ProfileScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account</Text>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => router.push('/profile/edit')}
-        >
+        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/profile/edit')}>
           <Text style={styles.menuText}>Edit Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
@@ -39,10 +36,7 @@ export default function ProfileScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => router.push('/settings')}
-        >
+        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/settings')}>
           <Text style={styles.menuText}>App Settings</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -51,16 +45,10 @@ export default function ProfileScreen() {
         >
           <Text style={styles.menuText}>Notifications</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => router.push('/settings/privacy')}
-        >
+        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/settings/privacy')}>
           <Text style={styles.menuText}>Privacy</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => router.push('/help')}
-        >
+        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/help')}>
           <Text style={styles.menuText}>Help & Support</Text>
         </TouchableOpacity>
       </View>

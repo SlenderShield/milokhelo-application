@@ -23,7 +23,7 @@ export default function NotificationsScreen() {
   const handleToggle = (key: keyof NotificationSettings) => {
     const newSettings = { ...settings, [key]: !settings[key] };
     setSettings(newSettings);
-    
+
     // In a real app, you would save these settings to the backend
     // For now, just show a success message
     Alert.alert('Settings Updated', `${key} ${newSettings[key] ? 'enabled' : 'disabled'}`);
@@ -33,13 +33,11 @@ export default function NotificationsScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>General</Text>
-        
+
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Push Notifications</Text>
-            <Text style={styles.itemDescription}>
-              Receive push notifications on your device
-            </Text>
+            <Text style={styles.itemDescription}>Receive push notifications on your device</Text>
           </View>
           <Switch
             value={settings.pushNotifications}
@@ -52,9 +50,7 @@ export default function NotificationsScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Email Notifications</Text>
-            <Text style={styles.itemDescription}>
-              Receive updates via email
-            </Text>
+            <Text style={styles.itemDescription}>Receive updates via email</Text>
           </View>
           <Switch
             value={settings.emailNotifications}
@@ -67,13 +63,11 @@ export default function NotificationsScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Activity</Text>
-        
+
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Match Reminders</Text>
-            <Text style={styles.itemDescription}>
-              Get notified before your scheduled matches
-            </Text>
+            <Text style={styles.itemDescription}>Get notified before your scheduled matches</Text>
           </View>
           <Switch
             value={settings.matchReminders}
@@ -86,9 +80,7 @@ export default function NotificationsScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Tournament Updates</Text>
-            <Text style={styles.itemDescription}>
-              Stay informed about tournament progress
-            </Text>
+            <Text style={styles.itemDescription}>Stay informed about tournament progress</Text>
           </View>
           <Switch
             value={settings.tournamentUpdates}
@@ -101,9 +93,7 @@ export default function NotificationsScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Chat Messages</Text>
-            <Text style={styles.itemDescription}>
-              Get notified of new chat messages
-            </Text>
+            <Text style={styles.itemDescription}>Get notified of new chat messages</Text>
           </View>
           <Switch
             value={settings.chatMessages}
@@ -116,9 +106,7 @@ export default function NotificationsScreen() {
         <View style={styles.item}>
           <View style={styles.itemText}>
             <Text style={styles.itemLabel}>Team Invites</Text>
-            <Text style={styles.itemDescription}>
-              Be notified when invited to join a team
-            </Text>
+            <Text style={styles.itemDescription}>Be notified when invited to join a team</Text>
           </View>
           <Switch
             value={settings.teamInvites}

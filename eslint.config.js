@@ -1,9 +1,9 @@
 // eslint.config.js
-import js from "@eslint/js";
-import importPlugin from "eslint-plugin-import";
-import prettierPlugin from "eslint-plugin-prettier";
-import prettierConfig from "eslint-config-prettier";
-import { FlatCompat } from "@eslint/eslintrc";
+import js from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
+import prettierPlugin from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-config-prettier';
+import { FlatCompat } from '@eslint/eslintrc';
 
 const compat = new FlatCompat();
 
@@ -18,7 +18,7 @@ export default [
       prettier: prettierPlugin,
     },
     rules: {
-      "prettier/prettier": "error", // treat Prettier issues as ESLint errors
+      'prettier/prettier': 'error', // treat Prettier issues as ESLint errors
     },
   },
 
@@ -26,22 +26,22 @@ export default [
   {
     plugins: { import: importPlugin },
     settings: {
-      "import/resolver": {
-        node: { extensions: [".js", ".jsx", ".ts", ".tsx"] },
+      'import/resolver': {
+        node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
       },
     },
     rules: {
-      "import/order": "warn",
-      "import/no-unresolved": "error",
+      'import/order': 'warn',
+      'import/no-unresolved': 'error',
     },
   },
 
   // ----- Your project files -----
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         // Add globals if you don’t use environments below
         // e.g. node: true, browser: true, es2021: true
@@ -49,23 +49,21 @@ export default [
     },
     rules: {
       // Your custom rules go here
-      eqeqeq: "warn",
-      "no-console": "warn",
+      eqeqeq: 'warn',
+      'no-console': 'warn',
     },
   },
 
   // ----- TypeScript (optional) -----
-  ...compat.extends("plugin:@typescript-eslint/recommended").map((config) => ({
+  ...compat.extends('plugin:@typescript-eslint/recommended').map(config => ({
     ...config,
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
   })),
 
   // ----- React (optional) -----
-  ...compat
-    .extends("plugin:react/recommended", "plugin:react-hooks/recommended")
-    .map((config) => ({
-      ...config,
-      files: ["**/*.{jsx,tsx}"],
-      settings: { react: { version: "detect" } },
-    })),
+  ...compat.extends('plugin:react/recommended', 'plugin:react-hooks/recommended').map(config => ({
+    ...config,
+    files: ['**/*.{jsx,tsx}'],
+    settings: { react: { version: 'detect' } },
+  })),
 ];

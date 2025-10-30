@@ -5,10 +5,12 @@ export const LocationSchema = z.object({
   venue: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
-  coordinates: z.object({
-    lat: z.number(),
-    lng: z.number(),
-  }).optional(),
+  coordinates: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+    })
+    .optional(),
 });
 
 export type Location = z.infer<typeof LocationSchema>;
@@ -29,14 +31,18 @@ export const MatchSchema = z.object({
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced', 'professional']).optional(),
   status: z.enum(['scheduled', 'live', 'finished', 'cancelled']).default('scheduled'),
   scores: z.record(z.string(), z.any()).optional(),
-  performanceMetrics: z.array(z.object({
-    userId: z.string(),
-    goals: z.number().optional(),
-    assists: z.number().optional(),
-    fouls: z.number().optional(),
-    yellowCards: z.number().optional(),
-    redCards: z.number().optional(),
-  })).optional(),
+  performanceMetrics: z
+    .array(
+      z.object({
+        userId: z.string(),
+        goals: z.number().optional(),
+        assists: z.number().optional(),
+        fouls: z.number().optional(),
+        yellowCards: z.number().optional(),
+        redCards: z.number().optional(),
+      })
+    )
+    .optional(),
   description: z.string().optional(),
   rules: z.string().optional(),
   isPrivate: z.boolean().default(false),
@@ -86,14 +92,18 @@ export type MatchUpdate = z.infer<typeof MatchUpdateSchema>;
 // Match Result Schema
 export const MatchResultSchema = z.object({
   scores: z.record(z.string(), z.any()),
-  performanceMetrics: z.array(z.object({
-    userId: z.string(),
-    goals: z.number().optional(),
-    assists: z.number().optional(),
-    fouls: z.number().optional(),
-    yellowCards: z.number().optional(),
-    redCards: z.number().optional(),
-  })).optional(),
+  performanceMetrics: z
+    .array(
+      z.object({
+        userId: z.string(),
+        goals: z.number().optional(),
+        assists: z.number().optional(),
+        fouls: z.number().optional(),
+        yellowCards: z.number().optional(),
+        redCards: z.number().optional(),
+      })
+    )
+    .optional(),
 });
 
 export type MatchResult = z.infer<typeof MatchResultSchema>;

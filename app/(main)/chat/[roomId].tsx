@@ -70,9 +70,7 @@ export default function ChatMessagesScreen() {
     if (wsMessages.length > 0) {
       // Add new WebSocket messages
       setMessages(prev => {
-        const newMessages = wsMessages.filter(
-          wsMsg => !prev.some(msg => msg.id === wsMsg.id)
-        );
+        const newMessages = wsMessages.filter(wsMsg => !prev.some(msg => msg.id === wsMsg.id));
         return [...prev, ...newMessages];
       });
     }
@@ -246,12 +244,8 @@ export default function ChatMessagesScreen() {
             >
               {formatTime(item.createdAt || item.timestamp)}
             </Text>
-            {isOwnMessage && item.delivered && (
-              <Text style={styles.deliveryStatus}>✓</Text>
-            )}
-            {isOwnMessage && item.read && (
-              <Text style={styles.deliveryStatus}>✓✓</Text>
-            )}
+            {isOwnMessage && item.delivered && <Text style={styles.deliveryStatus}>✓</Text>}
+            {isOwnMessage && item.read && <Text style={styles.deliveryStatus}>✓✓</Text>}
           </View>
         </View>
       </TouchableOpacity>
@@ -275,7 +269,7 @@ export default function ChatMessagesScreen() {
         <FlatList
           ref={flatListRef}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderMessage}
           contentContainerStyle={styles.messagesContent}
           inverted={false}
@@ -303,7 +297,8 @@ export default function ChatMessagesScreen() {
         {typingUsers.length > 0 && (
           <View style={styles.typingBar}>
             <Text style={styles.typingText}>
-              {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+              {typingUsers.map(u => u.userName).join(', ')}{' '}
+              {typingUsers.length === 1 ? 'is' : 'are'} typing...
             </Text>
           </View>
         )}
@@ -322,7 +317,7 @@ export default function ChatMessagesScreen() {
             style={styles.input}
             placeholder="Type a message..."
             value={messageText}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setMessageText(text);
               handleTyping();
             }}
@@ -338,16 +333,12 @@ export default function ChatMessagesScreen() {
                 styles.sendButtonDisabled,
             ]}
             onPress={handleSendMessage}
-            disabled={
-              !messageText.trim() || sendMessage.isPending || editMessage.isPending
-            }
+            disabled={!messageText.trim() || sendMessage.isPending || editMessage.isPending}
           >
             {sendMessage.isPending || editMessage.isPending ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text style={styles.sendButtonText}>
-                {editingMessage ? '✓' : '➤'}
-              </Text>
+              <Text style={styles.sendButtonText}>{editingMessage ? '✓' : '➤'}</Text>
             )}
           </TouchableOpacity>
         </View>

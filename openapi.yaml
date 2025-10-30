@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Milokhelo API
-  version: "v1"
+  version: 'v1'
   description: >
     # Milokhelo REST API v1
 
@@ -177,14 +177,14 @@ paths:
       summary: List supported OAuth providers
       description: Returns available OAuth providers (Google, Facebook) with their authorization URLs
       responses:
-        "200":
+        '200':
           description: Providers metadata
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/OAuthProvider"
+                  $ref: '#/components/schemas/OAuthProvider'
               example:
                 - name: google
                   displayName: Google
@@ -201,7 +201,7 @@ paths:
         Redirects user to Google OAuth consent screen. After user grants permission,
         Google redirects back to the callback URL with authorization code.
       responses:
-        "302":
+        '302':
           description: Redirect to Google OAuth consent screen
 
   /auth/oauth/facebook:
@@ -212,7 +212,7 @@ paths:
         Redirects user to Facebook OAuth consent screen. After user grants permission,
         Facebook redirects back to the callback URL with authorization code.
       responses:
-        "302":
+        '302':
           description: Redirect to Facebook OAuth consent screen
 
   /auth/oauth/callback/google:
@@ -235,7 +235,7 @@ paths:
           schema: { type: string }
           description: CSRF protection state parameter
       responses:
-        "302":
+        '302':
           description: Redirect to frontend with Set-Cookie header for session
 
   /auth/oauth/callback/facebook:
@@ -258,7 +258,7 @@ paths:
           schema: { type: string }
           description: CSRF protection state parameter
       responses:
-        "302":
+        '302':
           description: Redirect to frontend with Set-Cookie header for session
 
   /auth/session:
@@ -269,13 +269,13 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Session valid — user profile returned
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
+                $ref: '#/components/schemas/UserProfile'
+        '401':
           description: Session invalid/expired
           content:
             application/json:
@@ -283,7 +283,7 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean, example: false }
-                  message: { type: string, example: "No active session" }
+                  message: { type: string, example: 'No active session' }
 
   /auth/logout:
     post:
@@ -293,7 +293,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "204":
+        '204':
           description: Logged out successfully
 
   /auth/register:
@@ -308,15 +308,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegisterUser"
+              $ref: '#/components/schemas/RegisterUser'
       responses:
-        "201":
+        '201':
           description: User created and session established
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "400":
+                $ref: '#/components/schemas/UserProfile'
+        '400':
           description: Invalid input or user already exists
 
   /auth/login:
@@ -329,9 +329,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginUser"
+              $ref: '#/components/schemas/LoginUser'
       responses:
-        "200":
+        '200':
           description: Session cookie set and profile returned
           content:
             application/json:
@@ -339,16 +339,16 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: "#/components/schemas/UserProfile"
+                    $ref: '#/components/schemas/UserProfile'
                   accessToken:
                     type: string
                     description: JWT access token (7-day expiration)
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
                   refreshToken:
                     type: string
                     description: Refresh token (30-day expiration)
-                    example: "a1b2c3d4e5f6..."
-        "401":
+                    example: 'a1b2c3d4e5f6...'
+        '401':
           description: Invalid credentials
 
   /auth/me:
@@ -359,13 +359,13 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: Current user profile
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
+                $ref: '#/components/schemas/UserProfile'
+        '401':
           description: Not authenticated or invalid token
 
   /auth/verify-email/{token}:
@@ -381,7 +381,7 @@ paths:
             type: string
           description: Email verification token from email
       responses:
-        "200":
+        '200':
           description: Email verified successfully
           content:
             application/json:
@@ -393,8 +393,8 @@ paths:
                   message:
                     type: string
                   user:
-                    $ref: "#/components/schemas/UserProfile"
-        "400":
+                    $ref: '#/components/schemas/UserProfile'
+        '400':
           description: Invalid or expired token
 
   /auth/resend-verification:
@@ -414,7 +414,7 @@ paths:
                   type: string
                   format: email
       responses:
-        "200":
+        '200':
           description: Verification email sent
           content:
             application/json:
@@ -425,7 +425,7 @@ paths:
                     type: boolean
                   message:
                     type: string
-        "400":
+        '400':
           description: User not found or email already verified
 
   /auth/forgot-password:
@@ -445,7 +445,7 @@ paths:
                   type: string
                   format: email
       responses:
-        "200":
+        '200':
           description: If email exists, reset link sent
           content:
             application/json:
@@ -469,7 +469,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Token validation result
           content:
             application/json:
@@ -511,7 +511,7 @@ paths:
                   type: string
                   description: Must match password
       responses:
-        "200":
+        '200':
           description: Password reset successfully
           content:
             application/json:
@@ -523,8 +523,8 @@ paths:
                   message:
                     type: string
                   user:
-                    $ref: "#/components/schemas/UserProfile"
-        "400":
+                    $ref: '#/components/schemas/UserProfile'
+        '400':
           description: Invalid token or passwords don't match
 
   /auth/refresh-token:
@@ -544,7 +544,7 @@ paths:
                   type: string
                   description: Refresh token from login/register
       responses:
-        "200":
+        '200':
           description: New access token generated
           content:
             application/json:
@@ -555,10 +555,10 @@ paths:
                     type: string
                     description: New JWT access token
                   user:
-                    $ref: "#/components/schemas/UserProfile"
-        "400":
+                    $ref: '#/components/schemas/UserProfile'
+        '400':
           description: Invalid or expired refresh token
-        "401":
+        '401':
           description: User not found or account deactivated
 
   /auth/change-password:
@@ -585,7 +585,7 @@ paths:
                 confirmPassword:
                   type: string
       responses:
-        "200":
+        '200':
           description: Password changed successfully
           content:
             application/json:
@@ -596,9 +596,9 @@ paths:
                     type: boolean
                   message:
                     type: string
-        "400":
+        '400':
           description: Current password incorrect or validation failed
-        "401":
+        '401':
           description: Not authenticated
 
   /auth/deactivate:
@@ -610,7 +610,7 @@ paths:
         - bearerAuth: []
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Account deactivated successfully
           content:
             application/json:
@@ -621,7 +621,7 @@ paths:
                     type: boolean
                   message:
                     type: string
-        "401":
+        '401':
           description: Not authenticated
 
   ################################################################
@@ -634,12 +634,12 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Current user
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: '#/components/schemas/UserProfile'
     put:
       tags: [Users]
       summary: Update authenticated user profile
@@ -653,28 +653,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserUpdate"
+              $ref: '#/components/schemas/UserUpdate'
             example:
-              name: "John Doe"
-              bio: "Sports enthusiast and weekend warrior"
-              phone: "+254712345678"
-              sportsPreferences: ["football", "basketball"]
+              name: 'John Doe'
+              bio: 'Sports enthusiast and weekend warrior'
+              phone: '+254712345678'
+              sportsPreferences: ['football', 'basketball']
               location:
-                city: "Nairobi"
+                city: 'Nairobi'
               privacy:
                 showPhone: false
                 showStats: true
                 showLocation: true
       responses:
-        "200":
+        '200':
           description: Profile updated successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "400":
+                $ref: '#/components/schemas/UserProfile'
+        '400':
           description: Invalid input data
-        "401":
+        '401':
           description: Not authenticated
     patch:
       tags: [Users]
@@ -686,15 +686,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserUpdate"
+              $ref: '#/components/schemas/UserUpdate'
       responses:
-        "200":
+        '200':
           description: Profile updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
+                $ref: '#/components/schemas/UserProfile'
+        '401':
           description: Not authenticated
 
   /users/search:
@@ -733,21 +733,21 @@ paths:
             default: 0
           description: Number of results to skip (for pagination)
       responses:
-        "200":
+        '200':
           description: Array of matching users
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserProfile"
+                  $ref: '#/components/schemas/UserProfile'
               example:
-                - id: "user123"
-                  username: "johndoe"
-                  name: "John Doe"
-                  avatar: "https://example.com/avatar.jpg"
-                  bio: "Football enthusiast"
-                  sportsPreferences: ["football", "basketball"]
+                - id: 'user123'
+                  username: 'johndoe'
+                  name: 'John Doe'
+                  avatar: 'https://example.com/avatar.jpg'
+                  bio: 'Football enthusiast'
+                  sportsPreferences: ['football', 'basketball']
 
   /users:
     get:
@@ -763,14 +763,14 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Array of users
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserProfile"
+                  $ref: '#/components/schemas/UserProfile'
     post:
       tags: [Users]
       summary: Create or update a user profile (self or admin)
@@ -780,14 +780,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserCreate"
+              $ref: '#/components/schemas/UserCreate'
       responses:
-        "201":
+        '201':
           description: Profile created/updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: '#/components/schemas/UserProfile'
 
   /users/{id}/stats:
     get:
@@ -812,17 +812,17 @@ paths:
           schema: { type: string }
           description: User ID
       responses:
-        "200":
+        '200':
           description: Array of user stats by sport
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserStat"
+                  $ref: '#/components/schemas/UserStat'
               example:
-                - userId: "user123"
-                  sport: "football"
+                - userId: 'user123'
+                  sport: 'football'
                   matchesPlayed: 25
                   wins: 15
                   losses: 8
@@ -834,9 +834,9 @@ paths:
                   streak: 3
                   rating: 4.5
                   level: 5
-                  updatedAt: "2025-10-29T10:30:00Z"
-                - userId: "user123"
-                  sport: "basketball"
+                  updatedAt: '2025-10-29T10:30:00Z'
+                - userId: 'user123'
+                  sport: 'basketball'
                   matchesPlayed: 15
                   wins: 10
                   losses: 5
@@ -848,8 +848,8 @@ paths:
                   streak: -1
                   rating: 4.2
                   level: 4
-                  updatedAt: "2025-10-28T15:45:00Z"
-        "404":
+                  updatedAt: '2025-10-28T15:45:00Z'
+        '404':
           description: User not found
 
   /users/me/achievements:
@@ -863,34 +863,34 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Array of user's earned achievements
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Achievement"
+                  $ref: '#/components/schemas/Achievement'
               example:
-                - id: "ach_001"
-                  name: "First Victory"
-                  description: "Win your first match in any sport"
-                  category: "milestone"
-                  sport: "all"
-                  rarity: "common"
+                - id: 'ach_001'
+                  name: 'First Victory'
+                  description: 'Win your first match in any sport'
+                  category: 'milestone'
+                  sport: 'all'
+                  rarity: 'common'
                   points: 10
-                  badgeUrl: "https://example.com/badges/first-victory.png"
-                  createdAt: "2025-10-29T10:00:00Z"
-                - id: "ach_015"
-                  name: "On Fire"
-                  description: "Win 3 matches in a row"
-                  category: "skill"
-                  sport: "all"
-                  rarity: "common"
+                  badgeUrl: 'https://example.com/badges/first-victory.png'
+                  createdAt: '2025-10-29T10:00:00Z'
+                - id: 'ach_015'
+                  name: 'On Fire'
+                  description: 'Win 3 matches in a row'
+                  category: 'skill'
+                  sport: 'all'
+                  rarity: 'common'
                   points: 30
-                  badgeUrl: "https://example.com/badges/on-fire.png"
-                  createdAt: "2025-10-29T10:00:00Z"
-        "401":
+                  badgeUrl: 'https://example.com/badges/on-fire.png'
+                  createdAt: '2025-10-29T10:00:00Z'
+        '401':
           description: Not authenticated
 
   /users/{id}/achievements:
@@ -907,15 +907,15 @@ paths:
           schema: { type: string }
           description: User ID
       responses:
-        "200":
+        '200':
           description: Array of user's earned achievements
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Achievement"
-        "404":
+                  $ref: '#/components/schemas/Achievement'
+        '404':
           description: User not found
 
   /users/{id}/friends:
@@ -933,34 +933,34 @@ paths:
           schema: { type: string }
           description: User ID (MongoDB ObjectId)
       responses:
-        "200":
+        '200':
           description: Array of friends with populated user data
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserProfile"
+                  $ref: '#/components/schemas/UserProfile'
               example:
-                - id: "friend123"
-                  username: "janedoe"
-                  name: "Jane Doe"
-                  email: "jane@example.com"
-                  avatar: "https://example.com/avatar.jpg"
-                  bio: "Basketball player"
-                  sportsPreferences: ["basketball", "volleyball"]
+                - id: 'friend123'
+                  username: 'janedoe'
+                  name: 'Jane Doe'
+                  email: 'jane@example.com'
+                  avatar: 'https://example.com/avatar.jpg'
+                  bio: 'Basketball player'
+                  sportsPreferences: ['basketball', 'volleyball']
                   location:
-                    city: "Nairobi"
-                - id: "friend456"
-                  username: "bobsmith"
-                  name: "Bob Smith"
-                  email: "bob@example.com"
-                  avatar: "https://example.com/avatar2.jpg"
-                  bio: "Football enthusiast"
-                  sportsPreferences: ["football"]
+                    city: 'Nairobi'
+                - id: 'friend456'
+                  username: 'bobsmith'
+                  name: 'Bob Smith'
+                  email: 'bob@example.com'
+                  avatar: 'https://example.com/avatar2.jpg'
+                  bio: 'Football enthusiast'
+                  sportsPreferences: ['football']
                   location:
-                    city: "Mombasa"
-        "404":
+                    city: 'Mombasa'
+        '404':
           description: User not found
 
   /users/{friendId}/friend:
@@ -982,7 +982,7 @@ paths:
           schema: { type: string }
           description: ID of the user to add as friend (MongoDB ObjectId)
       responses:
-        "200":
+        '200':
           description: Friend added successfully
           content:
             application/json:
@@ -991,14 +991,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Friend added successfully"
+                    example: 'Friend added successfully'
                   friendId:
                     type: string
                     description: ID of the added friend
               example:
-                message: "Friend added successfully"
-                friendId: "507f1f77bcf86cd799439011"
-        "400":
+                message: 'Friend added successfully'
+                friendId: '507f1f77bcf86cd799439011'
+        '400':
           description: Bad request - cannot add self, already friends, or invalid ID
           content:
             application/json:
@@ -1009,13 +1009,13 @@ paths:
               examples:
                 selfFriend:
                   value:
-                    message: "Cannot add yourself as a friend"
+                    message: 'Cannot add yourself as a friend'
                 alreadyFriends:
                   value:
-                    message: "Already friends with this user"
-        "401":
+                    message: 'Already friends with this user'
+        '401':
           description: Not authenticated
-        "404":
+        '404':
           description: User not found
           content:
             application/json:
@@ -1024,7 +1024,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User not found"
+                    example: 'User not found'
     delete:
       tags: [Users]
       summary: Remove a friend
@@ -1041,7 +1041,7 @@ paths:
           schema: { type: string }
           description: ID of the friend to remove (MongoDB ObjectId)
       responses:
-        "200":
+        '200':
           description: Friend removed successfully
           content:
             application/json:
@@ -1050,16 +1050,16 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Friend removed successfully"
+                    example: 'Friend removed successfully'
                   friendId:
                     type: string
                     description: ID of the removed friend
               example:
-                message: "Friend removed successfully"
-                friendId: "507f1f77bcf86cd799439011"
-        "400":
+                message: 'Friend removed successfully'
+                friendId: '507f1f77bcf86cd799439011'
+        '400':
           description: Invalid friend ID
-        "401":
+        '401':
           description: Not authenticated
 
   ################################################################
@@ -1076,14 +1076,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TeamCreate"
+              $ref: '#/components/schemas/TeamCreate'
       responses:
-        "201":
+        '201':
           description: Team created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Team"
+                $ref: '#/components/schemas/Team'
     get:
       tags: [Teams]
       summary: List teams (filterable)
@@ -1095,14 +1095,14 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Array of teams
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Team"
+                  $ref: '#/components/schemas/Team'
 
   /teams/{id}:
     get:
@@ -1114,17 +1114,17 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Team object
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
+                  status: { type: string, example: 'success' }
                   data:
-                    $ref: "#/components/schemas/Team"
-        "404":
+                    $ref: '#/components/schemas/Team'
+        '404':
           description: Team not found
     put:
       tags: [Teams]
@@ -1143,23 +1143,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TeamUpdate"
+              $ref: '#/components/schemas/TeamUpdate'
       responses:
-        "200":
+        '200':
           description: Team updated
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
+                  status: { type: string, example: 'success' }
                   data:
-                    $ref: "#/components/schemas/Team"
-        "400":
+                    $ref: '#/components/schemas/Team'
+        '400':
           description: Validation error or invalid captain
-        "403":
+        '403':
           description: Not authorized (captain or admin only)
-        "404":
+        '404':
           description: Team not found
     delete:
       tags: [Teams]
@@ -1173,11 +1173,11 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "204":
+        '204':
           description: Team deleted successfully
-        "403":
+        '403':
           description: Not authorized (captain or admin only)
-        "404":
+        '404':
           description: Team not found
 
   /teams/{id}/join:
@@ -1203,22 +1203,22 @@ paths:
                 joinCode:
                   type: string
                   description: Required for private teams with join code
-                  example: "TEAM2024"
+                  example: 'TEAM2024'
       responses:
-        "200":
+        '200':
           description: Successfully joined team
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
-                  message: { type: string, example: "Successfully joined team" }
-        "400":
+                  status: { type: string, example: 'success' }
+                  message: { type: string, example: 'Successfully joined team' }
+        '400':
           description: Already a member or validation error
-        "403":
+        '403':
           description: Invalid or missing join code for private team
-        "404":
+        '404':
           description: Team not found
 
   /teams/{id}/leave:
@@ -1236,18 +1236,18 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Successfully left team
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
-                  message: { type: string, example: "Successfully left team" }
-        "400":
+                  status: { type: string, example: 'success' }
+                  message: { type: string, example: 'Successfully left team' }
+        '400':
           description: Not a member or captain trying to leave
-        "404":
+        '404':
           description: Team not found
 
   ################################################################
@@ -1264,14 +1264,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MatchCreate"
+              $ref: '#/components/schemas/MatchCreate'
       responses:
-        "201":
+        '201':
           description: Created match
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Match"
+                $ref: '#/components/schemas/Match'
     get:
       tags: [Matches]
       summary: List matches (filterable)
@@ -1286,14 +1286,14 @@ paths:
           in: query
           schema: { type: string, format: date-time }
       responses:
-        "200":
+        '200':
           description: Matches array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Match"
+                  $ref: '#/components/schemas/Match'
 
   /matches/{id}:
     get:
@@ -1305,12 +1305,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Match
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Match"
+                $ref: '#/components/schemas/Match'
     patch:
       tags: [Matches]
       summary: Update match
@@ -1325,9 +1325,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MatchUpdate"
+              $ref: '#/components/schemas/MatchUpdate'
       responses:
-        "200":
+        '200':
           description: Updated match
     delete:
       tags: [Matches]
@@ -1343,11 +1343,11 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "204":
+        '204':
           description: Match cancelled
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only the match organizer can cancel
 
   /matches/{id}/join:
@@ -1366,7 +1366,7 @@ paths:
           schema: { type: string }
           description: Match ID
       responses:
-        "200":
+        '200':
           description: Successfully joined match
           content:
             application/json:
@@ -1379,11 +1379,11 @@ paths:
                   message:
                     type: string
                     example: Successfully joined match
-        "400":
+        '400':
           description: Bad request - Cannot join (already joined, match full, or not scheduled)
-        "401":
+        '401':
           description: Authentication required
-        "404":
+        '404':
           description: Match not found
 
   /matches/{id}/leave:
@@ -1403,7 +1403,7 @@ paths:
           schema: { type: string }
           description: Match ID
       responses:
-        "200":
+        '200':
           description: Successfully left match
           content:
             application/json:
@@ -1416,11 +1416,11 @@ paths:
                   message:
                     type: string
                     example: Successfully left match
-        "400":
+        '400':
           description: Bad request - Cannot leave (not a participant, organizer, or match already started)
-        "401":
+        '401':
           description: Authentication required
-        "404":
+        '404':
           description: Match not found
 
   /matches/{id}/score:
@@ -1453,29 +1453,29 @@ paths:
                   description: Score object with participant IDs as keys
                   additionalProperties: true
                   example:
-                    "userId1": 5
-                    "userId2": 3
+                    'userId1': 5
+                    'userId2': 3
             examples:
               simpleScores:
                 summary: Simple numeric scores
                 value:
                   scores:
-                    "507f1f77bcf86cd799439011": 5
-                    "507f1f77bcf86cd799439012": 3
+                    '507f1f77bcf86cd799439011': 5
+                    '507f1f77bcf86cd799439012': 3
               detailedScores:
                 summary: Detailed performance stats
                 value:
                   scores:
-                    "507f1f77bcf86cd799439011":
+                    '507f1f77bcf86cd799439011':
                       goals: 3
                       assists: 2
                       fouls: 1
-                    "507f1f77bcf86cd799439012":
+                    '507f1f77bcf86cd799439012':
                       goals: 1
                       assists: 0
                       fouls: 3
       responses:
-        "200":
+        '200':
           description: Score updated successfully
           content:
             application/json:
@@ -1489,14 +1489,14 @@ paths:
                     type: string
                     example: Score updated successfully
                   data:
-                    $ref: "#/components/schemas/Match"
-        "400":
+                    $ref: '#/components/schemas/Match'
+        '400':
           description: Bad request - Invalid scores or match not in valid status
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only organizer or participants can update scores
-        "404":
+        '404':
           description: Match not found
 
   /matches/{id}/status:
@@ -1533,7 +1533,7 @@ paths:
                   description: New match status
                   example: live
       responses:
-        "200":
+        '200':
           description: Status updated successfully
           content:
             application/json:
@@ -1547,14 +1547,14 @@ paths:
                     type: string
                     example: Match status updated successfully
                   data:
-                    $ref: "#/components/schemas/Match"
-        "400":
+                    $ref: '#/components/schemas/Match'
+        '400':
           description: Bad request - Invalid status transition
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only the match organizer can update status
-        "404":
+        '404':
           description: Match not found
 
   /matches/{id}/start:
@@ -1571,7 +1571,7 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Match live
 
   /matches/{id}/finish:
@@ -1608,29 +1608,29 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MatchResult"
+              $ref: '#/components/schemas/MatchResult'
             examples:
               simpleScores:
                 summary: Simple numeric scores
                 value:
                   scores:
-                    "user1_id": 5
-                    "user2_id": 3
-                    "user3_id": 4
+                    'user1_id': 5
+                    'user2_id': 3
+                    'user3_id': 4
               detailedScores:
                 summary: Detailed performance stats
                 value:
                   scores:
-                    "user1_id":
+                    'user1_id':
                       goals: 3
                       assists: 2
                       fouls: 1
-                    "user2_id":
+                    'user2_id':
                       goals: 1
                       assists: 0
                       fouls: 3
       responses:
-        "200":
+        '200':
           description: >
             Match finished successfully. Stats for all participants have been
             automatically updated via event system. Updates include match outcome,
@@ -1644,10 +1644,10 @@ paths:
                   message: { type: string }
               example:
                 success: true
-                message: "Match finished, stats updated"
-        "401":
+                message: 'Match finished, stats updated'
+        '401':
           description: Unauthorized - must be match organizer
-        "404":
+        '404':
           description: Match not found
 
   ################################################################
@@ -1664,14 +1664,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TournamentCreate"
+              $ref: '#/components/schemas/TournamentCreate'
       responses:
-        "201":
+        '201':
           description: Tournament created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Tournament"
+                $ref: '#/components/schemas/Tournament'
     get:
       tags: [Tournaments]
       summary: List tournaments
@@ -1685,14 +1685,14 @@ paths:
             type: string
             enum: [knockout, league]
       responses:
-        "200":
+        '200':
           description: Tournaments array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Tournament"
+                  $ref: '#/components/schemas/Tournament'
 
   /tournaments/{id}:
     get:
@@ -1704,12 +1704,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Tournament
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Tournament"
+                $ref: '#/components/schemas/Tournament'
     put:
       tags: [Tournaments]
       summary: Update tournament
@@ -1738,16 +1738,7 @@ paths:
                   description: Tournament title
                 sport:
                   type: string
-                  enum:
-                    [
-                      football,
-                      basketball,
-                      volleyball,
-                      tennis,
-                      badminton,
-                      cricket,
-                      other,
-                    ]
+                  enum: [football, basketball, volleyball, tennis, badminton, cricket, other]
                   description: Sport type
                 type:
                   type: string
@@ -1789,16 +1780,16 @@ paths:
               updateBasicInfo:
                 summary: Update basic tournament info
                 value:
-                  title: "Updated Summer Basketball Championship"
-                  prizePool: "$2000 + Trophy"
-                  rules: "Updated tournament rules..."
+                  title: 'Updated Summer Basketball Championship'
+                  prizePool: '$2000 + Trophy'
+                  rules: 'Updated tournament rules...'
               extendRegistration:
                 summary: Extend registration window
                 value:
                   registrationWindow:
-                    end: "2025-12-31T23:59:59Z"
+                    end: '2025-12-31T23:59:59Z'
       responses:
-        "200":
+        '200':
           description: Tournament updated successfully
           content:
             application/json:
@@ -1812,14 +1803,14 @@ paths:
                     type: string
                     example: Tournament updated successfully
                   data:
-                    $ref: "#/components/schemas/Tournament"
-        "400":
+                    $ref: '#/components/schemas/Tournament'
+        '400':
           description: Bad request - Cannot modify tournament structure after it has started
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only organizer or admin can update
-        "404":
+        '404':
           description: Tournament not found
     delete:
       tags: [Tournaments]
@@ -1836,15 +1827,15 @@ paths:
           schema: { type: string }
           description: Tournament ID
       responses:
-        "204":
+        '204':
           description: Tournament cancelled successfully
-        "400":
+        '400':
           description: Bad request - Cannot cancel completed tournament
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only organizer or admin can cancel
-        "404":
+        '404':
           description: Tournament not found
 
   /tournaments/{id}/join:
@@ -1874,9 +1865,9 @@ paths:
                 teamId:
                   type: string
                   description: ID of the team to register
-                  example: "507f1f77bcf86cd799439011"
+                  example: '507f1f77bcf86cd799439011'
       responses:
-        "200":
+        '200':
           description: Successfully joined tournament
           content:
             application/json:
@@ -1889,11 +1880,11 @@ paths:
                   message:
                     type: string
                     example: Successfully joined tournament
-        "400":
+        '400':
           description: Bad request - Not in registration phase, registration window closed, tournament full, or already registered
-        "401":
+        '401':
           description: Authentication required
-        "404":
+        '404':
           description: Tournament not found
 
   /tournaments/{id}/leave:
@@ -1923,9 +1914,9 @@ paths:
                 teamId:
                   type: string
                   description: ID of the team to remove
-                  example: "507f1f77bcf86cd799439011"
+                  example: '507f1f77bcf86cd799439011'
       responses:
-        "200":
+        '200':
           description: Successfully left tournament
           content:
             application/json:
@@ -1938,11 +1929,11 @@ paths:
                   message:
                     type: string
                     example: Successfully left tournament
-        "400":
+        '400':
           description: Bad request - Not registered, or tournament already started
-        "401":
+        '401':
           description: Authentication required
-        "404":
+        '404':
           description: Tournament not found
 
   /tournaments/{id}/register:
@@ -1961,9 +1952,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TournamentRegister"
+              $ref: '#/components/schemas/TournamentRegister'
       responses:
-        "200":
+        '200':
           description: Registered
 
   /tournaments/{id}/start:
@@ -1983,7 +1974,7 @@ paths:
           schema: { type: string }
           description: Tournament ID
       responses:
-        "200":
+        '200':
           description: Tournament started with generated bracket
           content:
             application/json:
@@ -1997,20 +1988,20 @@ paths:
                     type: string
                     example: Tournament started successfully
                   bracket:
-                    $ref: "#/components/schemas/TournamentBracket"
+                    $ref: '#/components/schemas/TournamentBracket'
                   totalRounds:
                     type: integer
                     example: 4
                   currentRound:
                     type: integer
                     example: 1
-        "400":
+        '400':
           description: Bad request - Not enough teams, tournament already started, or registration not closed
-        "401":
+        '401':
           description: Authentication required
-        "403":
+        '403':
           description: Not authorized - Only tournament organizer can start
-        "404":
+        '404':
           description: Tournament not found
 
   /tournaments/{id}/bracket:
@@ -2024,13 +2015,13 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Tournament bracket
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TournamentBracket"
-        "404":
+                $ref: '#/components/schemas/TournamentBracket'
+        '404':
           description: Tournament or bracket not found
 
   /tournaments/{id}/match-result:
@@ -2053,19 +2044,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MatchResultUpdate"
+              $ref: '#/components/schemas/MatchResultUpdate'
       responses:
-        "200":
+        '200':
           description: Match result updated, returns updated bracket
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TournamentBracket"
-        "400":
+                $ref: '#/components/schemas/TournamentBracket'
+        '400':
           description: Invalid match result
-        "401":
+        '401':
           description: Unauthorized
-        "404":
+        '404':
           description: Tournament or match not found
 
   ################################################################
@@ -2078,14 +2069,14 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Chat rooms
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ChatRoom"
+                  $ref: '#/components/schemas/ChatRoom'
     post:
       tags: [Chat]
       summary: Create chat room
@@ -2095,14 +2086,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChatRoomCreate"
+              $ref: '#/components/schemas/ChatRoomCreate'
       responses:
-        "201":
+        '201':
           description: Chat room created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ChatRoom"
+                $ref: '#/components/schemas/ChatRoom'
 
   /chat/rooms/{roomId}/messages:
     get:
@@ -2122,14 +2113,14 @@ paths:
           in: query
           schema: { type: string, format: date-time }
       responses:
-        "200":
+        '200':
           description: Messages array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ChatMessage"
+                  $ref: '#/components/schemas/ChatMessage'
     post:
       tags: [Chat]
       summary: Send message
@@ -2145,9 +2136,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChatMessageCreate"
+              $ref: '#/components/schemas/ChatMessageCreate'
       responses:
-        "201":
+        '201':
           description: Message saved
 
   /chat/messages/{messageId}:
@@ -2170,7 +2161,7 @@ paths:
                 content:
                   type: string
       responses:
-        "200":
+        '200':
           description: Message edited
     delete:
       tags: [Chat]
@@ -2183,7 +2174,7 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "204":
+        '204':
           description: Message deleted
 
   ################################################################
@@ -2201,14 +2192,14 @@ paths:
           in: query
           schema: { type: integer, default: 20 }
       responses:
-        "200":
+        '200':
           description: Venues array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/VenueSummary"
+                  $ref: '#/components/schemas/VenueSummary'
 
   /venues/search:
     get:
@@ -2225,14 +2216,14 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Search results
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/VenueSummary"
+                  $ref: '#/components/schemas/VenueSummary'
 
   /venues/nearby:
     get:
@@ -2259,14 +2250,14 @@ paths:
           in: query
           schema: { type: boolean }
       responses:
-        "200":
+        '200':
           description: Nearby venues
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/VenueSummary"
+                  $ref: '#/components/schemas/VenueSummary'
 
   /venues/{venueId}:
     get:
@@ -2278,12 +2269,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Venue details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VenueDetail"
+                $ref: '#/components/schemas/VenueDetail'
 
   /venues/{venueId}/availability:
     get:
@@ -2299,14 +2290,14 @@ paths:
           required: true
           schema: { type: string, format: date }
       responses:
-        "200":
+        '200':
           description: Slots availability
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SlotAvailability"
+                  $ref: '#/components/schemas/SlotAvailability'
 
   /venues/{venueId}/book:
     post:
@@ -2324,14 +2315,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BookingCreate"
+              $ref: '#/components/schemas/BookingCreate'
       responses:
-        "201":
+        '201':
           description: Booking created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Booking"
+                $ref: '#/components/schemas/Booking'
 
   ################################################################
   # VENUE MANAGEMENT (OWNER-FACING)                               #
@@ -2343,14 +2334,14 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Owned venues
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Venue"
+                  $ref: '#/components/schemas/Venue'
     post:
       tags: [Venue Management]
       summary: Create a new venue (owner)
@@ -2361,14 +2352,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/VenueCreate"
+              $ref: '#/components/schemas/VenueCreate'
       responses:
-        "201":
+        '201':
           description: Venue created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Venue"
+                $ref: '#/components/schemas/Venue'
 
   /venue-management/venues/{venueId}:
     get:
@@ -2382,12 +2373,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Venue detail
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Venue"
+                $ref: '#/components/schemas/Venue'
     patch:
       tags: [Venue Management]
       summary: Update venue (owner)
@@ -2403,9 +2394,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/VenueUpdate"
+              $ref: '#/components/schemas/VenueUpdate'
       responses:
-        "200":
+        '200':
           description: Venue updated
     delete:
       tags: [Venue Management]
@@ -2418,7 +2409,7 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "204":
+        '204':
           description: Venue removed
 
   /venue-management/venues/{venueId}/slots:
@@ -2433,14 +2424,14 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Slots array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SlotAvailability"
+                  $ref: '#/components/schemas/SlotAvailability'
     post:
       tags: [Venue Management]
       summary: Add or update bulk slots for venue
@@ -2458,9 +2449,9 @@ paths:
             schema:
               type: array
               items:
-                $ref: "#/components/schemas/SlotAvailability"
+                $ref: '#/components/schemas/SlotAvailability'
       responses:
-        "200":
+        '200':
           description: Slots saved
 
   /venue-management/venues/{venueId}/bookings:
@@ -2478,14 +2469,14 @@ paths:
           in: query
           schema: { type: string, format: date }
       responses:
-        "200":
+        '200':
           description: Bookings array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Booking"
+                  $ref: '#/components/schemas/Booking'
 
   /venue-management/bookings/{bookingId}/approve:
     post:
@@ -2499,7 +2490,7 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Booking approved
 
   /venue-management/bookings/{bookingId}/reject:
@@ -2522,7 +2513,7 @@ paths:
                 reason:
                   type: string
       responses:
-        "200":
+        '200':
           description: Booking rejected
 
   ################################################################
@@ -2545,14 +2536,14 @@ paths:
           in: query
           schema: { type: number, default: 5 }
       responses:
-        "200":
+        '200':
           description: Venue pins
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/VenueMapData"
+                  $ref: '#/components/schemas/VenueMapData'
 
   /maps/submit:
     post:
@@ -2565,14 +2556,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MapSubmission"
+              $ref: '#/components/schemas/MapSubmission'
       responses:
-        "201":
+        '201':
           description: Location saved
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Location"
+                $ref: '#/components/schemas/Location'
 
   /maps/{entityType}/{entityId}:
     get:
@@ -2590,12 +2581,12 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
+        '200':
           description: Location returned
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Location"
+                $ref: '#/components/schemas/Location'
 
   ################################################################
   # CALENDAR                                                       #
@@ -2607,14 +2598,14 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Events array
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Event"
+                  $ref: '#/components/schemas/Event'
     post:
       tags: [Calendar]
       summary: Create or update an event from device (sync)
@@ -2625,14 +2616,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EventSync"
+              $ref: '#/components/schemas/EventSync'
       responses:
-        "201":
+        '201':
           description: Event created/updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
+                $ref: '#/components/schemas/Event'
 
   /calendar/sync:
     post:
@@ -2650,9 +2641,9 @@ paths:
                 deviceEvents:
                   type: array
                   items:
-                    $ref: "#/components/schemas/Event"
+                    $ref: '#/components/schemas/Event'
       responses:
-        "200":
+        '200':
           description: Sync result
           content:
             application/json:
@@ -2662,7 +2653,7 @@ paths:
                   syncedEvents:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Event"
+                      $ref: '#/components/schemas/Event'
 
   /calendar/google/auth:
     get:
@@ -2674,7 +2665,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Authorization URL
           content:
             application/json:
@@ -2686,10 +2677,10 @@ paths:
                     format: uri
                     description: Google OAuth2 authorization URL
                 example:
-                  authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id=..."
-        "400":
+                  authUrl: 'https://accounts.google.com/o/oauth2/v2/auth?client_id=...'
+        '400':
           description: Google Calendar integration not enabled
-        "401":
+        '401':
           description: Not authenticated
 
   /calendar/google/callback:
@@ -2716,7 +2707,7 @@ paths:
             type: string
           description: User ID passed as state parameter
       responses:
-        "200":
+        '200':
           description: Successfully connected to Google Calendar
           content:
             application/json:
@@ -2729,10 +2720,10 @@ paths:
                     type: string
                 example:
                   success: true
-                  message: "Google Calendar connected successfully"
-        "400":
+                  message: 'Google Calendar connected successfully'
+        '400':
           description: Invalid authorization code
-        "401":
+        '401':
           description: Not authenticated
 
   /calendar/google/sync:
@@ -2766,10 +2757,10 @@ paths:
               custom_range:
                 summary: Custom time range
                 value:
-                  timeMin: "2025-10-30T00:00:00Z"
-                  timeMax: "2025-12-31T23:59:59Z"
+                  timeMin: '2025-10-30T00:00:00Z'
+                  timeMax: '2025-12-31T23:59:59Z'
       responses:
-        "200":
+        '200':
           description: Events imported successfully
           content:
             application/json:
@@ -2786,15 +2777,15 @@ paths:
                   events:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Event"
+                      $ref: '#/components/schemas/Event'
                 example:
                   success: true
-                  message: "Imported 5 events from Google Calendar"
+                  message: 'Imported 5 events from Google Calendar'
                   importedCount: 5
                   events: []
-        "400":
+        '400':
           description: Google Calendar not connected or sync failed
-        "401":
+        '401':
           description: Not authenticated
 
   /calendar/google/disconnect:
@@ -2807,7 +2798,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Google Calendar disconnected successfully
           content:
             application/json:
@@ -2820,8 +2811,8 @@ paths:
                     type: string
                 example:
                   success: true
-                  message: "Google Calendar disconnected successfully"
-        "401":
+                  message: 'Google Calendar disconnected successfully'
+        '401':
           description: Not authenticated
 
   ################################################################
@@ -2848,19 +2839,19 @@ paths:
           schema: { type: boolean, default: false }
           description: Return only unread notifications
       responses:
-        "200":
+        '200':
           description: List of notifications
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
+                  status: { type: string, example: 'success' }
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Notification"
-        "401":
+                      $ref: '#/components/schemas/Notification'
+        '401':
           description: Not authenticated
 
   /notifications/{id}:
@@ -2877,19 +2868,19 @@ paths:
           schema: { type: string }
           description: Notification ID
       responses:
-        "200":
+        '200':
           description: Notification details
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
+                  status: { type: string, example: 'success' }
                   data:
-                    $ref: "#/components/schemas/Notification"
-        "403":
+                    $ref: '#/components/schemas/Notification'
+        '403':
           description: Not authorized to view this notification
-        "404":
+        '404':
           description: Notification not found
     delete:
       tags: [Notifications]
@@ -2904,11 +2895,11 @@ paths:
           schema: { type: string }
           description: Notification ID
       responses:
-        "204":
+        '204':
           description: Notification deleted successfully
-        "403":
+        '403':
           description: Not authorized to delete this notification
-        "404":
+        '404':
           description: Notification not found
 
   /notifications/{id}/read:
@@ -2925,19 +2916,19 @@ paths:
           schema: { type: string }
           description: Notification ID
       responses:
-        "200":
+        '200':
           description: Notification marked as read
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status: { type: string, example: "success" }
+                  status: { type: string, example: 'success' }
                   data:
-                    $ref: "#/components/schemas/Notification"
-        "403":
+                    $ref: '#/components/schemas/Notification'
+        '403':
           description: Not authorized to modify this notification
-        "404":
+        '404':
           description: Notification not found
 
   /notifications/unread/count:
@@ -2948,7 +2939,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Unread count
           content:
             application/json:
@@ -2960,7 +2951,7 @@ paths:
                     description: Number of unread notifications
                 example:
                   count: 5
-        "401":
+        '401':
           description: Not authenticated
 
   /notifications/read-all:
@@ -2971,7 +2962,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: All notifications marked as read
           content:
             application/json:
@@ -2987,9 +2978,9 @@ paths:
                     description: Number of notifications marked as read
                 example:
                   success: true
-                  message: "All notifications marked as read"
+                  message: 'All notifications marked as read'
                   modifiedCount: 5
-        "401":
+        '401':
           description: Not authenticated
 
   /notifications/push-token:
@@ -3008,28 +2999,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DeviceTokenRegister"
+              $ref: '#/components/schemas/DeviceTokenRegister'
             examples:
               ios:
                 summary: iOS device registration
                 value:
-                  token: "apns-token-here-64-chars-hex"
-                  platform: "ios"
-                  deviceName: "iPhone 14 Pro"
+                  token: 'apns-token-here-64-chars-hex'
+                  platform: 'ios'
+                  deviceName: 'iPhone 14 Pro'
               android:
                 summary: Android device registration
                 value:
-                  token: "fcm-token-here-152-chars"
-                  platform: "android"
-                  deviceName: "Samsung Galaxy S23"
+                  token: 'fcm-token-here-152-chars'
+                  platform: 'android'
+                  deviceName: 'Samsung Galaxy S23'
               web:
                 summary: Web browser registration
                 value:
-                  token: "fcm-web-token-here-152-chars"
-                  platform: "web"
-                  deviceName: "Chrome on MacBook"
+                  token: 'fcm-web-token-here-152-chars'
+                  platform: 'web'
+                  deviceName: 'Chrome on MacBook'
       responses:
-        "201":
+        '201':
           description: Device token registered successfully
           content:
             application/json:
@@ -3045,11 +3036,11 @@ paths:
                     description: Unique identifier for the registered device
                 example:
                   success: true
-                  message: "Device token registered successfully"
-                  deviceId: "device123abc"
-        "400":
+                  message: 'Device token registered successfully'
+                  deviceId: 'device123abc'
+        '400':
           description: Invalid token or platform
-        "401":
+        '401':
           description: Not authenticated
     delete:
       tags: [Notifications]
@@ -3071,9 +3062,9 @@ paths:
                   type: string
                   description: The device token to unregister
             example:
-              token: "fcm-or-apns-token-here"
+              token: 'fcm-or-apns-token-here'
       responses:
-        "200":
+        '200':
           description: Device token unregistered successfully
           content:
             application/json:
@@ -3086,12 +3077,12 @@ paths:
                     type: string
                 example:
                   success: true
-                  message: "Device token unregistered successfully"
-        "400":
+                  message: 'Device token unregistered successfully'
+        '400':
           description: Invalid request
-        "401":
+        '401':
           description: Not authenticated
-        "404":
+        '404':
           description: Token not found
 
   ################################################################
@@ -3108,9 +3099,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InvitationCreate"
+              $ref: '#/components/schemas/InvitationCreate'
       responses:
-        "201":
+        '201':
           description: Invitation created
     get:
       tags: [Invitations]
@@ -3118,14 +3109,14 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Invitations
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Invitation"
+                  $ref: '#/components/schemas/Invitation'
 
   /invitations/{id}/respond:
     post:
@@ -3149,7 +3140,7 @@ paths:
                   type: string
                   enum: [accept, decline]
       responses:
-        "200":
+        '200':
           description: Response recorded
 
   ################################################################
@@ -3166,9 +3157,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FeedbackCreate"
+              $ref: '#/components/schemas/FeedbackCreate'
       responses:
-        "201":
+        '201':
           description: Feedback submitted
     get:
       tags: [Feedback]
@@ -3176,14 +3167,14 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Feedback list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Feedback"
+                  $ref: '#/components/schemas/Feedback'
 
   ################################################################
   # ADMIN                                                           #
@@ -3195,7 +3186,7 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Reports array
           content:
             application/json:
@@ -3352,7 +3343,7 @@ components:
           type: string
           minLength: 3
           maxLength: 30
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           description: Username (3-30 chars, alphanumeric with underscores/hyphens)
         name:
           type: string
@@ -3391,7 +3382,7 @@ components:
                   items: { type: number }
                   minItems: 2
                   maxItems: 2
-                  description: "[longitude, latitude]"
+                  description: '[longitude, latitude]'
         privacy:
           type: object
           properties:
@@ -3411,32 +3402,23 @@ components:
           minLength: 3
           maxLength: 50
           description: Team name (3-50 characters)
-          example: "Thunder Strikers"
+          example: 'Thunder Strikers'
         sport:
           type: string
-          enum:
-            [
-              football,
-              basketball,
-              volleyball,
-              tennis,
-              badminton,
-              cricket,
-              other,
-            ]
+          enum: [football, basketball, volleyball, tennis, badminton, cricket, other]
           description: Sport type
-          example: "football"
+          example: 'football'
         description:
           type: string
           maxLength: 500
           description: Team description (optional, max 500 characters)
-          example: "Competitive football team looking for skilled players"
+          example: 'Competitive football team looking for skilled players'
         joinCode:
           type: string
           minLength: 4
           maxLength: 20
           description: Optional join code for private teams
-          example: "THUNDER2024"
+          example: 'THUNDER2024'
         isPrivate:
           type: boolean
           description: Whether the team is private (requires join code)
@@ -3450,22 +3432,22 @@ components:
           minLength: 3
           maxLength: 50
           description: Team name
-          example: "Thunder Strikers United"
+          example: 'Thunder Strikers United'
         description:
           type: string
           maxLength: 500
           description: Team description
-          example: "Updated team description"
+          example: 'Updated team description'
         captainId:
           type: string
           description: Transfer captaincy to another team member (must be existing member)
-          example: "507f1f77bcf86cd799439011"
+          example: '507f1f77bcf86cd799439011'
         joinCode:
           type: string
           minLength: 4
           maxLength: 20
           description: Join code for private teams
-          example: "NEWCODE2024"
+          example: 'NEWCODE2024'
         isPrivate:
           type: boolean
           description: Whether the team is private
@@ -3473,7 +3455,7 @@ components:
           type: string
           format: uri
           description: Team avatar URL
-          example: "https://example.com/avatar.jpg"
+          example: 'https://example.com/avatar.jpg'
 
     Team:
       type: object
@@ -3481,41 +3463,36 @@ components:
         id:
           type: string
           description: Team ID
-          example: "507f1f77bcf86cd799439011"
+          example: '507f1f77bcf86cd799439011'
         name:
           type: string
           description: Team name
-          example: "Thunder Strikers"
+          example: 'Thunder Strikers'
         sport:
           type: string
           description: Sport type
-          example: "football"
+          example: 'football'
         description:
           type: string
           description: Team description
-          example: "Competitive football team"
+          example: 'Competitive football team'
         captainId:
           type: string
           description: Team captain user ID
-          example: "507f191e810c19729de860ea"
+          example: '507f191e810c19729de860ea'
         members:
           type: array
           description: Team members
           items:
             type: object
             properties:
-              userId: { type: string, example: "507f191e810c19729de860ea" }
-              role: { type: string, enum: [captain, member], example: "member" }
-              joinedAt:
-                {
-                  type: string,
-                  format: date-time,
-                  example: "2024-01-15T10:00:00Z",
-                }
+              userId: { type: string, example: '507f191e810c19729de860ea' }
+              role: { type: string, enum: [captain, member], example: 'member' }
+              joinedAt: { type: string, format: date-time, example: '2024-01-15T10:00:00Z' }
         joinCode:
           type: string
           description: Join code (only shown to captain)
-          example: "THUNDER2024"
+          example: 'THUNDER2024'
         isPrivate:
           type: boolean
           description: Whether team is private
@@ -3524,7 +3501,7 @@ components:
           type: string
           format: uri
           description: Team avatar URL
-          example: "https://example.com/avatar.jpg"
+          example: 'https://example.com/avatar.jpg'
         stats:
           type: object
           description: Team statistics
@@ -3539,12 +3516,12 @@ components:
           type: string
           format: date-time
           description: Team creation timestamp
-          example: "2024-01-01T00:00:00Z"
+          example: '2024-01-01T00:00:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
-          example: "2024-03-15T14:30:00Z"
+          example: '2024-03-15T14:30:00Z'
 
     #########################################################
     # MATCH / TOURNAMENT SCHEMAS                            #
@@ -3581,7 +3558,7 @@ components:
         startAt: { type: string, format: date-time }
         endAt: { type: string, format: date-time }
         location:
-          $ref: "#/components/schemas/Location"
+          $ref: '#/components/schemas/Location'
         maxPlayers: { type: integer }
         skillLevel:
           type: string
@@ -3600,7 +3577,7 @@ components:
         startAt: { type: string, format: date-time }
         endAt: { type: string, format: date-time }
         location:
-          $ref: "#/components/schemas/Location"
+          $ref: '#/components/schemas/Location'
         maxPlayers: { type: integer }
         status:
           type: string
@@ -3627,15 +3604,15 @@ components:
                   assists: { type: integer, description: Assists }
                   fouls: { type: integer, description: Fouls committed }
           example:
-            "user1_id": 5
-            "user2_id":
+            'user1_id': 5
+            'user2_id':
               goals: 3
               assists: 2
               fouls: 1
 
     Match:
       allOf:
-        - $ref: "#/components/schemas/MatchCreate"
+        - $ref: '#/components/schemas/MatchCreate'
         - type: object
           properties:
             id: { type: string }
@@ -3697,7 +3674,7 @@ components:
 
     Tournament:
       allOf:
-        - $ref: "#/components/schemas/TournamentCreate"
+        - $ref: '#/components/schemas/TournamentCreate'
         - type: object
           properties:
             id: { type: string }
@@ -3711,7 +3688,7 @@ components:
             rounds: { type: integer }
             currentRound: { type: integer }
             bracket:
-              $ref: "#/components/schemas/TournamentBracket"
+              $ref: '#/components/schemas/TournamentBracket'
             status:
               type: string
               enum: [registration, ongoing, completed, cancelled]
@@ -3721,8 +3698,8 @@ components:
 
     TournamentBracket:
       oneOf:
-        - $ref: "#/components/schemas/KnockoutBracket"
-        - $ref: "#/components/schemas/LeagueBracket"
+        - $ref: '#/components/schemas/KnockoutBracket'
+        - $ref: '#/components/schemas/LeagueBracket'
 
     KnockoutBracket:
       type: object
@@ -3740,7 +3717,7 @@ components:
         rounds:
           type: array
           items:
-            $ref: "#/components/schemas/KnockoutRound"
+            $ref: '#/components/schemas/KnockoutRound'
         teams:
           type: array
           items:
@@ -3779,7 +3756,7 @@ components:
         matches:
           type: array
           items:
-            $ref: "#/components/schemas/KnockoutMatch"
+            $ref: '#/components/schemas/KnockoutMatch'
         completed:
           type: boolean
           description: Whether all matches in this round are completed
@@ -3846,11 +3823,11 @@ components:
         rounds:
           type: array
           items:
-            $ref: "#/components/schemas/LeagueRound"
+            $ref: '#/components/schemas/LeagueRound'
         standings:
           type: array
           items:
-            $ref: "#/components/schemas/LeagueStanding"
+            $ref: '#/components/schemas/LeagueStanding'
 
     LeagueRound:
       type: object
@@ -3862,7 +3839,7 @@ components:
         matches:
           type: array
           items:
-            $ref: "#/components/schemas/LeagueMatch"
+            $ref: '#/components/schemas/LeagueMatch'
         completed:
           type: boolean
           description: Whether all matches in this round are completed
@@ -4011,7 +3988,7 @@ components:
 
     ChatMessage:
       allOf:
-        - $ref: "#/components/schemas/ChatMessageCreate"
+        - $ref: '#/components/schemas/ChatMessageCreate'
         - type: object
           properties:
             id: { type: string }
@@ -4049,7 +4026,7 @@ components:
           type: number
           description: Distance in kilometers
         location:
-          $ref: "#/components/schemas/GeoLocation"
+          $ref: '#/components/schemas/GeoLocation'
         isAvailable: { type: boolean }
 
     VenueMapData:
@@ -4069,7 +4046,7 @@ components:
 
     VenueDetail:
       allOf:
-        - $ref: "#/components/schemas/VenueSummary"
+        - $ref: '#/components/schemas/VenueSummary'
         - type: object
           properties:
             ownerId: { type: string }
@@ -4093,7 +4070,7 @@ components:
 
     Venue:
       allOf:
-        - $ref: "#/components/schemas/VenueDetail"
+        - $ref: '#/components/schemas/VenueDetail'
         - type: object
           properties:
             createdAt: { type: string, format: date-time }
@@ -4120,7 +4097,7 @@ components:
             phone: { type: string }
             email: { type: string }
         location:
-          $ref: "#/components/schemas/GeoLocation"
+          $ref: '#/components/schemas/GeoLocation'
         images:
           type: array
           items: { type: string }
@@ -4243,7 +4220,7 @@ components:
 
     Event:
       allOf:
-        - $ref: "#/components/schemas/EventCreate"
+        - $ref: '#/components/schemas/EventCreate'
         - type: object
           properties:
             id: { type: string }
@@ -4286,17 +4263,17 @@ components:
           description: >
             The device-specific push token. For iOS this is the APNS token (64 hex chars),
             for Android/Web this is the FCM registration token (152+ chars).
-          example: "fcm-registration-token-or-apns-token-here"
+          example: 'fcm-registration-token-or-apns-token-here'
         platform:
           type: string
           enum: [ios, android, web]
           description: >
             Device platform. 'ios' uses APNS, 'android' and 'web' use FCM.
-          example: "android"
+          example: 'android'
         deviceName:
           type: string
           description: Optional human-readable device name for identification
-          example: "iPhone 14 Pro"
+          example: 'iPhone 14 Pro'
 
     InvitationCreate:
       type: object
@@ -4311,7 +4288,7 @@ components:
 
     Invitation:
       allOf:
-        - $ref: "#/components/schemas/InvitationCreate"
+        - $ref: '#/components/schemas/InvitationCreate'
         - type: object
           properties:
             id: { type: string }
@@ -4340,7 +4317,7 @@ components:
 
     Feedback:
       allOf:
-        - $ref: "#/components/schemas/FeedbackCreate"
+        - $ref: '#/components/schemas/FeedbackCreate'
         - type: object
           properties:
             id: { type: string }
@@ -4468,7 +4445,7 @@ components:
           example:
             type: stat_threshold
             field: wins
-            operator: ">="
+            operator: '>='
             value: 10
         badgeUrl:
           type: string

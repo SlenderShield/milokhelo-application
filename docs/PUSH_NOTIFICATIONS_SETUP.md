@@ -180,12 +180,12 @@ await scheduleLocalNotification(
 
 Pre-configured channels:
 
-| Channel ID | Name | Importance | Use Case |
-|------------|------|------------|----------|
-| `default` | Default | MAX | General notifications |
-| `matches` | Matches | HIGH | Match updates, invitations |
-| `invitations` | Invitations | HIGH | Team/tournament invites |
-| `messages` | Messages | HIGH | Chat messages |
+| Channel ID    | Name        | Importance | Use Case                   |
+| ------------- | ----------- | ---------- | -------------------------- |
+| `default`     | Default     | MAX        | General notifications      |
+| `matches`     | Matches     | HIGH       | Match updates, invitations |
+| `invitations` | Invitations | HIGH       | Team/tournament invites    |
+| `messages`    | Messages    | HIGH       | Chat messages              |
 
 ## 📊 Backend Integration
 
@@ -205,12 +205,14 @@ Example with Node.js:
 const { Expo } = require('expo-server-sdk');
 const expo = new Expo();
 
-const messages = [{
-  to: 'ExponentPushToken[xxxxx]',
-  sound: 'default',
-  body: 'You have a new match invitation!',
-  data: { type: 'match', matchId: '123' },
-}];
+const messages = [
+  {
+    to: 'ExponentPushToken[xxxxx]',
+    sound: 'default',
+    body: 'You have a new match invitation!',
+    data: { type: 'match', matchId: '123' },
+  },
+];
 
 const chunks = expo.chunkPushNotifications(messages);
 for (const chunk of chunks) {

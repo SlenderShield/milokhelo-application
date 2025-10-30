@@ -22,28 +22,41 @@ export const VenueSchema = z.object({
   facilities: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
   images: z.array(z.string().url()).optional(),
-  priceRange: z.object({
-    min: z.number(),
-    max: z.number(),
-  }).optional(),
+  priceRange: z
+    .object({
+      min: z.number(),
+      max: z.number(),
+    })
+    .optional(),
   rating: z.number().min(0).max(5).optional(),
   totalReviews: z.number().optional(),
   distance: z.number().optional(), // Distance in kilometers for nearby searches
   owner: z.string().optional(), // Kept for backwards compatibility
   ownerId: z.string().optional(), // Backend uses ownerId
-  contact: z.object({ // Backend uses 'contact' not 'contactInfo'
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-  }).optional(),
-  contactInfo: z.object({ // Keep for backwards compatibility
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    website: z.string().url().optional(),
-  }).optional(),
-  operatingHours: z.record(z.string(), z.object({
-    open: z.string(),
-    close: z.string(),
-  })).optional(),
+  contact: z
+    .object({
+      // Backend uses 'contact' not 'contactInfo'
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+    })
+    .optional(),
+  contactInfo: z
+    .object({
+      // Keep for backwards compatibility
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      website: z.string().url().optional(),
+    })
+    .optional(),
+  operatingHours: z
+    .record(
+      z.string(),
+      z.object({
+        open: z.string(),
+        close: z.string(),
+      })
+    )
+    .optional(),
   status: z.enum(['active', 'inactive', 'pending', 'banned']).default('pending'),
   isAvailable: z.boolean().default(true),
   verified: z.boolean().optional(),
@@ -66,19 +79,28 @@ export const VenueCreateSchema = z.object({
   facilities: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
   images: z.array(z.string().url()).optional(),
-  priceRange: z.object({
-    min: z.number().min(0),
-    max: z.number().min(0),
-  }).optional(),
-  contactInfo: z.object({
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    website: z.string().url().optional(),
-  }).optional(),
-  operatingHours: z.record(z.string(), z.object({
-    open: z.string(),
-    close: z.string(),
-  })).optional(),
+  priceRange: z
+    .object({
+      min: z.number().min(0),
+      max: z.number().min(0),
+    })
+    .optional(),
+  contactInfo: z
+    .object({
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      website: z.string().url().optional(),
+    })
+    .optional(),
+  operatingHours: z
+    .record(
+      z.string(),
+      z.object({
+        open: z.string(),
+        close: z.string(),
+      })
+    )
+    .optional(),
 });
 
 export type VenueCreate = z.infer<typeof VenueCreateSchema>;
@@ -95,19 +117,28 @@ export const VenueUpdateSchema = z.object({
   facilities: z.array(z.string()).optional(),
   amenities: z.array(z.string()).optional(),
   images: z.array(z.string().url()).optional(),
-  priceRange: z.object({
-    min: z.number().min(0),
-    max: z.number().min(0),
-  }).optional(),
-  contactInfo: z.object({
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    website: z.string().url().optional(),
-  }).optional(),
-  operatingHours: z.record(z.string(), z.object({
-    open: z.string(),
-    close: z.string(),
-  })).optional(),
+  priceRange: z
+    .object({
+      min: z.number().min(0),
+      max: z.number().min(0),
+    })
+    .optional(),
+  contactInfo: z
+    .object({
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      website: z.string().url().optional(),
+    })
+    .optional(),
+  operatingHours: z
+    .record(
+      z.string(),
+      z.object({
+        open: z.string(),
+        close: z.string(),
+      })
+    )
+    .optional(),
   status: z.enum(['active', 'inactive', 'pending']).optional(),
   isAvailable: z.boolean().optional(),
 });
@@ -117,12 +148,14 @@ export type VenueUpdate = z.infer<typeof VenueUpdateSchema>;
 // Slot Availability Schema
 export const SlotAvailabilitySchema = z.object({
   date: z.string(),
-  slots: z.array(z.object({
-    startTime: z.string(),
-    endTime: z.string(),
-    isAvailable: z.boolean(),
-    price: z.number(),
-  })),
+  slots: z.array(
+    z.object({
+      startTime: z.string(),
+      endTime: z.string(),
+      isAvailable: z.boolean(),
+      price: z.number(),
+    })
+  ),
 });
 
 export type SlotAvailability = z.infer<typeof SlotAvailabilitySchema>;

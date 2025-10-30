@@ -84,20 +84,14 @@ export default function NotificationsScreen() {
     ]);
   };
 
-  const handleInvitationResponse = async (
-    invitationId: string,
-    accept: boolean
-  ) => {
+  const handleInvitationResponse = async (invitationId: string, accept: boolean) => {
     try {
       await respondToInvitation.mutateAsync({
         id: invitationId,
         data: { response: accept ? 'accept' : 'decline' },
       });
       refetchInvitations();
-      Alert.alert(
-        'Success',
-        accept ? 'Invitation accepted!' : 'Invitation declined'
-      );
+      Alert.alert('Success', accept ? 'Invitation accepted!' : 'Invitation declined');
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to respond to invitation');
     }
@@ -142,33 +136,21 @@ export default function NotificationsScreen() {
         onPress={() => !item.read && handleMarkAsRead(item.id)}
       >
         <View style={styles.notificationLeft}>
-          <Text style={styles.notificationIcon}>
-            {getNotificationIcon(item.type)}
-          </Text>
+          <Text style={styles.notificationIcon}>{getNotificationIcon(item.type)}</Text>
           {!item.read && <View style={styles.unreadDot} />}
         </View>
 
         <View style={styles.notificationBody}>
-          <Text
-            style={[
-              styles.notificationTitle,
-              !item.read && styles.notificationTitleUnread,
-            ]}
-          >
+          <Text style={[styles.notificationTitle, !item.read && styles.notificationTitleUnread]}>
             {item.title}
           </Text>
           <Text style={styles.notificationMessage} numberOfLines={2}>
             {item.message}
           </Text>
-          <Text style={styles.notificationTime}>
-            {formatTime(item.createdAt)}
-          </Text>
+          <Text style={styles.notificationTime}>{formatTime(item.createdAt)}</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDelete(item.id)}
-        >
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
           <Text style={styles.deleteButtonText}>×</Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -181,9 +163,7 @@ export default function NotificationsScreen() {
         <Text style={styles.invitationIcon}>✉️</Text>
         <View style={styles.invitationHeaderText}>
           <Text style={styles.invitationTitle}>{item.title}</Text>
-          <Text style={styles.invitationTime}>
-            {formatTime(item.createdAt)}
-          </Text>
+          <Text style={styles.invitationTime}>{formatTime(item.createdAt)}</Text>
         </View>
       </View>
 
@@ -213,9 +193,7 @@ export default function NotificationsScreen() {
           <Text
             style={[
               styles.invitationStatusText,
-              item.status === 'accepted'
-                ? styles.statusAccepted
-                : styles.statusDeclined,
+              item.status === 'accepted' ? styles.statusAccepted : styles.statusDeclined,
             ]}
           >
             {item.status === 'accepted' ? '✓ Accepted' : '✗ Declined'}
@@ -265,18 +243,10 @@ export default function NotificationsScreen() {
       {/* Tabs */}
       <View style={styles.tabBar}>
         <TouchableOpacity
-          style={[
-            styles.tab,
-            activeTab === 'notifications' && styles.tabActive,
-          ]}
+          style={[styles.tab, activeTab === 'notifications' && styles.tabActive]}
           onPress={() => setActiveTab('notifications')}
         >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'notifications' && styles.tabTextActive,
-            ]}
-          >
+          <Text style={[styles.tabText, activeTab === 'notifications' && styles.tabTextActive]}>
             Notifications
           </Text>
           {unreadCount && unreadCount.count > 0 && (
@@ -290,12 +260,7 @@ export default function NotificationsScreen() {
           style={[styles.tab, activeTab === 'invitations' && styles.tabActive]}
           onPress={() => setActiveTab('invitations')}
         >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'invitations' && styles.tabTextActive,
-            ]}
-          >
+          <Text style={[styles.tabText, activeTab === 'invitations' && styles.tabTextActive]}>
             Invitations
           </Text>
           {invitations && invitations.filter((inv: any) => inv.status === 'pending').length > 0 && (
@@ -330,24 +295,16 @@ export default function NotificationsScreen() {
       {/* List */}
       {isEmpty ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>
-            {activeTab === 'notifications' ? '🔔' : '✉️'}
-          </Text>
+          <Text style={styles.emptyIcon}>{activeTab === 'notifications' ? '🔔' : '✉️'}</Text>
           <Text style={styles.emptyText}>
-            {activeTab === 'notifications'
-              ? 'No notifications yet'
-              : 'No invitations yet'}
+            {activeTab === 'notifications' ? 'No notifications yet' : 'No invitations yet'}
           </Text>
         </View>
       ) : (
         <FlatList
           data={currentData as any[]}
           keyExtractor={(item: any) => item.id}
-          renderItem={
-            activeTab === 'notifications'
-              ? renderNotification
-              : renderInvitation
-          }
+          renderItem={activeTab === 'notifications' ? renderNotification : renderInvitation}
           contentContainerStyle={styles.listContent}
           refreshing={isLoading}
           onRefresh={() => {

@@ -136,25 +136,22 @@ interface UpdateTeamRequest {
 // src/utils/uploadImage.ts
 import { imageToBase64 } from './imageUtils';
 
-export async function uploadImage(
-  uri: string,
-  type: 'avatar' | 'team-logo'
-): Promise<string> {
+export async function uploadImage(uri: string, type: 'avatar' | 'team-logo'): Promise<string> {
   const base64 = await imageToBase64(uri);
-  
+
   const response = await fetch(`${API_BASE_URL}/upload/image`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ image: base64, type }),
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to upload image');
   }
-  
+
   const data = await response.json();
   return data.url;
 }
@@ -319,10 +316,10 @@ console.log(formatFileSize(1536000)); // "1.46 MB"
 
 ```typescript
 interface CompressionOptions {
-  maxWidth?: number;        // Default: 1024
-  maxHeight?: number;       // Default: 1024
-  quality?: number;         // Default: 0.8 (0-1)
-  maxSizeInMB?: number;     // Default: 5
+  maxWidth?: number; // Default: 1024
+  maxHeight?: number; // Default: 1024
+  quality?: number; // Default: 0.8 (0-1)
+  maxSizeInMB?: number; // Default: 5
 }
 ```
 

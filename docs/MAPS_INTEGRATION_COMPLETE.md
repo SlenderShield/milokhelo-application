@@ -97,7 +97,7 @@
    ```bash
    # Get API keys from Google Cloud Console
    # https://console.cloud.google.com/
-   
+
    # Enable APIs:
    # - Maps SDK for Android
    # - Maps SDK for iOS
@@ -114,7 +114,7 @@
 
    ```objc
    @import GoogleMaps;
-   
+
    [GMSServices provideAPIKey:@"YOUR_IOS_API_KEY"];
    ```
 
@@ -160,9 +160,9 @@ import { useLocation } from '@/src/hooks/useLocation';
 
 function MyComponent() {
   const {
-    location,        // { latitude, longitude } | null
-    loading,         // boolean
-    error,           // string | null
+    location, // { latitude, longitude } | null
+    loading, // boolean
+    error, // string | null
     permissionGranted,
     refreshLocation,
     requestLocationPermission,
@@ -200,8 +200,8 @@ import {
 
 // Calculate distance between two points
 const distance = calculateDistance(
-  { latitude: 40.7128, longitude: -74.0060 },  // New York
-  { latitude: 34.0522, longitude: -118.2437 }  // Los Angeles
+  { latitude: 40.7128, longitude: -74.006 }, // New York
+  { latitude: 34.0522, longitude: -118.2437 } // Los Angeles
 ); // Returns: 3935.7 km
 
 // Format for display
@@ -260,8 +260,8 @@ Map components automatically convert to:
 ```typescript
 // In your component or test
 const mockLocation = {
-  latitude: -26.2041,  // Johannesburg, South Africa
-  longitude: 28.0473
+  latitude: -26.2041, // Johannesburg, South Africa
+  longitude: 28.0473,
 };
 ```
 
@@ -272,8 +272,8 @@ import { calculateDistance } from '@/src/hooks/useLocation';
 
 // Johannesburg to Pretoria (~50km)
 const distance = calculateDistance(
-  { latitude: -26.2041, longitude: 28.0473 },  // Johannesburg
-  { latitude: -25.7461, longitude: 28.1881 }   // Pretoria
+  { latitude: -26.2041, longitude: 28.0473 }, // Johannesburg
+  { latitude: -25.7461, longitude: 28.1881 } // Pretoria
 );
 console.log(distance); // ~50.8 km
 ```
